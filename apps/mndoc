@@ -1,0 +1,10 @@
+#!/bin/sh
+# -*- tcl -*- A Tcl comment, whose contents don't matter \
+exec tclsh "$0" "$@"
+
+package require Tcl 8.6-
+package require mndoc
+if {[info exists argv]} {
+    ::mndoc::main $argv
+}
+exit
