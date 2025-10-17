@@ -114,7 +114,7 @@ There is as well an install script which installs _mndoc_
 into `~/.local/bin`. You can execute it like this:
 
 ```
-bash -c "$(curl -fsSL https://github.com/mittelmark/nmdoc/releases/latest/download/install-mndoc.sh)"
+bash -c "$(curl -fsSL https://github.com/mittelmark/mndoc/releases/latest/download/install-mndoc.sh)"
 ```
 
 ## Changes in Comparison to the Tcllib Package
