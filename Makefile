@@ -29,6 +29,7 @@ app:
 	mv temp.tcl mndoc.vfs/lib/markdown/markdown.tcl
 	for file in $(txutl-files); do wget $(tcllib)modules/textutil/$${file} -O mndoc.vfs/lib/textutil/$${file}; done	
 	$(TCL) ../tpack/tpack-b64.tcl wrap mndoc.tapp --lz4
+	[ -d bin ] || mkdir bin
 	cp mndoc.tapp bin/mndoc-`tclsh mndoc.tapp --version`.bin
 	ls -lth bin/mndoc*.bin
 	echo done
