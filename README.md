@@ -4,7 +4,7 @@
 [![Release](https://img.shields.io/github/v/release/mittelmark/mndoc.svg?label=current+release)](https://github.com/mittelmark/mndoc/releases)
 ![Downloads](https://img.shields.io/github/downloads/mittelmark/mndoc/total)
 ![Commits](https://img.shields.io/github/commits-since/mittelmark/mndoc/latest)
-[![Docu](https://img.shields.io/badge/Docu-blue)](http://htmlpreview.github.io/?https://github.com/mittelmark/mndoc/blob/master/mkdoc/mndoc.html)
+[![Docu](https://img.shields.io/badge/Docu-blue)](http://htmlpreview.github.io/?https://github.com/mittelmark/mndoc/blob/master/mndoc/mndoc.html)
 
 Markdown to HTML converter and source code documentation tool using embedded Markdown for programming
 languages supporting either multiline comments or at least the # character for comments.
