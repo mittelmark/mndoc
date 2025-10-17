@@ -77,8 +77,8 @@ A more extended example can be seen within the script
 [mndoc/mndoc.tcl](https://github.com/mittelmark/mndoc/blob/main/mndoc/mndoc.tcl)
 itself. 
 
-These comments are used to create the longer manual which can be seen here: 
-[mndoc-mndoc.html](http://htmlpreview.github.io/?https://github.com/mittelmark/mndoc/blob/master/mndoc/mndoc-mndoc.html).
+These comments are used to create the manual which can be seen here: 
+[mndoc.html](http://htmlpreview.github.io/?https://github.com/mittelmark/mndoc/blob/master/mndoc/mndoc.html).
 
 An example using syntax hilighting can be seen here (seems not to work in preview mode):
 
