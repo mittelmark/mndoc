@@ -103,7 +103,21 @@ $ mndoc --version
 0.9.0
 ```
 
-## Changes in Comparison to the Tcllib packages
+## Installation
+
+On Linux, MacOS and on Windows  with  installed  Msys2, Cygwin or WSL   download the
+latest  _mndoc-VERSION.bin_ file  (100-130kb in size), rename the bin file to
+_mndoc_  and  copy  the  file  to a  folder  belonging  to your  _PATH_  variable.
+Thereafter make the file executable and check that it is correctly  installed.
+
+There is as well an install script which installs _mndoc_ 
+into `~/.local/bin`. You can execute it like this:
+
+```
+bash -c "$(curl -fsSL https://github.com/mittelmark/nmdoc/releases/latest/download/install-nmdoc.sh)"
+```
+
+## Changes in Comparison to the Tcllib Package
 
 - adding header and footer support
 - adding javascript (single and multiple file support)
