@@ -6,7 +6,7 @@ cmdl-files=pkgIndex.tcl cmdline.tcl
 mdown-files=markdown.tcl pkgIndex.tcl
 txutl-files=tabify.tcl repeat.tcl pkgIndex.tcl
 tcllib=https://raw.githubusercontent.com/tcltk/tcllib/master/
-VERSION=$(shell grep "package ifneeded" mndoc/pkgIndex.tcl | grep -Eo '[.0-9]{2,}')
+VERSION=$(shell grep "package ifneeded" mndoc/pkgIndex.tcl | grep -Eo '[.0-9]{2,}' | head -1)
 TCL9=~/.local/opt/bin/tclsh9.0
 TCL=tclsh
 app:	
@@ -35,11 +35,9 @@ app:
 	echo done
 
 test-hightlight:
-	 tclsh ./bin/mndoc-$(VERSION).bin examples/test.md examples/test.html --javascript highlightjs
+	 tclsh ./bin/mndoc-$(VERSION).bin examples/hilight.md examples/hilight.html --javascript highlightjs
 test-equations:
-	echo $(VERSION)
 	tclsh ./bin/mndoc-$(VERSION).bin examples/equations.md examples/equations.html --mathjax true
-	echo done
 docu:
 	TCLLIBPATH=`pwd`/mndoc.vfs/lib tclsh apps/mndoc mndoc/mndoc.tcl mndoc/mndoc.html --css mndoc.css --mathjax true --javascript highlightjs
 	#htmlark --ignore-js mndoc/mndoc.html -o mndoc/mndoc-out.html
