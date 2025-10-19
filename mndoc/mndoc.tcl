@@ -2,7 +2,7 @@
 ##############################################################################
 #  Author        : Dr. Detlef Groth
 #  Created       : Fri Nov 15 10:20:22 2019
-#  Last Modified : <251019.0740>
+#  Last Modified : <251019.0758>
 #
 #  Description	 : Command line utility and package to extract Markdown documentation 
 #                  from programming code if embedded as after comment sequence #' 
@@ -41,9 +41,9 @@
 #
 ##############################################################################
 #' ---
-#' title: mndoc::mndoc 0.13.0
+#' title: mndoc::mndoc 0.14.0
 #' author: Detlef Groth, University of Potsdam, Germany
-#' date: 2025-10-16
+#' date: 2025-10-19
 #' css: mndoc.css
 #' ---
 #' 
