@@ -1,7 +1,10 @@
+/* stylesheet special font support */
+@import url('https://fonts.bunny.net/css?family=Alegreya&display=swap'); /* ' */
+@import url('https://fonts.bunny.net/css?family=Ubuntu+Mono&display=swap');
 
 body {
     margin-left: 10%; margin-right: 10%;
-    font-family: Palatino, "Palatino Linotype", "Palatino LT STD", "Book Antiqua", Georgia, serif;
+    font-family: Alegreya, Palatino, "Palatino Linotype", "Palatino LT STD", "Book Antiqua", Georgia, serif;
     max-width: 90%;
 }
 pre {
@@ -14,7 +17,7 @@ pre {
     background: 	#fafafa;
     border-top:		1px solid black;
     border-bottom:		1px solid black;
-    font-family: Monaco, Consolas, "Liberation Mono", Menlo, Courier, monospace;
+    font-family: "Ubuntu Mono", Monaco, Consolas, "Liberation Mono", Menlo, Courier, monospace;
 }
 a { text-decoration: none }
 pre.synopsis {
@@ -28,7 +31,7 @@ pre.code code.tclout {
 }
 
 code {
-  font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
+  font-family: "Ubuntu Mono", Consolas, "Liberation Mono", Menlo, Courier, monospace;
   background: 	#fafafa;
 }
 h1,h2, h3,h4 {
