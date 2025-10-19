@@ -134,7 +134,8 @@ An explanation on how to do this, is given in the section <a href="#install">Ins
 mndoc::mndoc mndoc.tcl mndoc.html                ## simple HTML page
 mndoc::mndoc mndoc.tcl mndoc.md                  ## just output a Markdown page
 mndoc::mndoc mndoc.tcl mndoc.html --refresh 20   ## reload HTML page every twenty seconds
-mndoc::mndoc mndoc.tcl mndoc.html --mathjax true ## parse inline equations using mathjax library</code></pre>
+mndoc::mndoc mndoc.tcl mndoc.html --mathjax true ## parse inline equations using mathjax library
+mndoc::mndoc sample.html sample-out.html         ## inline images and stylesheets into sample-out.html</code></pre>
 </blockquote>
 
 <h2><a name='format'>FORMATTING</a></h2>
@@ -376,6 +377,7 @@ in your module path as <code>mndoc-0.1X.X.tm</code> for instance. See the <a hre
 <h2><a name='see'>SEE ALSO</a></h2>
 
 <ul>
+<li><a href="https://github.com/mittelmark/tmdoc">tmdoc</a> for an approach to perform literate programming using Tcl</li>
 <li><a href="https://core.tcl-lang.org/tcllib/doc/trunk/embedded/index.md">tcllib</a> for the original mkdoc package and the 
   Markdown as well as the textutil packages</li>
 <li><a href="https://pandoc.org">pandoc</a> - am universal document converter</li>
@@ -486,7 +488,13 @@ in your module path as <code>mndoc-0.1X.X.tm</code> for instance. See the <a hre
 <li>2025-10-16 Release 0.13.0
 <ul>
 <li>renamed to mndoc with version 0.13.0 to avoid name collisions with
-   tcllib package
+   tcllib package</li></ul>
+
+</li>
+<li>2025-10-XX Release 0.14.0
+<ul>
+<li>adding support for inlining local images and stylesheets into exisitng
+   HTML files
 </li></ul>
 
 </li></ul>
@@ -494,7 +502,9 @@ in your module path as <code>mndoc-0.1X.X.tm</code> for instance. See the <a hre
 <h2><a name='todo'>TODO</a></h2>
 
 <ul>
-<li>dtplite support ?
+<li>font embedding using https://european-alternatives.eu/de/produkt/bunny-fonts</li>
+<li>dtplite support ?</li>
+<li>inline online images and stylesheets?
 </li></ul>
 
 <h2><a name='authors'>AUTHOR(s)</a></h2>
@@ -503,7 +513,7 @@ in your module path as <code>mndoc-0.1X.X.tm</code> for instance. See the <a hre
 
 <h2><a name='license'>LICENSE AND COPYRIGHT</a></h2>
 
-<p>Markdown extractor and converter mndoc::mndoc, version 0.13.0</p>
+<p>Markdown extractor and converter mndoc::mndoc, version 0.14.0</p>
 
 <p>Copyright (c) 2019-25  Detlef Groth, E-mail: &lt;dgroth(at)uni(minus)potsdam(dot)de&gt;</p>
 

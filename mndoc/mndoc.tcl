@@ -2,7 +2,7 @@
 ##############################################################################
 #  Author        : Dr. Detlef Groth
 #  Created       : Fri Nov 15 10:20:22 2019
-#  Last Modified : <251016.1654>
+#  Last Modified : <251019.0740>
 #
 #  Description	 : Command line utility and package to extract Markdown documentation 
 #                  from programming code if embedded as after comment sequence #' 
@@ -25,8 +25,9 @@
 #                  2025-01-04 Release 0.11.0 Tcl 9 support
 #                  2025-01-18 Release 0.11.2 Fix multiple images include on same line
 #                  2025-01-26 Release 0.11.3 Fix invalid argument crash, uneven length option list
-#                  2025-10-16 Release 0.12.0 Renamed to mndoc to avoid name class with Tcllib package
-#	
+#                  2025-10-16 Release 0.13.0 Renamed to mndoc to avoid name class with Tcllib package
+#	           2025-10-XX Release 0.14.0 converion html to html with image and stylesheet embedding
+#
 ##############################################################################
 #
 # Copyright (c) 2019-2025  Dr. Detlef Groth, E-mail: dgroth((at)uni-potsdam(dot)de
@@ -145,6 +146,7 @@
 #' mndoc::mndoc mndoc.tcl mndoc.md                  ## just output a Markdown page
 #' mndoc::mndoc mndoc.tcl mndoc.html --refresh 20   ## reload HTML page every twenty seconds
 #' mndoc::mndoc mndoc.tcl mndoc.html --mathjax true ## parse inline equations using mathjax library
+#' mndoc::mndoc sample.html sample-out.html         ## inline images and stylesheets into sample-out.html
 #' > ```
 
 package require Tcl 8.6-
@@ -152,8 +154,8 @@ package require Tcl 8.6-
 package require yaml
 package require Markdown
 
-package provide mndoc 0.13.0
-package provide mndoc::mndoc 0.13.0
+package provide mndoc 0.14.0
+package provide mndoc::mndoc 0.14.0
 namespace eval ::mndoc {
     variable deindent [list \n\t \n "\n    " \n]
     
@@ -263,11 +265,31 @@ proc ::mndoc::mndoc {filename outfile args} {
     array set arg [list --css "" --footer "" --header "" --javascript "" \
                    --mathjax false --refresh 0 --base64 true]
     if {! [expr {[llength $args] % 2 == 0}]} {
-        return -code error "List mus have an even length of type '--option value'!"
+        return -code error "List must have an even length of type '--option value'!"
     }
     array set arg $args
     if {[file extension $filename] eq [file extension $outfile] && $filename ne "-"} {
-	return -code error "Error: infile and outfile must have different file extensions!"
+
+        if {[file extension $filename] in [list .html .htm]} {
+            if {$filename eq $outfile} {
+                return -code error "Error: infile and outfile can't be the same file!"
+            }
+            ## just inlineing images and stylesheets
+            if [catch {open $filename r} infh] {
+                puts stderr "Cannot open $filename: $infh"
+                exit
+            } else {
+                set html [read $infh]
+                set html [inline-assets $filename $html]
+                set out [open $outfile w 0600]
+                puts $out "$html"
+                close $out
+                return 0
+            }
+            
+        } else {
+            return -code error "Error: infile and outfile must have different file extensions!"
+        }
     }
     set outmode html
     if {[regexp -nocase {(md|nw)$} [file extension $outfile]]} {
@@ -488,11 +510,14 @@ set HELP [string map [list "\n    " "\n"] {
         INFILE  - input file with:
                 - embedded Markdown comments: #' Markdown markup
                 - pure Markdown code (file.md)
+                - HTML file 
                 - if INFILE is given as - input is taken from STDIN
 
         OUTFILE - output file usually HTML or Markdown file
                 - file format is deduced on file extension .html or .md,
                 - if OUTFILE is the `-` sign output is written to STDOUT
+                - if INFILE and OUTFILE are HTML files just embedding of
+                  local images and stylsheets is performed
 
     Optional arguments:
 
@@ -503,8 +528,8 @@ set HELP [string map [list "\n    " "\n"] {
                              mndoc.css
         --header HTMLFILE  - file with HTML code to be included after the body tag
         --footer HTMLFILE  - file with HTML code to be included before the closing
-                             body tag                            
-        --base64  BOOL     - should local images, css files and JavaScript files being embedded as base 64 codes, default: true                
+                             body tag
+        --base64  BOOL     - should local images, css files and JavaScript files being embedded as base 64 codes, default: true
         --javascript JSLIB - hightlightjs|file1,file2,... using these Javascript libs / files, default: NULL
         --mathjax BOOL     - Embed the Mathjax Javascript library to add LaTeX formulas, default: false
         --refresh INT      - Create a HTML page which does automatic refreshing after N seconds, default: 0
@@ -513,7 +538,10 @@ set HELP [string map [list "\n    " "\n"] {
 
         # create manual page for mndoc.tcl itself 
         __APP__ mndoc.tcl mndoc.html
-
+        
+        # inline all local images and stylesheets into an HTML file
+        __APP__ sample.html sample-out.html
+        
         # create manual code for a CPP file using a custom style sheet
         __APP__ sample.cpp sample.html --css manual.css
 
@@ -849,6 +877,7 @@ set HELP [string map [list "\n    " "\n"] {
 #'
 #' ## <a name='see'>SEE ALSO</a>
 #' 
+#' - [tmdoc](https://github.com/mittelmark/tmdoc) for an approach to perform literate programming using Tcl
 #' - [tcllib](https://core.tcl-lang.org/tcllib/doc/trunk/embedded/index.md) for the original mkdoc package and the 
 #'   Markdown as well as the textutil packages
 #' - [pandoc](https://pandoc.org) - am universal document converter
@@ -924,10 +953,15 @@ set HELP [string map [list "\n    " "\n"] {
 #' - 2025-10-16 Release 0.13.0
 #'      - renamed to mndoc with version 0.13.0 to avoid name collisions with
 #'        tcllib package
+#' - 2025-10-XX Release 0.14.0
+#'      - adding support for inlining local images and stylesheets into exisitng
+#'        HTML files
 #'
 #' ## <a name='todo'>TODO</a>
 #'
+#' - font embedding using https://european-alternatives.eu/de/produkt/bunny-fonts
 #' - dtplite support ?
+#' - inline online images and stylesheets?
 #'
 #' ## <a name='authors'>AUTHOR(s)</a>
 #'
@@ -935,7 +969,7 @@ set HELP [string map [list "\n    " "\n"] {
 #'
 #' ## <a name='license'>LICENSE AND COPYRIGHT</a>
 #'
-#' Markdown extractor and converter mndoc::mndoc, version 0.13.0
+#' Markdown extractor and converter mndoc::mndoc, version 0.14.0
 #'
 #' Copyright (c) 2019-25  Detlef Groth, E-mail: <dgroth(at)uni(minus)potsdam(dot)de>
 #' 
@@ -970,4 +1004,3 @@ set HELP [string map [list "\n    " "\n"] {
 #' the Rights in Technical Data and Computer Software Clause as DFARS
 #' 252.227-7013 and FAR 52.227-19. 
 #'
-

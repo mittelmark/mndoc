@@ -100,7 +100,7 @@ this:
 
 ```
 $ mndoc --version
-0.9.0
+0.13.0
 ```
 
 ## Installation
@@ -124,10 +124,20 @@ bash -c "$(curl -fsSL https://github.com/mittelmark/mndoc/releases/latest/downlo
 - adding code highlight support [highligthjs](https://highlightjs.org/)
 - adding equation support using [MathJax](https://www.mathjax.org/)
 - adding css support for multiple files
-- adding  standalone  binary  mndoc.bin  with  embedded  Tcllib  packages  for
+- adding standalone  binary  mndoc.bin  with  embedded  Tcllib  packages  for
   document conversion
 - adding support for embedding  local images,  stylesheet and Javascript  code
   using base64 encoding
+- adding support for refresh option  
+- adding support for inlining local images and stylesheets into existing HTML files  
+
+## TODO's
+
+- [ ] conversion of HTML to HTML with embedding as base 64 data local
+    - [x] images (v0.14.0)
+    - [x] css files (v.0.14.0)
+    - [ ] javascript files
+- [ ] allow linking of https://european-alternatives.eu/de/produkt/bunny-fonts    
 
 ## Author
 

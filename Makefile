@@ -38,16 +38,19 @@ test-hightlight:
 	 tclsh ./bin/mndoc-$(VERSION).bin examples/hilight.md examples/hilight.html --javascript highlightjs
 test-equations:
 	tclsh ./bin/mndoc-$(VERSION).bin examples/equations.md examples/equations.html --mathjax true
+test-inline:
+	tclsh ./bin/mndoc-$(VERSION).bin examples/extern.html examples/intern.html 
 docu:
 	TCLLIBPATH=`pwd`/mndoc.vfs/lib tclsh apps/mndoc mndoc/mndoc.tcl mndoc/mndoc.html --css mndoc.css --mathjax true --javascript highlightjs
 	#htmlark --ignore-js mndoc/mndoc.html -o mndoc/mndoc-out.html
 	#cp mndoc/mndoc-out.html mndoc/mndoc.html
 tests:
 	@echo "Running tests..."
-	@TCLLIBPATH=`pwd` tclsh apps/mndoc examples/hilight.md examples/hilight.html --javascript highlightjs && grep -q "highlight.min.js" examples/hilight.html || (echo "Error: Expected highlightjs output not found"; exit 1) && echo "  ... highlight passing"
-	@TCLLIBPATH=`pwd` tclsh apps/mndoc examples/hilight.md examples/hilight-refresh.html --refresh 10 && grep -qE "http-equiv=.refresh.+10" examples/hilight-refresh.html || (echo "Error: Expected refresh output not found"; exit 1) && echo "  ... refresh passing"	
-	@echo -e "---\ntitle: test-title\nauthor: NN\ndate: 2024-11-20\n---\n\nhello\n\n" > test.md
-	@TCLLIBPATH=`pwd` tclsh apps/mndoc test.md test.html
+	@TCLLIBPATH=`pwd`/../tmdoc/modules tclsh apps/mndoc examples/hilight.md examples/hilight.html --javascript highlightjs && grep -q "highlight.min.js" examples/hilight.html || (echo "Error: Expected highlightjs output not found"; exit 1) && echo "  ... highlight passing"
+	@TCLLIBPATH=`pwd`/../tmdoc/modules tclsh apps/mndoc examples/hilight.md examples/hilight-refresh.html --refresh 10 && grep -qE "http-equiv=.refresh.+10" examples/hilight-refresh.html || (echo "Error: Expected refresh output not found"; exit 1) && echo "  ... refresh passing"	
+	@TCLLIBPATH=`pwd`/../tmdoc/modules tclsh apps/mndoc examples/extern.html examples/intern.html && grep -qE "png;base64," examples/intern.html || (echo "Error: Expected base64 encoding"; exit 1) && echo "  ... base64 passing"	
+	@printf -- '---\ntitle: test-title\nauthor: NN\ndate: 2024-11-20\n---\n\nhello\n\n' > test.md
+	@TCLLIBPATH=`pwd`/../tmdoc/modules tclsh apps/mndoc test.md test.html
 	@grep -qE "<h1 class=\"title\">test-title</h1>" test.html || (echo "Error: Expected title output not found"; exit 1) && echo "  ... title passing"
 	@grep -qE "<h2 class=\"date\">2024-11-20</h2>" test.html || (echo "Error: Expected date output not found"; exit 1) && echo "  ... date passing"
 	@grep -qE "<h2 class=\"author\">NN</h2>" test.html || (echo "Error: Expected author output not found"; exit 1) && echo "  ... author passing"
@@ -55,7 +58,7 @@ tests:
 	@cp test.html hello.html
 	@cp test.md hello.md
 	@echo "## header" > test.md
-	@TCLLIBPATH=`pwd` tclsh apps/mndoc test.md test.html && grep -qE "<h2>header</h2>" test.html || (echo "Error: Expected header output not found"; exit 1) && echo "  ... header passing"
+	@TCLLIBPATH=`pwd`/../tmdoc/modules tclsh apps/mndoc test.md test.html && grep -qE "<h2>header</h2>" test.html || (echo "Error: Expected header output not found"; exit 1) && echo "  ... header passing"
 	@echo "Tests passed successfully!"
 run:
 	@TCLLIBPATH=`pwd` tclsh apps/mndoc mndoc.tcl --run
