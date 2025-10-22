@@ -2,7 +2,7 @@
 ##############################################################################
 #  Author        : Dr. Detlef Groth
 #  Created       : Fri Nov 15 10:20:22 2019
-#  Last Modified : <251022.2202>
+#  Last Modified : <251022.2209>
 #
 #  Description	 : Command line utility and package to extract Markdown documentation 
 #                  from programming code if embedded as after comment sequence #' 
@@ -126,7 +126,8 @@
 #'   - *--javascript highlighjs|filename1,filename2* if outfile is an HTML file embeds either the hilightjs Javascript hilighter or the given local javascript filename(s) 
 #'   - *--mathjax true|false* should there be the MathJax library included, default: false
 #'   - *--refresh 0|10* should there be the autorefresh header included only values above 9 are considered, default: 0
-#'     
+#'   - *--bodyonly false|true* should only the part within the body tags safed to the new file, default: false
+#' 
 #' > If the file extension of the outfile is either html or htm a HTML file is created. If the output
 #'   file has other file extension the documentation after _#'_ comments is simply extracted and stored
 #'   in the given _outfile_, *-mode* flag  (one of -html, -md, -pandoc) is not given, the output format
@@ -143,11 +144,12 @@
 #'
 #' > ```
 #' package require mndoc::mndoc
-#' mndoc::mndoc mndoc.tcl mndoc.html                ## simple HTML page
-#' mndoc::mndoc mndoc.tcl mndoc.md                  ## just output a Markdown page
-#' mndoc::mndoc mndoc.tcl mndoc.html --refresh 20   ## reload HTML page every twenty seconds
-#' mndoc::mndoc mndoc.tcl mndoc.html --mathjax true ## parse inline equations using mathjax library
-#' mndoc::mndoc sample.html sample-out.html         ## inline images and stylesheets into sample-out.html
+#' mndoc::mndoc mndoc.tcl mndoc.html                  ## simple HTML page
+#' mndoc::mndoc mndoc.tcl mndoc.md                    ## just output a Markdown page
+#' mndoc::mndoc mndoc.tcl mndoc.html --refresh 20     ## reload HTML page every twenty seconds
+#' mndoc::mndoc mndoc.tcl mndoc.html --mathjax true   ## parse inline equations using mathjax library
+#' mndoc::mndoc sample.html sample-out.html           ## inline images and stylesheets into sample-out.html
+#' mndoc::mndoc header.md header.html --bodyonly true ## no HTML header, no HTML footer
 #' > ```
 
 package require Tcl 8.6-
@@ -1022,9 +1024,9 @@ set HELP [string map [list "\n    " "\n"] {
 #'      - fixing uneven length option list
 #' - 2025-10-16 Release 0.13.0
 #'      - renamed to mndoc with version 0.13.0 to avoid name collisions with
-#'        tcllib package
+#'        mkdoc package in tcllib
 #' - 2025-10-XX Release 0.14.0
-#'      - adding support for inlining local images and stylesheets into exisitng
+#'      - adding support for inlining local images and stylesheets into exisiting
 #'        HTML files
 #'      - adding option --bodyonly to omit HTML header and footer as well as body tag
 #'
