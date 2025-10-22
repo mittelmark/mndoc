@@ -2,7 +2,7 @@
 ##############################################################################
 #  Author        : Dr. Detlef Groth
 #  Created       : Fri Nov 15 10:20:22 2019
-#  Last Modified : <251022.2128>
+#  Last Modified : <251022.2202>
 #
 #  Description	 : Command line utility and package to extract Markdown documentation 
 #                  from programming code if embedded as after comment sequence #' 
@@ -63,7 +63,6 @@
 #'  - [FORMATTING](#format)
 #'     - [Code Blocks](#code-blocks)
 #'     - [Equations](#equations)
-#'     - [Alerts](#alerts)
 #'  - [INSTALLATION](#install)
 #'  - [SEE ALSO](#see)
 #'  - [CHANGES](#changes)
@@ -258,80 +257,6 @@ variable htmlstart [string map $deindent {
             text-align: left; 
             padding: 5px;
         }      
-        .side-info::before, .side-warning::before, .side-caution::before, 
-        .side-question::before, .side-error::before, .side-note::before, 
-        .side-tip::before, .side-important::before, .side-hint::before {
-            align-items: center;
-            border-radius: 50%;
-            display: flex;
-            font-family: monospace;
-            font-size: 16px;
-            font-weight: 700;
-            height: 24px;
-            justify-content: center;
-            left: 12px;
-            line-height: 1;
-            position: absolute;
-            top: 15px;
-            width: 24px;
-        }
-        
-        .side-note::before, .side-tip::before {
-            background-color: #223399;
-            color: #fff;
-            content: "N";
-            
-        }
-        .side-hint::before {
-            background-color: #992299;
-            color: #fff;
-            content: "!";
-            
-        }
-        
-        .side-important::before {
-            background-color: #993399;
-            color: #fff;
-            content: "!";
-        }
-        
-        .side-tip::before {
-            background-color: #223399; 
-            content: "\261B";
-            font-size: 110%;
-            
-        }
-        .side-info::before {
-            background-color: #339922;
-            color: #fff;
-            content: "i";
-            
-        }
-        .side-error::before {
-            background-color: #fff0f0;
-            color: #fff;
-            content: "\26D4";
-            font-size: 120%;
-        }
-        .side-caution::before {
-            background-color: #aa3322;
-            color: #fff;
-            content: "!";
-        }
-        
-        .side-question::before {
-            background-color: #999922;
-            color: #fff;
-            content: "?";
-            
-        }
-        
-        .side-warning::before {
-            background-color: #dd6622;
-            color: #fff;
-            content: "!";
-            
-        }
     }]
 } 
 
@@ -374,7 +299,7 @@ proc ::mndoc::inline-assets {filename html} {
                 }
             }
             set line [regsub -all {imgXXXXsrc} $line {img src}]
-        } elseif {[regexp -nocase {<link +rel="stylesheet" +href="(.+.css)">} $line match cssfile]} {
+        } elseif {[regexp -nocase {<link +rel="stylesheet" +href="(.+?.css)">} $line match cssfile]} {
             if {[file exists [file join [file dirname $cssfile]]]} {
                 set fname [file join [file dirname $filename] $cssfile]
                 if [catch {open $fname} infhc] {
@@ -508,7 +433,7 @@ proc ::mndoc::mndoc {filename outfile args} {
     if {$arg(--css) ne ""} {
         set css ""
         foreach cs [split $arg(--css) ","] {
-            append css   "<link rel=\"stylesheet\" href=\"$cs\">"
+            append css   "\n<link rel=\"stylesheet\" href=\"$cs\">\n"
         }
         dict set yamldict css $css
     }
@@ -657,7 +582,7 @@ set HELP [string map [list "\n    " "\n"] {
                 - file format is deduced on file extension .html or .md,
                 - if OUTFILE is the `-` sign output is written to STDOUT
                 - if INFILE and OUTFILE are HTML files just embedding of
-                  local images and stylsheets is performed
+                  local images and stylesheets is performed
 
     Optional arguments:
 
@@ -1002,13 +927,6 @@ set HELP [string map [list "\n    " "\n"] {
 #' mndoc in contrast to standard markdown as well support includes. Using the `#' #include "filename.md"` syntax 
 #' it is possible to include other markdown files. This might be useful for instance to include the same 
 #' header or a footer in a set of related files.
-#'
-#' ## <a name='alerts'>ALERTS</a>
-#'
-#' Since version 0.14.0 mndoc supports Markdown alerts
-#'
-#' > [!HINT]
-#' Markdown Alerts should be used carefully!
 #'
 #' ## <a name='install'>INSTALLATION</a>
 #' 
