@@ -2,7 +2,7 @@
 ##############################################################################
 #  Author        : Dr. Detlef Groth
 #  Created       : Fri Nov 15 10:20:22 2019
-#  Last Modified : <251022.1654>
+#  Last Modified : <251022.1658>
 #
 #  Description	 : Command line utility and package to extract Markdown documentation 
 #                  from programming code if embedded as after comment sequence #' 
@@ -174,19 +174,19 @@ namespace eval ::mndoc {
         $stylejs
 	</head>
 	<body>
-        <div class="document-header">
         $document(header)
-        </div>
     }]
     variable footer [string map $deindent {
     $document(footer)
 </body>
 </html>
 }]
-    variable htmlstart [string map $deindent {
+variable htmlstart [string map $deindent {
+        <div class="document-header">
 	<h1 class="title">$document(title)</h1>
 	<h2 class="author">$document(author)</h2>
 	<h2 class="date">$document(date)</h2>
+        </div>
     }]
 
     variable mndocstyle [string map $deindent {
