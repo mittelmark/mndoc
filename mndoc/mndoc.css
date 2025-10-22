@@ -1,11 +1,12 @@
 /* stylesheet special font support */
-@import url('https://fonts.bunny.net/css?family=Alegreya&display=swap'); /* ' */
-@import url('https://fonts.bunny.net/css?family=Ubuntu+Mono&display=swap');
+@import url('https://fonts.bunny.net/css?family=Andika&display=swap'); 
+@import url('https://fonts.bunny.net/css?family=Aleo&display=swap'); 
+@import url('https://fonts.bunny.net/css?family=Ubuntu+Mono&display=swap'); /* ' */
 
 body {
     margin-left: 10%; margin-right: 10%;
-    font-family: Alegreya, Palatino, "Palatino Linotype", "Palatino LT STD", "Book Antiqua", Georgia, serif;
     max-width: 90%;
+    font-family: "Andika", sans-serif;
 }
 pre {
     padding-top:	1ex;

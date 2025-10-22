@@ -2,7 +2,7 @@
 ##############################################################################
 #  Author        : Dr. Detlef Groth
 #  Created       : Fri Nov 15 10:20:22 2019
-#  Last Modified : <251022.1658>
+#  Last Modified : <251022.2128>
 #
 #  Description	 : Command line utility and package to extract Markdown documentation 
 #                  from programming code if embedded as after comment sequence #' 
@@ -26,7 +26,8 @@
 #                  2025-01-18 Release 0.11.2 Fix multiple images include on same line
 #                  2025-01-26 Release 0.11.3 Fix invalid argument crash, uneven length option list
 #                  2025-10-16 Release 0.13.0 Renamed to mndoc to avoid name class with Tcllib package
-#	           2025-10-XX Release 0.14.0 converion html to html with image and stylesheet embedding
+#	           2025-10-XX Release 0.14.0 conversion of html to html with image and stylesheet embedding
+#                                            adding option --bodyonly to omit HTML header and footer section without body tag
 #
 ##############################################################################
 #
@@ -43,7 +44,7 @@
 #' ---
 #' title: mndoc::mndoc 0.14.0
 #' author: Detlef Groth, University of Potsdam, Germany
-#' date: 2025-10-19
+#' date: 2025-10-22
 #' css: mndoc.css
 #' ---
 #' 
@@ -62,6 +63,7 @@
 #'  - [FORMATTING](#format)
 #'     - [Code Blocks](#code-blocks)
 #'     - [Equations](#equations)
+#'     - [Alerts](#alerts)
 #'  - [INSTALLATION](#install)
 #'  - [SEE ALSO](#see)
 #'  - [CHANGES](#changes)
@@ -190,14 +192,146 @@ variable htmlstart [string map $deindent {
     }]
 
     variable mndocstyle [string map $deindent {
-	body {
+        @import url('https://fonts.bunny.net/css?family=Andika&display=swap'); 
+        @import url('https://fonts.bunny.net/css?family=Ubuntu+Mono&display=swap'); /* ' */
+                         
+        body {
+            padding: 30px;
 	    margin-left: 10%; margin-right: 10%;
-	    font-family: Palatino, "Palatino Linotype", "Palatino LT STD", "Book Antiqua", Georgia, serif;
+	    font-family: Andika, sans-serif;
 	    max-width: 90%;
 	}
-	pre {
-	    font-family: Monaco, Consolas, "Liberation Mono", Menlo, Courier, monospace;
-	}
+        div.document-header {
+            max-width: 800px;
+            text-align: center;
+        }
+        hr { max-width: 800px; }
+        p, ul { max-width: 800px; }        
+        img { margin-left: 25px; }
+
+        h1.title, p.author, p.date, h2.author, h2.date {
+            text-align: center;
+        }
+        a { text-decoration: none ; }
+        pre {
+            padding: 10px ;
+            border-top: 2px solid #CCCCCC;
+            border-bottom: 2px solid #CCCCCC; 
+            font-family: "Ubuntu Mono", monospace;
+            margin-left: 30px;
+            max-width: 800px;
+        }
+        code { font-size: 80% ;}
+        pre:has(code) {
+            background: #efefef;
+        }
+        pre:has(code.tclcode) {
+            background: cornsilk;   
+        }
+        
+        pre:has(code.tclout) {    
+            background: #CCEEFF;
+        }
+        pre:has(code.tclerr) {    
+            background: #FFCCCC;
+        }
+        pre:has(code.error) {    
+            background: #FFCCCC;
+        }
+        
+        table {    
+            border-collapse: collapse;
+            border-bottom: 2px solid;
+            border-spacing: 5px;
+            min-width: 500px;
+            margin-left: 25px;
+        }
+        table thead tr th { 
+            background-color: #fde9d9;
+            text-align: left; 
+            padding: 5px;
+            border-top: 2px solid;
+            border-bottom: 2px solid;
+        }
+        table tr td { 
+            background-color: #f6f6f6;
+            text-align: left; 
+            padding: 5px;
+        }      
+        .side-info::before, .side-warning::before, .side-caution::before, 
+        .side-question::before, .side-error::before, .side-note::before, 
+        .side-tip::before, .side-important::before, .side-hint::before {
+            align-items: center;
+            border-radius: 50%;
+            display: flex;
+            font-family: monospace;
+            font-size: 16px;
+            font-weight: 700;
+            height: 24px;
+            justify-content: center;
+            left: 12px;
+            line-height: 1;
+            position: absolute;
+            top: 15px;
+            width: 24px;
+        }
+        
+        .side-note::before, .side-tip::before {
+            background-color: #223399;
+            color: #fff;
+            content: "N";
+            
+        }
+        .side-hint::before {
+            background-color: #992299;
+            color: #fff;
+            content: "!";
+            
+        }
+        
+        .side-important::before {
+            background-color: #993399;
+            color: #fff;
+            content: "!";
+        }
+        
+        .side-tip::before {
+            background-color: #223399; 
+            content: "\261B";
+            font-size: 110%;
+            
+        }
+        .side-info::before {
+            background-color: #339922;
+            color: #fff;
+            content: "i";
+            
+        }
+        .side-error::before {
+            background-color: #fff0f0;
+            color: #fff;
+            content: "\26D4";
+            font-size: 120%;
+        }
+        .side-caution::before {
+            background-color: #aa3322;
+            color: #fff;
+            content: "!";
+        }
+        
+        .side-question::before {
+            background-color: #999922;
+            color: #fff;
+            content: "?";
+            
+        }
+        
+        .side-warning::before {
+            background-color: #dd6622;
+            color: #fff;
+            content: "!";
+            
+        }
     }]
 } 
 
@@ -265,7 +399,7 @@ proc ::mndoc::mndoc {filename outfile args} {
     variable mndocstyle
     array set document [list title "" author "" css mndoc.css footer "" header "" javascript ""] 
     array set arg [list --css "" --footer "" --header "" --javascript "" \
-                   --mathjax false --refresh 0 --base64 true]
+                   --mathjax false --refresh 0 --base64 true --bodyonly false]
     if {! [expr {[llength $args] % 2 == 0}]} {
         return -code error "List must have an even length of type '--option value'!"
     }
@@ -358,9 +492,9 @@ proc ::mndoc::mndoc {filename outfile args} {
     set lnr 0
     foreach line [split $markdown "\n"] {
         incr lnr 
-        if {$lnr < 5 && !$yamlflag && [regexp {^---} $line]} {
+        if {$lnr < 5 && !$yamlflag && [regexp {^--- *$} $line]} {
             set yamlflag true
-        } elseif {$yamlflag && [regexp {^---} $line]} {
+        } elseif {$yamlflag && [regexp {^--- *$} $line]} {
             set hasyaml true
             set yamldict [dict merge $yamldict [yaml::yaml2dict $yamltext]]
             set yamlflag false
@@ -468,14 +602,18 @@ proc ::mndoc::mndoc {filename outfile args} {
         if {$arg(--base64)} {
             set header [mndoc::inline-assets $filename $header]
         }
-        puts $out $header
-        if {$hasyaml} {
-            set start [subst -nobackslashes -nocommands $htmlstart]            
-            puts $out $start
+        if {!$arg(--bodyonly)} {
+            puts $out $header
+            if {$hasyaml} {
+                set start [subst -nobackslashes -nocommands $htmlstart]            
+                puts $out $start
+            }
         }
         puts $out $html
-        set footer [subst -nobackslashes -nocommands $footer]
-        puts $out $footer
+        if {!$arg(--bodyonly)} {
+            set footer [subst -nobackslashes -nocommands $footer]
+            puts $out $footer
+        }
         close $out
     } else {
         if {$outfile ne "-"} {
@@ -493,7 +631,7 @@ proc ::mndoc::mndoc {filename outfile args} {
 proc ::mndoc::main {argv} {
     global argv0
     set valid_args [list --help --version --license --css --header --footer --mathjax \
-                    --javascript --refresh --base64]
+                    --javascript --refresh --base64 --bodyonly]
     set APP $argv0
     if {[regexp {tclmain} $APP]} {
         set APP "tclmain -m mndoc"
@@ -501,7 +639,7 @@ proc ::mndoc::main {argv} {
 set USAGE [string map [list "\n    " "\n"] {
     Usage: __APP__ ?--help|--version|--license? INFILE OUTFILE ?--css file.css? 
                       ?--header header.html? ?--footer footer.html? ?--mathjax true? 
-                      ?--javascript JSLIB|JSFile? ?--refresh 10? ?--base64 true?
+                      ?--javascript JSLIB|JSFile? ?--refresh 10? ?--base64 true? ?--bodyonly false?
 }]
 set HELP [string map [list "\n    " "\n"] {
     mndoc __VERSION__ - code documentation tool to process embedded Markdown markup
@@ -531,11 +669,11 @@ set HELP [string map [list "\n    " "\n"] {
         --header HTMLFILE  - file with HTML code to be included after the body tag
         --footer HTMLFILE  - file with HTML code to be included before the closing
                              body tag
-        --base64  BOOL     - should local images, css files and JavaScript files being embedded as base 64 codes, default: true
+        --base64     BOOL  - should local images, css files and JavaScript files being embedded as base 64 codes, default: true
         --javascript JSLIB - hightlightjs|file1,file2,... using these Javascript libs / files, default: NULL
-        --mathjax BOOL     - Embed the Mathjax Javascript library to add LaTeX formulas, default: false
-        --refresh INT      - Create a HTML page which does automatic refreshing after N seconds, default: 0
-        
+        --mathjax    BOOL  - Embed the Mathjax Javascript library to add LaTeX formulas, default: false
+        --refresh    INT   - Create a HTML page which does automatic refreshing after N seconds, default: 0
+        --bodyonly   BOOL  - should the document contain HTML header and footer, default: true
     Examples:
 
         # create manual page for mndoc.tcl itself 
@@ -566,6 +704,11 @@ set HELP [string map [list "\n    " "\n"] {
         # using \\( inline formula \\) or \\[ block formula syntax \\]
         
         __APP__ sample.md sample.html --mathjax true 
+        
+        # convert a Markdown file to HTML without HTML header and footer
+        # useful for inclusion into other documents
+        
+        __APP__ sample.md sample.html --bodyonly true
         
     Author: @ Detlef Groth, University of Potsdam, Germany 2019-2025
 
@@ -860,6 +1003,13 @@ set HELP [string map [list "\n    " "\n"] {
 #' it is possible to include other markdown files. This might be useful for instance to include the same 
 #' header or a footer in a set of related files.
 #'
+#' ## <a name='alerts'>ALERTS</a>
+#'
+#' Since version 0.14.0 mndoc supports Markdown alerts
+#'
+#' > [!HINT]
+#' Markdown Alerts should be used carefully!
+#'
 #' ## <a name='install'>INSTALLATION</a>
 #' 
 #' The mndoc::mndoc package can be installed either as command line application or as a Tcl module. 
@@ -958,10 +1108,12 @@ set HELP [string map [list "\n    " "\n"] {
 #' - 2025-10-XX Release 0.14.0
 #'      - adding support for inlining local images and stylesheets into exisitng
 #'        HTML files
+#'      - adding option --bodyonly to omit HTML header and footer as well as body tag
 #'
 #' ## <a name='todo'>TODO</a>
 #'
-#' - font embedding using https://european-alternatives.eu/de/produkt/bunny-fonts
+#' - font embedding using https://european-alternatives.eu/de/produkt/bunny-fonts 
+#'   currently Ubuntu Mono and Andika are used from there within the default stylesheet
 #' - dtplite support ?
 #' - inline online images and stylesheets?
 #'
