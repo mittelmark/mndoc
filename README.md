@@ -4,7 +4,8 @@
 [![Release](https://img.shields.io/github/v/release/mittelmark/mndoc.svg?label=current+release)](https://github.com/mittelmark/mndoc/releases)
 ![Downloads](https://img.shields.io/github/downloads/mittelmark/mndoc/total)
 ![Commits](https://img.shields.io/github/commits-since/mittelmark/mndoc/latest)
-[![Docu](https://img.shields.io/badge/Docu-blue)](http://htmlpreview.github.io/?https://github.com/mittelmark/mndoc/blob/master/mndoc/mndoc.html)
+[![Docu (HTML)](https://img.shields.io/badge/Docu-blue)](http://htmlpreview.github.io/?https://github.com/mittelmark/mndoc/blob/master/mndoc/mndoc.html)
+[![Docu (PDF)](https://github.com/mittelmark/mndoc/releases/latest/download/mndoc.pdf)
 
 Markdown to HTML converter and source code documentation tool using embedded Markdown for programming
 languages supporting either multiline comments or at least the # character for comments.
@@ -36,6 +37,9 @@ Since version 0.9.0 it as well supports embedding LaTeX equations using the
 
 * current code and manuals:  [mndoc.zip](https://github.com/mittelmark/mndoc/archive/refs/heads/main.zip)
 * Manual page [mndoc.html](http://htmlpreview.github.io/?https://github.com/mittelmark/mndoc/blob/master/mndoc/mndoc.html)
+* Manual page as PDF [mndoc.pdf](https://github.com/mittelmark/mndoc/releases/latest/download/mndoc.pdf)
+
+Please note that Mathjax and Hilightjs do not work in these manuals, there only work in HTML page.
 
 Here an example of an embedded mndoc comment for a Python script:
 

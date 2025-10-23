@@ -2,7 +2,7 @@
 ##############################################################################
 #  Author        : Dr. Detlef Groth
 #  Created       : Fri Nov 15 10:20:22 2019
-#  Last Modified : <251023.0826>
+#  Last Modified : <251023.1027>
 #
 #  Description	 : Command line utility and package to extract Markdown documentation 
 #                  from programming code if embedded as after comment sequence #' 
@@ -170,15 +170,18 @@
 #'  
 #' ## <a name='example'>EXAMPLE</a>
 #'
-#' > ```
+#' ```
 #' package require mndoc::mndoc
 #' mndoc::mndoc mndoc.tcl mndoc.html                  ## simple HTML page
 #' mndoc::mndoc mndoc.tcl mndoc.md                    ## just output a Markdown page
-#' mndoc::mndoc mndoc.tcl mndoc.html --refresh 20     ## reload HTML page every twenty seconds
-#' mndoc::mndoc mndoc.tcl mndoc.html --mathjax true   ## parse inline equations using mathjax library
-#' mndoc::mndoc sample.html sample-out.html           ## inline images and stylesheets into sample-out.html
+#' mndoc::mndoc mndoc.tcl mndoc.html --refresh 20     ## reload HTML page every
+#'                                                    ## twenty seconds
+#' mndoc::mndoc mndoc.tcl mndoc.html --mathjax true   ## parse inline equations
+#'                                                    ## using mathjax library
+#' mndoc::mndoc sample.html sample-out.html           ## inline images and stylesheets
+#'                                                    ## into sample-out.html
 #' mndoc::mndoc header.md header.html --bodyonly true ## no HTML header, no HTML footer
-#' > ```
+#' ```
 
 package require Tcl 8.6-
 
@@ -1034,7 +1037,8 @@ set HELP [string map [list "\n    " "\n"] {
 #' Installation as command line application is easiest by executing the following shell one liner:
 #'
 #' ```
-#' /bin/bash -c "$(curl -fsSL https://github.com/mittelmark/mndoc/releases/latest/download/install-mndoc.sh)"
+#' /bin/bash -c \
+#'  "$(curl -fsSL https://github.com/mittelmark/mndoc/releases/latest/download/install-mndoc.sh)"
 #' ```
 #'
 #' Alternatively it can be installed by downloading the file 

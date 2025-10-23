@@ -164,15 +164,16 @@ An explanation on how to do this, is given in the section <a href="#install">Ins
 
 <h2><a name='example'>EXAMPLE</a></h2>
 
-<blockquote>
 <pre class='code'><code>package require mndoc::mndoc
 mndoc::mndoc mndoc.tcl mndoc.html                  ## simple HTML page
 mndoc::mndoc mndoc.tcl mndoc.md                    ## just output a Markdown page
-mndoc::mndoc mndoc.tcl mndoc.html --refresh 20     ## reload HTML page every twenty seconds
-mndoc::mndoc mndoc.tcl mndoc.html --mathjax true   ## parse inline equations using mathjax library
-mndoc::mndoc sample.html sample-out.html           ## inline images and stylesheets into sample-out.html
+mndoc::mndoc mndoc.tcl mndoc.html --refresh 20     ## reload HTML page every
+                                                   ## twenty seconds
+mndoc::mndoc mndoc.tcl mndoc.html --mathjax true   ## parse inline equations
+                                                   ## using mathjax library
+mndoc::mndoc sample.html sample-out.html           ## inline images and stylesheets
+                                                   ## into sample-out.html
 mndoc::mndoc header.md header.html --bodyonly true ## no HTML header, no HTML footer</code></pre>
-</blockquote>
 
 <h2><a name='format'>FORMATTING</a></h2>
 
@@ -448,7 +449,8 @@ It requires the markdown, cmdline, yaml and textutils packages from tcllib to be
 
 <p>Installation as command line application is easiest by executing the following shell one liner:</p>
 
-<pre class='code'><code>/bin/bash -c &quot;$(curl -fsSL https://github.com/mittelmark/mndoc/releases/latest/download/install-mndoc.sh)&quot;</code></pre>
+<pre class='code'><code>/bin/bash -c \
+ &quot;$(curl -fsSL https://github.com/mittelmark/mndoc/releases/latest/download/install-mndoc.sh)&quot;</code></pre>
 
 <p>Alternatively it can be installed by downloading the file 
 <a href="https://github.com/mittelmark/mndoc/releases">mndoc-0.1X.X.bin</a> from the latest release, which

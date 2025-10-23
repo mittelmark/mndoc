@@ -45,6 +45,7 @@ test-header:
 docu:
 	TCLLIBPATH=`pwd`/mndoc.vfs/lib tclsh apps/mndoc mndoc/mndoc.tcl mndoc/mndoc.html --css mndoc.css --mathjax true --javascript highlightjs
 	#htmlark --ignore-js mndoc/mndoc.html -o mndoc/mndoc-out.html
+	cd mndoc && weasyprint -s small.css mndoc.html mndoc.pdf 
 	#cp mndoc/mndoc-out.html mndoc/mndoc.html
 tests:
 	@echo "Running tests..."
