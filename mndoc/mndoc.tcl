@@ -2,7 +2,7 @@
 ##############################################################################
 #  Author        : Dr. Detlef Groth
 #  Created       : Fri Nov 15 10:20:22 2019
-#  Last Modified : <251022.2209>
+#  Last Modified : <251023.0826>
 #
 #  Description	 : Command line utility and package to extract Markdown documentation 
 #                  from programming code if embedded as after comment sequence #' 
@@ -26,8 +26,11 @@
 #                  2025-01-18 Release 0.11.2 Fix multiple images include on same line
 #                  2025-01-26 Release 0.11.3 Fix invalid argument crash, uneven length option list
 #                  2025-10-16 Release 0.13.0 Renamed to mndoc to avoid name class with Tcllib package
-#	           2025-10-XX Release 0.14.0 conversion of html to html with image and stylesheet embedding
+#	           2025-10-23 Release 0.14.0 conversion of html to html with image and stylesheet embedding
 #                                            adding option --bodyonly to omit HTML header and footer section without body tag
+#                                            support for style section in YAML header 
+#                                            support for simple todo lists
+#                                            support for image attributes like width
 #
 ##############################################################################
 #
@@ -44,15 +47,31 @@
 #' ---
 #' title: mndoc::mndoc 0.14.0
 #' author: Detlef Groth, University of Potsdam, Germany
-#' date: 2025-10-22
+#' date: 2025-10-23
 #' css: mndoc.css
+#' style: |
+#'    @import url('https://fonts.bunny.net/css?family=Andika&display=swap'); 
+#'    @import url('https://fonts.bunny.net/css?family=Ubuntu+Mono&display=swap');
+#'    body { font-family: Andika, sans-serif ; }
+#'    pre, code { font-family: "Ubuntu Mono", monospaced ; }
 #' ---
 #' 
 #' ## NAME
 #'
 #' **mndoc::mndoc**  - Tcl package and command line application to extract and format 
 #' embedded programming documentation from source code files written in Markdown or
-#' doctools format and optionally converting it into HTML.
+#' doctools format and optionally converting it into HTML. The **nmdoc** tool can be as
+#' well used to convert Markdown files to HTML files and to embed local images and stylesheets into 
+#' the output document. It supports standard Markdown with a few extensions which are
+#' explained below.
+#'
+#' ## USE CASES
+#'
+#' - simple install with small file size < 150kb
+#' - extract in source code embedded Markdown documentation
+#' - convert Markdown files to HTML
+#' - embed local images into HTML files
+#' - use provided extensions for better display experiences
 #'
 #' ## <a name='toc'></a>TABLE OF CONTENTS
 #' 
@@ -61,8 +80,17 @@
 #'  - [COMMAND](#command)
 #'  - [EXAMPLE](#example)
 #'  - [FORMATTING](#format)
+#'     - [Title, Author, Date](#title)
+#'     - [Styling with CSS](#styling)
+#'     - [Headers](#headers)
+#'     - [Lists](#lists)
+#'     - [Hyperlinks](#hyperlinks)
+#'     - [Indentations](#indentations)
+#'     - [Font styles](#fontstyles)
+#'     - [Images](#images)
 #'     - [Code Blocks](#code-blocks)
 #'     - [Equations](#equations)
+#'     - [Includes](#includes)
 #'  - [INSTALLATION](#install)
 #'  - [SEE ALSO](#see)
 #'  - [CHANGES](#changes)
@@ -77,7 +105,7 @@
 #' ```
 #' package require mndoc::mndoc
 #' mndoc::mndoc inputfile outputfile ?--css file1.css,file2.css? \
-#'    ?--header header.html? ?--footer footer.html? ?--base64 true? \
+#'    ?--header header.html? ?--footer footer.html? ?--base64 true? ?--bodyonly false?\
 #'    ?--javascript highlightjs|file1.js,file2.js? ?--mathjax true? ?--refresh 10?
 #' ```
 #'
@@ -92,7 +120,7 @@
 #' ```
 #' mndoc inputfile.md outputfile.html ?--css file.css,file2.css --header header.html \
 #'   --footer footer.html --javascript highlighjs|filename1,filename2  --mathjax true \
-#'   --refresh 10 --base64 true?
+#'   --refresh 10 --base64 true --bodyonly false?  
 #' ```
 #'
 #' ## <a name='description'>DESCRIPTION</a>
@@ -119,12 +147,12 @@
 #' 
 #' > - *infile* - file with embedded markdown documentation
 #'   - *outfile* -  name of output file extension
-#'   - *--base64 true* should local images and CSS files be included, default: true
+#'   - *--base64 false|true* should local images and CSS files be included, default: true
 #'   - *--css cssfile* if outfile is an HTML file use the given *cssfile*
 #'   - *--footer footer.html* if outfile is an HTML file add this footer before the closing body tag
 #'   - *--header header.html* if outfile is an HTML file add this header after  the opening body tag
 #'   - *--javascript highlighjs|filename1,filename2* if outfile is an HTML file embeds either the hilightjs Javascript hilighter or the given local javascript filename(s) 
-#'   - *--mathjax true|false* should there be the MathJax library included, default: false
+#'   - *--mathjax false|true* should there be the MathJax library included, default: false
 #'   - *--refresh 0|10* should there be the autorefresh header included only values above 9 are considered, default: 0
 #'   - *--bodyonly false|true* should only the part within the body tags safed to the new file, default: false
 #' 
@@ -140,7 +168,7 @@
 #'   style sheet embedded within the mndoc code. As well since version 0.8.0 a --header and --footer option
 #'   is available to add HTML code at the beginning and at the end of the document.
 #'  
-#' > Example:
+#' ## <a name='example'>EXAMPLE</a>
 #'
 #' > ```
 #' package require mndoc::mndoc
@@ -193,13 +221,10 @@ variable htmlstart [string map $deindent {
     }]
 
     variable mndocstyle [string map $deindent {
-        @import url('https://fonts.bunny.net/css?family=Andika&display=swap'); 
-        @import url('https://fonts.bunny.net/css?family=Ubuntu+Mono&display=swap'); /* ' */
-                         
         body {
             padding: 30px;
 	    margin-left: 10%; margin-right: 10%;
-	    font-family: Andika, sans-serif;
+	    font-family: serif;
 	    max-width: 90%;
 	}
         div.document-header {
@@ -218,7 +243,7 @@ variable htmlstart [string map $deindent {
             padding: 10px ;
             border-top: 2px solid #CCCCCC;
             border-bottom: 2px solid #CCCCCC; 
-            font-family: "Ubuntu Mono", monospace;
+            font-family: monospace;
             margin-left: 30px;
             max-width: 800px;
         }
@@ -339,8 +364,7 @@ proc ::mndoc::mndoc {filename outfile args} {
             }
             ## just inlineing images and stylesheets
             if [catch {open $filename r} infh] {
-                puts stderr "Cannot open $filename: $infh"
-                exit
+                return -code error "Cannot open $filename: $infh"
             } else {
                 set html [read $infh]
                 set html [inline-assets $filename $html]
@@ -407,7 +431,8 @@ proc ::mndoc::mndoc {filename outfile args} {
          header   "" \
          javascript "" \
          mathjax   "" \
-         refresh   ""
+         refresh   "" \
+         style ""
          ]
 
     set mdhtml ""
@@ -417,6 +442,7 @@ proc ::mndoc::mndoc {filename outfile args} {
     set indent ""
     set header $htmltemplate
     set lnr 0
+    set pre false
     foreach line [split $markdown "\n"] {
         incr lnr 
         if {$lnr < 5 && !$yamlflag && [regexp {^--- *$} $line]} {
@@ -428,7 +454,20 @@ proc ::mndoc::mndoc {filename outfile args} {
         } elseif {$yamlflag} {
             append yamltext "$line\n"
         } else {
-            set line [regsub -all {!\[\]\((.+?)\)} $line "<img src=\"\\1\"></img>"]
+            if {[regexp {^>? ?```} $line]} {
+                if {$pre} { 
+                    set pre false 
+                } else {
+                    set pre true
+                }
+            }
+            if {!$pre} {
+                set line [regsub -all {!\[(.+?)\]\((.+?)\)\{(.+?)\}} $line "<img src=\"\\2\" alt=\"\\1\" \\3></img>"]
+                set line [regsub -all {!\[\]\((.+?)\)\{(.+?)\}} $line "<img src=\"\\1\" \\2></img>"]            
+                set line [regsub -all {!\[\]\((.+?)\)} $line "<img src=\"\\1\"></img>"]
+                set line [regsub {^- \[ \]} $line "- AMPERSAND#9744" ] 
+                set line [regsub {^- \[x\]} $line "- AMPERSAND#9745"]
+            }
             append mdhtml "$indent$line\n"
         }
     }
@@ -495,17 +534,20 @@ proc ::mndoc::mndoc {filename outfile args} {
     append yamltext "---"
     
     set style <style>$mndocstyle</style>
+    append style "\n<style>\n[dict get $yamldict style]</style>"
+
     if {$outmode eq "html"} {
         if {[dict get $yamldict css] ne "mndoc.css"} {
             # Switch from embedded style to external link
             set style [dict get $yamldict css]
+            append style "\n<style>\n[dict get $yamldict style]</style>"
         }
         set html [Markdown::convert $mdhtml]
         if {$arg(--base64)} {
             set html [mndoc::inline-assets $filename $html]
         }
         ## issue in Markdown package?
-        set html [string map {&amp;amp; &amp; &amp;lt; &lt;  &amp;gt; &gt; &amp;quot; &quot;} $html]  
+        set html [string map {&amp;amp; &amp; &amp;lt; &lt;  &amp;gt; &gt; &amp;quot; &quot; AMPERSAND &} $html]  
         ## fixing curly brace issues in backtick code chunk
         set html [regsub -all "code class='\{" $html {code class='}] 
         set html [regsub -all "code class='(\[^'\]+)\}'" $html {code class='\1'}]
@@ -691,7 +733,7 @@ set HELP [string map [list "\n    " "\n"] {
 #' Here just the most basic essentials  to create documentation are described.
 #' Please note, that formatting blocks in Markdown are separated by an empty line, and empty line in this documenting mode is a line prefixed with the `#'` and nothing thereafter. 
 #'
-#' **Title, Author and Date**
+#' <a name="title"> **Title, Author and Date**</a>
 #' 
 #' Title, author and date can be set at the beginning of the documentation in a so called YAML header. 
 #' This header will be as well used by the document converter [pandoc](https://pandoc.org)  to handle various options for later processing if you extract not HTML but Markdown code from your documentation.
@@ -708,6 +750,8 @@ set HELP [string map [list "\n    " "\n"] {
 #' 
 #' Those five lines produce the three lines on top of this document. You can extend the header if you would like to process your document after extracting the Markdown with other tools, for instance with Pandoc.
 #' 
+#' <a name="styling">**CSS Styles**</a>
+#'
 #' You can as well specify an other style sheet, than the default by adding
 #' the following style information:
 #'
@@ -720,9 +764,28 @@ set HELP [string map [list "\n    " "\n"] {
 #' #' ---
 #' ```
 #' 
-#' Please note, that the indentation is required and it is two spaces.
+#' If you like to change the default font it is recommended to place this informaton 
+#' either in the css file, or if you like you can add as well a style section to the YAML
+#' either like in this example:
 #'
-#' **Headers**
+#'
+#' ```
+#' #' ---
+#' #' title: mndoc::mndoc 0.14.0
+#' #' author: Detlef Groth, University of Potsdam, Germany
+#' #' date: 2025-10-23
+#' #' css: mndoc.css
+#' #' style: |
+#' #'   @import url('https://fonts.bunny.net/css?family=Andika&display=swap'); 
+#' #'   @import url('https://fonts.bunny.net/css?family=Ubuntu+Mono&display=swap');
+#' #'   body { font-family: Andika, sans-serif ; }
+#' #'   pre, code { font-family: "Ubuntu Mono", monospaced ; }
+#' #' ---
+#' ```
+#' The use of the fonts provided by [https://fonts.bunny.net](https://fonts.bunny.net)
+#' is recommended if you are living in a member state of the European Union.
+#'
+#' <a name="headers">**Headers**</a>
 #'
 #' Headers are prefixed with the hash symbol, single hash stands for level 1 heading, double hashes for level 2 heading, etc.
 #' Please note, that the embedded style sheet centers level 1 and level 3 headers, there are intended to be used
@@ -737,7 +800,7 @@ set HELP [string map [list "\n    " "\n"] {
 #'
 #' This produces a level 2 header. Please note, if you have a section name `synopsis` the code fragments thereafer will be hilighted different than the other code fragments. You should only use level 2 and 3 headers for the documentation. Level 1 header are reserved for the title.
 #' 
-#' **Lists**
+#' <a name="lists">**Lists**</a>
 #'
 #' Lists can be given either using hyphens or stars at the beginning of a line.
 #'
@@ -772,7 +835,25 @@ set HELP [string map [list "\n    " "\n"] {
 #'      <a name='synopsis'>Synopsis2</a> 
 #'
 #'
-#' **Hyperlinks**
+#' Another type of lists are TODO lists. mndoc has limited support for it. They are simple unnested lists starting at the beginning
+#' of a line with a minus sign folled by either `[ ]` for a TODO item or a `[x]` 
+#' indicator for a done item. Here an example:
+#'
+#' ```
+#'  - [ ] Todo item 1
+#'  - [ ] TODO item 2
+#'  - [x] DONE item 1
+#'  - [x] another item which was done already
+#' ```
+#'
+#' Here the output:
+#'
+#' - [ ] Todo item 1
+#' - [ ] TODO item 2
+#' - [x] DONE item 1
+#' - [x] another item which was done already
+#'
+#' <a name="hyperlinks">**Hyperlinks**</a>
 #'
 #' Hyperlinks are written with the following markup code:
 #'
@@ -788,7 +869,7 @@ set HELP [string map [list "\n    " "\n"] {
 #' 
 #' produces: [Tcler's Wiki](https://wiki.tcl-lang.org/)
 #'
-#' **Indentations**
+#' <a neme="indentations">**Indentations**</a>
 #'
 #' Indentations are achieved using the greater sign:
 #' 
@@ -822,9 +903,9 @@ set HELP [string map [list "\n    " "\n"] {
 #'   - item 2
 #'   - item 3
 #'
-#' **Fontfaces**
+#' <a name="fontstyles">**Font Styles**</a>
 #' 
-#' Italic font face can be requested by using single stars or underlines at the beginning 
+#' Italic font style can be requested by using single stars or underlines at the beginning 
 #' and at the end of the text. Bold is achieved by dublicating those symbols:
 #' Monospace font appears within backticks.
 #' Here an example:
@@ -835,7 +916,7 @@ set HELP [string map [list "\n    " "\n"] {
 #'
 #' > I am _italic_ and I am __bold__! But I am programming code: `ls -l`
 #' 
-#' **Images**
+#' <a name="images">**Images**</a>
 #'
 #' If you insist on images in your documentation, images can be embedded in Markdown with a syntax close to links.
 #' The links here however start with an exclamation mark:
@@ -844,11 +925,22 @@ set HELP [string map [list "\n    " "\n"] {
 #' #' ![image caption](filename.png)
 #' ```
 #' 
+#' Image attributes like width can be given after the image code like this 
+#' (ignore the space after the closing parenthesis):
+#' 
+#' ```
+#' ![dot image](../examples/dot.png){width="150px"}
+#' ```
+#'
+#' Here the output:
+#'
+#' ![](../examples/dot.png){width="150px"}
+#'
 #' The source code of mndoc.tcl is a good example for usage of this source code 
 #' annotation tool. Don't overuse the possibilities of Markdown, sometimes less is more. 
 #' Write clear and concise, don't use fancy visual effects.
 #' 
-#' ### <a name="code-blocks">Code blocks</a>
+#' <a name="code-blocks">**Code blocks**</a>
 #'
 #' Code blocks can be started using either three or more spaces after the #' sequence 
 #' or by embracing the code block with triple backticks on top and on bottom. Here an example:
@@ -885,7 +977,7 @@ set HELP [string map [list "\n    " "\n"] {
 #' test();
 #' ```
 #' 
-#' ### <a name="equations">Equations</a>
+#' <a name="equations">**Equations**</a>
 #'
 #' Since version 0.9.0 as well LaTeX equations can be embedded into Markdown documents and are
 #' rendered using the [MathJax](https://www.mathjax.org/) library. Just include either inline 
@@ -915,7 +1007,7 @@ set HELP [string map [list "\n    " "\n"] {
 #' </div>
 #' ```
 #'
-#' And here the output:
+#' And here the output (please note that this **does not work in Github Preview Mode**):
 #' 
 #' <div style="display: flex;">
 #'
@@ -924,10 +1016,14 @@ set HELP [string map [list "\n    " "\n"] {
 #' </div>
 #'
 #'
-#' **Includes**
+#' <a name="includes">**Includes**</a>
 #' 
-#' mndoc in contrast to standard markdown as well support includes. Using the `#' #include "filename.md"` syntax 
-#' it is possible to include other markdown files. This might be useful for instance to include the same 
+#' mndoc in contrast to standard markdown as well support includes. Using the 
+#' 
+#' `#' #include "filename.md"`
+#'
+#' syntax it is possible to include other markdown files. 
+#' This might be useful for instance to include the same 
 #' header or a footer in a set of related files.
 #'
 #' ## <a name='install'>INSTALLATION</a>
@@ -935,7 +1031,13 @@ set HELP [string map [list "\n    " "\n"] {
 #' The mndoc::mndoc package can be installed either as command line application or as a Tcl module. 
 #' It requires the markdown, cmdline, yaml and textutils packages from tcllib to be installed.
 #' 
-#' Installation as command line application is easiest by downloading the file 
+#' Installation as command line application is easiest by executing the following shell one liner:
+#'
+#' ```
+#' /bin/bash -c "$(curl -fsSL https://github.com/mittelmark/mndoc/releases/latest/download/install-mndoc.sh)"
+#' ```
+#'
+#' Alternatively it can be installed by downloading the file 
 #' [mndoc-0.1X.X.bin](https://github.com/mittelmark/mndoc/releases) from the latest release, which
 #' contains the main script file and all required libraries, to your local machine. The X stands for the current release number. 
 #' Rename this file to mndoc, make it executable and coy it to a folder belonging to your PATH variable.
@@ -1025,17 +1127,20 @@ set HELP [string map [list "\n    " "\n"] {
 #' - 2025-10-16 Release 0.13.0
 #'      - renamed to mndoc with version 0.13.0 to avoid name collisions with
 #'        mkdoc package in tcllib
-#' - 2025-10-XX Release 0.14.0
+#' - 2025-10-23 Release 0.14.0
 #'      - adding support for inlining local images and stylesheets into exisiting
 #'        HTML files
 #'      - adding option --bodyonly to omit HTML header and footer as well as body tag
+#'      - support for style section in YAML header for instance to install and use Bunny fonts
+#'      - support for simple todo lists
+#'      - support for image attributes like width
 #'
 #' ## <a name='todo'>TODO</a>
 #'
-#' - font embedding using https://european-alternatives.eu/de/produkt/bunny-fonts 
-#'   currently Ubuntu Mono and Andika are used from there within the default stylesheet
-#' - dtplite support ?
-#' - inline online images and stylesheets?
+#' - [x] font embedding using https://european-alternatives.eu/de/produkt/bunny-fonts 
+#'   currently Ubuntu Mono and Andika are used from there within the default stylesheet (done)
+#' - [ ] dtplite support ?
+#' - [ ] inline online images and stylesheets?
 #'
 #' ## <a name='authors'>AUTHOR(s)</a>
 #'

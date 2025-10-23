@@ -23,6 +23,12 @@
 </style>
 
 
+<style>
+@import url('https://fonts.bunny.net/css?family=Andika&display=swap'); 
+@import url('https://fonts.bunny.net/css?family=Ubuntu+Mono&display=swap');
+body { font-family: Andika, sans-serif ; }
+pre, code { font-family: "Ubuntu Mono", monospaced ; }
+</style>
     <style>
            pre, blockquote pre { background: #fafafa !important; }
            </style>
@@ -36,14 +42,26 @@
     <div class="document-header">
 <h1 class="title">mndoc::mndoc 0.14.0</h1>
 <h2 class="author">Detlef Groth, University of Potsdam, Germany</h2>
-<h2 class="date">2025-10-22</h2>
+<h2 class="date">2025-10-23</h2>
     </div>
 
 <h2>NAME</h2>
 
 <p><strong>mndoc::mndoc</strong>  - Tcl package and command line application to extract and format 
 embedded programming documentation from source code files written in Markdown or
-doctools format and optionally converting it into HTML.</p>
+doctools format and optionally converting it into HTML. The <strong>nmdoc</strong> tool can be as
+well used to convert Markdown files to HTML files and to embed local images and stylesheets into 
+the output document. It supports standard Markdown with a few extensions which are
+explained below.</p>
+
+<h2>USE CASES</h2>
+
+<ul>
+<li>extract in source code embedded Markdown documentation</li>
+<li>convert Markdown files to HTML</li>
+<li>embed local images into HTML files</li>
+<li>use provided extensions for better display experiences
+</li></ul>
 
 <h2><a name='toc'></a>TABLE OF CONTENTS</h2>
 
@@ -54,8 +72,17 @@ doctools format and optionally converting it into HTML.</p>
 <li><a href="#example">EXAMPLE</a></li>
 <li><a href="#format">FORMATTING</a>
 <ul>
+<li><a href="#title">Title, Author, Date</a></li>
+<li><a href="#styling">Styling with CSS</a></li>
+<li><a href="#headers">Headers</a></li>
+<li><a href="#lists">Lists</a></li>
+<li><a href="#hyperlinks">Hyperlinks</a></li>
+<li><a href="#indentations">Indentations</a></li>
+<li><a href="#fontstyles">Font styles</a></li>
+<li><a href="#images">Images</a></li>
 <li><a href="#code-blocks">Code Blocks</a></li>
-<li><a href="#equations">Equations</a></li></ul>
+<li><a href="#equations">Equations</a></li>
+<li><a href="#includes">Includes</a></li></ul>
 
 </li>
 <li><a href="#install">INSTALLATION</a></li>
@@ -72,7 +99,7 @@ doctools format and optionally converting it into HTML.</p>
 
 <pre class='code'><code>package require mndoc::mndoc
 mndoc::mndoc inputfile outputfile ?--css file1.css,file2.css? \
-   ?--header header.html? ?--footer footer.html? ?--base64 true? \
+   ?--header header.html? ?--footer footer.html? ?--base64 true? ?--bodyonly false?\
    ?--javascript highlightjs|file1.js,file2.js? ?--mathjax true? ?--refresh 10?</code></pre>
 
 <p>Usage as command line application for extraction of Markdown comments prefixed with <code>#'</code>:</p>
@@ -83,7 +110,7 @@ mndoc::mndoc inputfile outputfile ?--css file1.css,file2.css? \
 
 <pre class='code'><code>mndoc inputfile.md outputfile.html ?--css file.css,file2.css --header header.html \
   --footer footer.html --javascript highlighjs|filename1,filename2  --mathjax true \
-  --refresh 10 --base64 true?</code></pre>
+  --refresh 10 --base64 true --bodyonly false?  </code></pre>
 
 <h2><a name='description'>DESCRIPTION</a></h2>
 
@@ -111,12 +138,12 @@ An explanation on how to do this, is given in the section <a href="#install">Ins
 <ul>
 <li><em>infile</em> - file with embedded markdown documentation</li>
 <li><em>outfile</em> -  name of output file extension</li>
-<li><em>--base64 true</em> should local images and CSS files be included, default: true</li>
+<li><em>--base64 false|true</em> should local images and CSS files be included, default: true</li>
 <li><em>--css cssfile</em> if outfile is an HTML file use the given <em>cssfile</em></li>
 <li><em>--footer footer.html</em> if outfile is an HTML file add this footer before the closing body tag</li>
 <li><em>--header header.html</em> if outfile is an HTML file add this header after  the opening body tag</li>
 <li><em>--javascript highlighjs|filename1,filename2</em> if outfile is an HTML file embeds either the hilightjs Javascript hilighter or the given local javascript filename(s) </li>
-<li><em>--mathjax true|false</em> should there be the MathJax library included, default: false</li>
+<li><em>--mathjax false|true</em> should there be the MathJax library included, default: false</li>
 <li><em>--refresh 0|10</em> should there be the autorefresh header included only values above 9 are considered, default: 0</li>
 <li><em>--bodyonly false|true</em> should only the part within the body tags safed to the new file, default: false
 </li></ul>
@@ -132,9 +159,11 @@ An explanation on how to do this, is given in the section <a href="#install">Ins
   If output is html a <em>--css</em> flag can be given to use the given stylesheet file instead of the default
   style sheet embedded within the mndoc code. As well since version 0.8.0 a --header and --footer option
   is available to add HTML code at the beginning and at the end of the document.</p>
+</blockquote>
 
-<p>Example:</p>
+<h2><a name='example'>EXAMPLE</a></h2>
 
+<blockquote>
 <pre class='code'><code>package require mndoc::mndoc
 mndoc::mndoc mndoc.tcl mndoc.html                  ## simple HTML page
 mndoc::mndoc mndoc.tcl mndoc.md                    ## just output a Markdown page
@@ -150,7 +179,7 @@ mndoc::mndoc header.md header.html --bodyonly true ## no HTML header, no HTML fo
 Here just the most basic essentials  to create documentation are described.
 Please note, that formatting blocks in Markdown are separated by an empty line, and empty line in this documenting mode is a line prefixed with the <code>#'</code> and nothing thereafter.</p>
 
-<p><strong>Title, Author and Date</strong></p>
+<p><a name="title"> <strong>Title, Author and Date</strong></a></p>
 
 <p>Title, author and date can be set at the beginning of the documentation in a so called YAML header. 
 This header will be as well used by the document converter <a href="https://pandoc.org">pandoc</a>  to handle various options for later processing if you extract not HTML but Markdown code from your documentation.</p>
@@ -165,6 +194,8 @@ This header will be as well used by the document converter <a href="https://pand
 
 <p>Those five lines produce the three lines on top of this document. You can extend the header if you would like to process your document after extracting the Markdown with other tools, for instance with Pandoc.</p>
 
+<p><a name="styling"><strong>CSS Styles</strong></a></p>
+
 <p>You can as well specify an other style sheet, than the default by adding
 the following style information:</p>
 
@@ -175,9 +206,24 @@ the following style information:</p>
 #' css: tufte.css
 #' ---</code></pre>
 
-<p>Please note, that the indentation is required and it is two spaces.</p>
+<p>If you like to change the default font it is recommended to place this informaton 
+either in the css file, or if you like you can add as well a style section to the YAML
+either like in this example:</p>
 
-<p><strong>Headers</strong></p>
+<pre class='code'><code>#' ---
+#' title: mndoc::mndoc 0.14.0
+#' author: Detlef Groth, University of Potsdam, Germany
+#' date: 2025-10-23
+#' css: mndoc.css
+#' style: |
+#'   @import url('https://fonts.bunny.net/css?family=Andika&amp;display=swap'); 
+#'   @import url('https://fonts.bunny.net/css?family=Ubuntu+Mono&amp;display=swap');
+#'   body { font-family: Andika, sans-serif ; }
+#'   pre, code { font-family: &quot;Ubuntu Mono&quot;, monospaced ; }
+#' ---</code></pre><p>The use of the fonts provided by <a href="https://fonts.bunny.net">https://fonts.bunny.net</a>
+is recommended if you are living in a member state of the European Union.</p>
+
+<p><a name="headers"><strong>Headers</strong></a></p>
 
 <p>Headers are prefixed with the hash symbol, single hash stands for level 1 heading, double hashes for level 2 heading, etc.
 Please note, that the embedded style sheet centers level 1 and level 3 headers, there are intended to be used
@@ -190,7 +236,7 @@ for the page title (h1), author (h3) and date information (h3) on top of the pag
 
 <p>This produces a level 2 header. Please note, if you have a section name <code>synopsis</code> the code fragments thereafer will be hilighted different than the other code fragments. You should only use level 2 and 3 headers for the documentation. Level 1 header are reserved for the title.</p>
 
-<p><strong>Lists</strong></p>
+<p><a name="lists"><strong>Lists</strong></a></p>
 
 <p>Lists can be given either using hyphens or stars at the beginning of a line.</p>
 
@@ -221,7 +267,25 @@ the name targets using html code like so:</p>
 
 <pre><code> &lt;a name='synopsis'&gt;Synopsis2&lt;/a&gt; </code></pre>
 
-<p><strong>Hyperlinks</strong></p>
+<p>Another type of lists are TODO lists. mndoc has limited support for it. They are simple unnested lists starting at the beginning
+of a line with a minus sign folled by either <code>[ ]</code> for a TODO item or a <code>[x]</code> 
+indicator for a done item. Here an example:</p>
+
+<pre class='code'><code> - [ ] Todo item 1
+ - [ ] TODO item 2
+ - [x] DONE item 1
+ - [x] another item which was done already</code></pre>
+
+<p>Here the output:</p>
+
+<ul>
+<li>&#9744 Todo item 1</li>
+<li>&#9744 TODO item 2</li>
+<li>&#9745 DONE item 1</li>
+<li>&#9745 another item which was done already
+</li></ul>
+
+<p><a name="hyperlinks"><strong>Hyperlinks</strong></a></p>
 
 <p>Hyperlinks are written with the following markup code:</p>
 
@@ -233,7 +297,7 @@ the name targets using html code like so:</p>
 
 <p>produces: <a href="https://wiki.tcl-lang.org/">Tcler's Wiki</a></p>
 
-<p><strong>Indentations</strong></p>
+<p><a neme="indentations"><strong>Indentations</strong></a></p>
 
 <p>Indentations are achieved using the greater sign:</p>
 
@@ -270,9 +334,9 @@ the name targets using html code like so:</p>
 
 </blockquote>
 
-<p><strong>Fontfaces</strong></p>
+<p><a name="fontstyles"><strong>Font Styles</strong></a></p>
 
-<p>Italic font face can be requested by using single stars or underlines at the beginning 
+<p>Italic font style can be requested by using single stars or underlines at the beginning 
 and at the end of the text. Bold is achieved by dublicating those symbols:
 Monospace font appears within backticks.
 Here an example:</p>
@@ -283,18 +347,27 @@ Here an example:</p>
 <p>I am <em>italic</em> and I am <strong>bold</strong>! But I am programming code: <code>ls -l</code></p>
 </blockquote>
 
-<p><strong>Images</strong></p>
+<p><a name="images"><strong>Images</strong></a></p>
 
 <p>If you insist on images in your documentation, images can be embedded in Markdown with a syntax close to links.
 The links here however start with an exclamation mark:</p>
 
 <pre class='code'><code>#' ![image caption](filename.png)</code></pre>
 
+<p>Image attributes like width can be given after the image code like this 
+(ignore the space after the closing parenthesis):</p>
+
+<pre class='code'><code>![dot image](../examples/dot.png){width=&quot;150px&quot;}</code></pre>
+
+<p>Here the output:</p>
+
+<p><img src="data:image/png;base64, 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" width="150px"></img></p>
+
 <p>The source code of mndoc.tcl is a good example for usage of this source code 
 annotation tool. Don't overuse the possibilities of Markdown, sometimes less is more. 
 Write clear and concise, don't use fancy visual effects.</p>
 
-<h3><a name="code-blocks">Code blocks</a></h3>
+<p><a name="code-blocks"><strong>Code blocks</strong></a></p>
 
 <p>Code blocks can be started using either three or more spaces after the #' sequence 
 or by embracing the code block with triple backticks on top and on bottom. Here an example:</p>
@@ -323,7 +396,7 @@ and you get syntax highlighting for code blocks. Here an example:</p>
   print(&quot;testig2&quot;)
 test();</code></pre>
 
-<h3><a name="equations">Equations</a></h3>
+<p><a name="equations"><strong>Equations</strong></a></p>
 
 <p>Since version 0.9.0 as well LaTeX equations can be embedded into Markdown documents and are
 rendered using the <a href="https://www.mathjax.org/">MathJax</a> library. Just include either inline 
@@ -349,7 +422,7 @@ $$ \sum_{i=0}^n i^2 = \frac{(n^2+n)(2n+1)}{6} \tag{1} $$
 
 &lt;/div&gt;</code></pre>
 
-<p>And here the output:</p>
+<p>And here the output (please note that this <strong>does not work in Github Preview Mode</strong>):</p>
 
 <div style="display: flex;">
 
@@ -357,10 +430,14 @@ $$ \sum_{i=0}^n i^2 = \frac{(n^2+n)(2n+1)}{6} \tag{1} $$
 
 </div>
 
-<p><strong>Includes</strong></p>
+<p><a name="includes"><strong>Includes</strong></a></p>
 
-<p>mndoc in contrast to standard markdown as well support includes. Using the <code>#' #include &quot;filename.md&quot;</code> syntax 
-it is possible to include other markdown files. This might be useful for instance to include the same 
+<p>mndoc in contrast to standard markdown as well support includes. Using the</p>
+
+<p><code>#' #include &quot;filename.md&quot;</code></p>
+
+<p>syntax it is possible to include other markdown files. 
+This might be useful for instance to include the same 
 header or a footer in a set of related files.</p>
 
 <h2><a name='install'>INSTALLATION</a></h2>
@@ -501,7 +578,10 @@ in your module path as <code>mndoc-0.1X.X.tm</code> for instance. See the <a hre
 <ul>
 <li>adding support for inlining local images and stylesheets into exisiting
    HTML files</li>
-<li>adding option --bodyonly to omit HTML header and footer as well as body tag
+<li>adding option --bodyonly to omit HTML header and footer as well as body tag</li>
+<li>support for style section in YAML header for instance to install and use Bunny fonts</li>
+<li>support for simple todo lists</li>
+<li>support for image attributes like width
 </li></ul>
 
 </li></ul>
@@ -509,10 +589,10 @@ in your module path as <code>mndoc-0.1X.X.tm</code> for instance. See the <a hre
 <h2><a name='todo'>TODO</a></h2>
 
 <ul>
-<li>font embedding using https://european-alternatives.eu/de/produkt/bunny-fonts 
-  currently Ubuntu Mono and Andika are used from there within the default stylesheet</li>
-<li>dtplite support ?</li>
-<li>inline online images and stylesheets?
+<li>&#9745 font embedding using https://european-alternatives.eu/de/produkt/bunny-fonts 
+  currently Ubuntu Mono and Andika are used from there within the default stylesheet (done)</li>
+<li>&#9744 dtplite support ?</li>
+<li>&#9744 inline online images and stylesheets?
 </li></ul>
 
 <h2><a name='authors'>AUTHOR(s)</a></h2>

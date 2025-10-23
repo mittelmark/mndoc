@@ -15,11 +15,18 @@ languages supporting either multiline comments or at least the # character for c
 * Tcl library for  programmers to accomplish both things above from within the
   Tcl programming language
 * Features added to mndoc in comparison to mkdoc
-    * support for Syntax highlighting
+    * standlone simplified installation using shell script
+    * file size for install less than 150kb
+    * support for Syntax highlighting using Javascript higlighters
     * support for embedded LaTeX equations using mathjax
     * header, footer support
     * base64 encoding of local images, stylsheets and Javascript files for 
-      creating standalone applications
+      creating standalone applications during conversion from Markdown
+      or in already existing HTML files
+    * support for image attributes like width
+    * suppport for styling via YAML header
+    * omission of HTML header and footer if requested
+    * refresh option for development  
 
 So the mndoc package/application can be as well  used to  convert  Markdown  code into HTML  optionally  adding
 header, footer, stylesheets and Javascript code. The latter can be used to add
@@ -92,20 +99,7 @@ An example using equation embedding can be seen here (seems not to work in previ
 
 ## Installation
 
-On Linux, MacOS and on Windows with installed Msys2 or Cyvwin download the latest
-[mndoc-VERSION.bin](https://github.com/mittelmark/mndoc/releases) binary (90kb in size), rename
-it to mndoc and copy the file to a folder belonging to your PATH variable. 
-Thereafter make the file executable and check that it is correctly installed like
-this:
-
-```
-$ mndoc --version
-0.13.0
-```
-
-## Installation
-
-On Linux, MacOS and on Windows  with  installed  Msys2, Cygwin or WSL   download the
+On Linux, MacOS or Windows  with  installed  Msys2, Cygwin or WSL   download the
 latest  _mndoc-VERSION.bin_ file  (100-130kb in size), rename the bin file to
 _mndoc_  and  copy  the  file  to a  folder  belonging  to your  _PATH_  variable.
 Thereafter make the file executable and check that it is correctly  installed.
@@ -117,7 +111,7 @@ into `~/.local/bin`. You can execute it like this:
 bash -c "$(curl -fsSL https://github.com/mittelmark/mndoc/releases/latest/download/install-mndoc.sh)"
 ```
 
-## Changes in Comparison to the Tcllib Package
+## Changes in Comparison to the Tcllib mkdoc Package
 
 - adding header and footer support
 - adding javascript (single and multiple file support)
@@ -130,6 +124,9 @@ bash -c "$(curl -fsSL https://github.com/mittelmark/mndoc/releases/latest/downlo
   using base64 encoding
 - adding support for refresh option  
 - adding support for inlining local images and stylesheets into existing HTML files  
+- adding support for TODO lists
+- adding support for YAML headers and styles
+- adding support for image attributes
 
 ## TODO's
 
@@ -137,7 +134,7 @@ bash -c "$(curl -fsSL https://github.com/mittelmark/mndoc/releases/latest/downlo
     - [x] images (v0.14.0)
     - [x] css files (v.0.14.0)
     - [ ] javascript files
-- [ ] allow linking of https://european-alternatives.eu/de/produkt/bunny-fonts    
+- [x] allow linking of https://european-alternatives.eu/de/produkt/bunny-fonts  (v0.14.0)  
 
 ## Author
 
