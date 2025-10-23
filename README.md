@@ -16,9 +16,9 @@ languages supporting either multiline comments or at least the # character for c
 * Tcl library for  programmers to accomplish both things above from within the
   Tcl programming language
 * Features added to mndoc in comparison to mkdoc
-    * standlone simplified installation using shell script
+    * stand-alone simplified installation using shell script
     * file size for install less than 150kb
-    * support for Syntax highlighting using Javascript higlighters
+    * support for Syntax highlighting using Javascript highlighters
     * support for embedded LaTeX equations using mathjax
     * header, footer support
     * base64 encoding of local images, stylsheets and Javascript files for 
