@@ -57,6 +57,7 @@ explained below.</p>
 <h2>USE CASES</h2>
 
 <ul>
+<li>simple install with small file size &lt; 150kb</li>
 <li>extract in source code embedded Markdown documentation</li>
 <li>convert Markdown files to HTML</li>
 <li>embed local images into HTML files</li>
@@ -445,7 +446,11 @@ header or a footer in a set of related files.</p>
 <p>The mndoc::mndoc package can be installed either as command line application or as a Tcl module. 
 It requires the markdown, cmdline, yaml and textutils packages from tcllib to be installed.</p>
 
-<p>Installation as command line application is easiest by downloading the file 
+<p>Installation as command line application is easiest by executing the following shell one liner:</p>
+
+<pre class='code'><code>/bin/bash -c &quot;$(curl -fsSL https://github.com/mittelmark/mndoc/releases/latest/download/install-mndoc.sh)&quot;</code></pre>
+
+<p>Alternatively it can be installed by downloading the file 
 <a href="https://github.com/mittelmark/mndoc/releases">mndoc-0.1X.X.bin</a> from the latest release, which
 contains the main script file and all required libraries, to your local machine. The X stands for the current release number. 
 Rename this file to mndoc, make it executable and coy it to a folder belonging to your PATH variable.</p>
@@ -574,7 +579,7 @@ in your module path as <code>mndoc-0.1X.X.tm</code> for instance. See the <a hre
    mkdoc package in tcllib</li></ul>
 
 </li>
-<li>2025-10-XX Release 0.14.0
+<li>2025-10-23 Release 0.14.0
 <ul>
 <li>adding support for inlining local images and stylesheets into exisiting
    HTML files</li>
