@@ -2,7 +2,7 @@
 ##############################################################################
 #  Author        : Dr. Detlef Groth
 #  Created       : Fri Nov 15 10:20:22 2019
-#  Last Modified : <251023.1027>
+#  Last Modified : <251026.1751>
 #
 #  Description	 : Command line utility and package to extract Markdown documentation 
 #                  from programming code if embedded as after comment sequence #' 
@@ -31,6 +31,7 @@
 #                                            support for style section in YAML header 
 #                                            support for simple todo lists
 #                                            support for image attributes like width
+#                  2025-10-26 Release 0.14.1 fix for multiple users running the application on the same machine
 #
 ##############################################################################
 #
@@ -45,9 +46,9 @@
 #
 ##############################################################################
 #' ---
-#' title: mndoc::mndoc 0.14.0
+#' title: mndoc::mndoc 0.14.1
 #' author: Detlef Groth, University of Potsdam, Germany
-#' date: 2025-10-23
+#' date: 2025-10-26
 #' css: mndoc.css
 #' style: |
 #'    @import url('https://fonts.bunny.net/css?family=Andika&display=swap'); 
@@ -188,8 +189,8 @@ package require Tcl 8.6-
 package require yaml
 package require Markdown
 
-package provide mndoc 0.14.0
-package provide mndoc::mndoc 0.14.0
+package provide mndoc 0.14.1
+package provide mndoc::mndoc 0.14.1
 namespace eval ::mndoc {
     variable deindent [list \n\t \n "\n    " \n]
     
@@ -774,7 +775,7 @@ set HELP [string map [list "\n    " "\n"] {
 #'
 #' ```
 #' #' ---
-#' #' title: mndoc::mndoc 0.14.0
+#' #' title: mndoc::mndoc 0.14.1
 #' #' author: Detlef Groth, University of Potsdam, Germany
 #' #' date: 2025-10-23
 #' #' css: mndoc.css
@@ -1138,6 +1139,8 @@ set HELP [string map [list "\n    " "\n"] {
 #'      - support for style section in YAML header for instance to install and use Bunny fonts
 #'      - support for simple todo lists
 #'      - support for image attributes like width
+#' - 2025-10-26 Release 0.14.1
+#'      - file application cache file right fix for multiple users on the same machine try to run mndoc
 #'
 #' ## <a name='todo'>TODO</a>
 #'
