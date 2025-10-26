@@ -15,10 +15,10 @@ function installBinary() {
     echo "testing $APP version"
     ~/.local/bin/$APP --version
     echo "Looks good. Installed $APP!"
-    if [[ "`echo $PATH | grep .local/bin`" == "" ]]; then 
+    if [[ "`echo $PATH | grep /.local/bin`" == "" ]]; then 
         echo "~/.local/bin is not in your PATH"
         echo "add the following line to your .bashrc or .zshrc file"
-        echo "echo \$PATH | grep .local/bin || export PATH=~/.local/bin:\$PATH"
+        echo "echo \$PATH | grep -q /.local/bin || export PATH=~/.local/bin:\$PATH"
         yes_or_no "Do you like to add this PATH adaptation to your .bashrc file?" && add_local_bin_path
         
     else 
@@ -27,7 +27,7 @@ function installBinary() {
 }
 
 function add_local_bin_path {
-    echo "echo \$PATH | grep .local/bin || export PATH=~/.local/bin:\$PATH" >> ~/.bashrc
+    echo "echo \$PATH | grep -q /.local/bin || export PATH=~/.local/bin:\$PATH" >> ~/.bashrc
     source ~/.bashrc    
     echo "Path was updated in .bashrc"
 }
