@@ -2,7 +2,7 @@
 ##############################################################################
 #  Author        : Dr. Detlef Groth
 #  Created       : Fri Nov 15 10:20:22 2019
-#  Last Modified : <251026.1751>
+#  Last Modified : <251030.1359>
 #
 #  Description	 : Command line utility and package to extract Markdown documentation 
 #                  from programming code if embedded as after comment sequence #' 
@@ -32,6 +32,7 @@
 #                                            support for simple todo lists
 #                                            support for image attributes like width
 #                  2025-10-26 Release 0.14.1 fix for multiple users running the application on the same machine
+#                  2025-10-26 Release 0.14.2 mathjax mode with dollar as inline configuration avoiding backspace issues.
 #
 ##############################################################################
 #
@@ -46,9 +47,9 @@
 #
 ##############################################################################
 #' ---
-#' title: mndoc::mndoc 0.14.1
+#' title: mndoc::mndoc 0.14.2
 #' author: Detlef Groth, University of Potsdam, Germany
-#' date: 2025-10-26
+#' date: 2025-10-30
 #' css: mndoc.css
 #' style: |
 #'    @import url('https://fonts.bunny.net/css?family=Andika&display=swap'); 
@@ -189,8 +190,8 @@ package require Tcl 8.6-
 package require yaml
 package require Markdown
 
-package provide mndoc 0.14.1
-package provide mndoc::mndoc 0.14.1
+package provide mndoc 0.14.2
+package provide mndoc::mndoc 0.14.2
 namespace eval ::mndoc {
     variable deindent [list \n\t \n "\n    " \n]
     
@@ -227,9 +228,8 @@ variable htmlstart [string map $deindent {
     variable mndocstyle [string map $deindent {
         body {
             padding: 30px;
-	    margin-left: 10%; margin-right: 10%;
-	    font-family: serif;
-	    max-width: 90%;
+            max-width: 1000px;
+            margin: 0 auto;
 	}
         div.document-header {
             max-width: 800px;
@@ -507,7 +507,7 @@ proc ::mndoc::mndoc {filename outfile args} {
     }
     if {$arg(--mathjax)} {
         set document(mathjax) {<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>}
-        
+        append document(mathjax) {<script>  window.MathJax = {  tex: { inlineMath: [['$', '$'], ['\\(', '\\)']]  } }; </script> }
     } else {
         set document(mathjax) ""
     }
@@ -775,7 +775,7 @@ set HELP [string map [list "\n    " "\n"] {
 #'
 #' ```
 #' #' ---
-#' #' title: mndoc::mndoc 0.14.1
+#' #' title: mndoc::mndoc 0.14.2
 #' #' author: Detlef Groth, University of Potsdam, Germany
 #' #' date: 2025-10-23
 #' #' css: mndoc.css
@@ -1141,6 +1141,8 @@ set HELP [string map [list "\n    " "\n"] {
 #'      - support for image attributes like width
 #' - 2025-10-26 Release 0.14.1
 #'      - file application cache file right fix for multiple users on the same machine try to run mndoc
+#' - 2025-10-30 Release 0.14.2
+#'      - mathjax inline equations with $ equation $ to avoid backslash issues
 #'
 #' ## <a name='todo'>TODO</a>
 #'
