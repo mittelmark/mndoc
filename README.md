@@ -124,7 +124,7 @@ bash -c "$(curl -fsSL https://github.com/mittelmark/mndoc/releases/latest/downlo
 - adding css support for multiple files
 - adding standalone  binary  mndoc.bin  with  embedded  Tcllib  packages  for
   document conversion
-- adding support for embedding  local images,  stylesheet and Javascript  code
+- adding support for embedding local images,  stylesheet and Javascript  code
   using base64 encoding
 - adding support for refresh option  
 - adding support for inlining local images and stylesheets into existing HTML files  
