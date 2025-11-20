@@ -2,7 +2,7 @@
 ##############################################################################
 #  Author        : Dr. Detlef Groth
 #  Created       : Fri Nov 15 10:20:22 2019
-#  Last Modified : <251030.1359>
+#  Last Modified : <251120.1149>
 #
 #  Description	 : Command line utility and package to extract Markdown documentation 
 #                  from programming code if embedded as after comment sequence #' 
@@ -33,6 +33,8 @@
 #                                            support for image attributes like width
 #                  2025-10-26 Release 0.14.1 fix for multiple users running the application on the same machine
 #                  2025-10-26 Release 0.14.2 mathjax mode with dollar as inline configuration avoiding backspace issues.
+#                  2025-11-20 Release 0.15.0 adding support for ^"""#' start and ^""" end of Markdown documentation
+#                                            for instance to support Julia or Python language
 #
 ##############################################################################
 #
@@ -47,9 +49,9 @@
 #
 ##############################################################################
 #' ---
-#' title: mndoc::mndoc 0.14.2
+#' title: mndoc::mndoc 0.15.0
 #' author: Detlef Groth, University of Potsdam, Germany
-#' date: 2025-10-30
+#' date: 2025-11-20
 #' css: mndoc.css
 #' style: |
 #'    @import url('https://fonts.bunny.net/css?family=Andika&display=swap'); 
@@ -190,8 +192,8 @@ package require Tcl 8.6-
 package require yaml
 package require Markdown
 
-package provide mndoc 0.14.2
-package provide mndoc::mndoc 0.14.2
+package provide mndoc 0.15.0
+package provide mndoc::mndoc 0.15.0
 namespace eval ::mndoc {
     variable deindent [list \n\t \n "\n    " \n]
     
@@ -418,6 +420,12 @@ proc ::mndoc::mndoc {filename outfile args} {
             }
         } elseif {$inmode eq "code" && [regexp {^\s*#' ?(.*)} $line -> md]} {
             append markdown "$md\n"
+        } elseif {$inmode eq "code" && ([regexp "^\"\"\"#'" $line] || [regexp "^/\\*\\*?#'" $line])} { 
+            set flag true
+        } elseif {$inmode eq "code" && ([regexp "^\"\"\"" $line] || [regexp "^\\*/" $line])} {
+            set flag false
+        } elseif {$flag} {
+            append markdown "$line\n"
         } elseif {$inmode eq "markup"} {
             append markdown "$line\n"
         }
@@ -533,9 +541,11 @@ proc ::mndoc::mndoc {filename outfile args} {
     # Regenerate yamltext from the final dict (to report the final CSS reference)
     set yamltext "---\n"
     foreach k [lsort -dict [dict keys $yamldict]] {
-        append yamltext "${k}: [dict get $yamldict $k]\n"
+        if {[dict get $yamldict $k] ne ""} {
+            append yamltext "${k}: [dict get $yamldict $k]\n"
+        }
     }
-    append yamltext "---"
+    append yamltext "---\n"
     
     set style <style>$mndocstyle</style>
     append style "\n<style>\n[dict get $yamldict style]</style>"
@@ -775,9 +785,9 @@ set HELP [string map [list "\n    " "\n"] {
 #'
 #' ```
 #' #' ---
-#' #' title: mndoc::mndoc 0.14.2
+#' #' title: mndoc::mndoc 0.15.0
 #' #' author: Detlef Groth, University of Potsdam, Germany
-#' #' date: 2025-10-23
+#' #' date: 2025-11-20
 #' #' css: mndoc.css
 #' #' style: |
 #' #'   @import url('https://fonts.bunny.net/css?family=Andika&display=swap'); 
@@ -1143,6 +1153,9 @@ set HELP [string map [list "\n    " "\n"] {
 #'      - file application cache file right fix for multiple users on the same machine try to run mndoc
 #' - 2025-10-30 Release 0.14.2
 #'      - mathjax inline equations with $ equation $ to avoid backslash issues
+#' - 2025-11-20 Release 0.15.0
+#'      - support for """#' and /**#' to start Markdown blocks and """ */ to end Markdown blocks
+#'        to document for example the Julia language
 #'
 #' ## <a name='todo'>TODO</a>
 #'
