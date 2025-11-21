@@ -3,10 +3,10 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="title" content="mndoc::mndoc 0.14.1">
+<meta name="title" content="mndoc::mndoc 0.15.0">
 <meta name="author" content="Detlef Groth, University of Potsdam, Germany">
     
-<title>mndoc::mndoc 0.14.1</title>
+<title>mndoc::mndoc 0.15.0</title>
     
                                       <link rel="stylesheet" href="https://unpkg.com/@highlightjs/cdn-assets@11.9.0/styles/atom-one-light.min.css">
                                       <script src="https://unpkg.com/@highlightjs/cdn-assets@11.9.0/highlight.min.js"></script>
@@ -15,7 +15,7 @@
                                       <!-- Initialize highlight.js -->
                                       <script>hljs.highlightAll();</script>
        
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script><script>  window.MathJax = {  tex: { inlineMath: [['$', '$'], ['\\(', '\\)']]  } }; </script> 
 
 
 <style>
@@ -40,9 +40,9 @@ pre, code { font-family: "Ubuntu Mono", monospaced ; }
 
 
     <div class="document-header">
-<h1 class="title">mndoc::mndoc 0.14.1</h1>
+<h1 class="title">mndoc::mndoc 0.15.0</h1>
 <h2 class="author">Detlef Groth, University of Potsdam, Germany</h2>
-<h2 class="date">2025-10-26</h2>
+<h2 class="date">2025-11-21</h2>
     </div>
 
 <h2>NAME</h2>
@@ -213,9 +213,9 @@ either in the css file, or if you like you can add as well a style section to th
 either like in this example:</p>
 
 <pre class='code'><code>#' ---
-#' title: mndoc::mndoc 0.14.1
+#' title: mndoc::mndoc 0.15.0
 #' author: Detlef Groth, University of Potsdam, Germany
-#' date: 2025-10-23
+#' date: 2025-11-20
 #' css: mndoc.css
 #' style: |
 #'   @import url('https://fonts.bunny.net/css?family=Andika&amp;display=swap'); 
@@ -593,7 +593,18 @@ in your module path as <code>mndoc-0.1X.X.tm</code> for instance. See the <a hre
 </li>
 <li>2025-10-26 Release 0.14.1
 <ul>
-<li>file application cache file right fix for multiple users on the same machine try to run mndoc
+<li>file application cache file right fix for multiple users on the same machine try to run mndoc</li></ul>
+
+</li>
+<li>2025-10-30 Release 0.14.2
+<ul>
+<li>mathjax inline equations with $ equation $ to avoid backslash issues</li></ul>
+
+</li>
+<li>2025-11-20 Release 0.15.0
+<ul>
+<li>support for &quot;&quot;&quot;#' and /<em></em>#' to start Markdown blocks and &quot;&quot;&quot; */ to end Markdown blocks
+   to document for example the Julia language
 </li></ul>
 
 </li></ul>

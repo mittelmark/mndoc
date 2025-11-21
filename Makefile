@@ -42,6 +42,8 @@ test-inline:
 	tclsh ./bin/mndoc-$(VERSION).bin examples/extern.html examples/intern.html 
 test-header:
 	tclsh ./bin/mndoc-$(VERSION).bin examples/header.md examples/header.html --bodyonly true
+test-image:
+	tclsh ./bin/mndoc-$(VERSION).bin examples/image.md examples/image.html
 docu:
 	TCLLIBPATH=`pwd`/mndoc.vfs/lib tclsh apps/mndoc mndoc/mndoc.tcl mndoc/mndoc.html --css mndoc.css --mathjax true --javascript highlightjs
 	#htmlark --ignore-js mndoc/mndoc.html -o mndoc/mndoc-out.html
