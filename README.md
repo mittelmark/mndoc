@@ -224,6 +224,8 @@ bash -c "$(curl -fsSL https://github.com/mittelmark/mndoc/releases/latest/downlo
     - [x] css files (v.0.14.0)
     - [ ] javascript files
 - [x] allow linking of https://european-alternatives.eu/de/produkt/bunny-fonts  (v0.14.0)  
+- [ ] provide a very minimal  hilighter  for standard  keywords,  comments and
+      strings at least for Python and R based on this article [How to Create and Use a Syntax Highlighter using JavaScript?](https://www.geeksforgeeks.org/javascript/how-to-create-and-use-a-syntax-highlighter-using-javascript/)
 
 ## Author
 
