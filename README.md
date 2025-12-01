@@ -216,6 +216,9 @@ bash -c "$(curl -fsSL https://github.com/mittelmark/mndoc/releases/latest/downlo
 - 2025-11-21 Release 0.15.0
     - support for """#' and /**#' to start Markdown blocks and """ */ to end Markdown blocks
        to document for example the Julia language
+- 2025-12-01 Release 0.15.1
+    - fix for non-existing stylesheet files like mndoc.css or tmdoc.css taking them from the 
+      package folder
 
 ## TODO's
 

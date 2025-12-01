@@ -2,7 +2,7 @@
 ##############################################################################
 #  Author        : Dr. Detlef Groth
 #  Created       : Fri Nov 15 10:20:22 2019
-#  Last Modified : <251121.0405>
+#  Last Modified : <251201.1846>
 #
 #  Description	 : Command line utility and package to extract Markdown documentation 
 #                  from programming code if embedded as after comment sequence #' 
@@ -35,6 +35,8 @@
 #                  2025-10-26 Release 0.14.2 mathjax mode with dollar as inline configuration avoiding backspace issues.
 #                  2025-11-21 Release 0.15.0 adding support for ^"""#' start and ^""" end of Markdown documentation
 #                                            for instance to support Julia or Python language
+#                  2025-12-01 Release 0.15.1 fix for non-existing files like mndoc.css or tmdoc.css taking them from the 
+#                                            package folder
 #
 ##############################################################################
 #
@@ -49,9 +51,9 @@
 #
 ##############################################################################
 #' ---
-#' title: mndoc::mndoc 0.15.0
+#' title: mndoc::mndoc 0.15.1
 #' author: Detlef Groth, University of Potsdam, Germany
-#' date: 2025-11-21
+#' date: 2025-12-01
 #' css: mndoc.css
 #' style: |
 #'    @import url('https://fonts.bunny.net/css?family=Andika&display=swap'); 
@@ -152,7 +154,8 @@
 #' > - *infile* - file with embedded markdown documentation
 #'   - *outfile* -  name of output file extension
 #'   - *--base64 false|true* should local images and CSS files be included, default: true
-#'   - *--css cssfile* if outfile is an HTML file use the given *cssfile*
+#'   - *--css cssfile* if outfile is an HTML file use the given *cssfile*, if the filename is 'mndoc.css' or 'tmdoc.css'
+#'      and if the file is not yet existing in the appropiate location this file is copied from the package folder at this place  
 #'   - *--footer footer.html* if outfile is an HTML file add this footer before the closing body tag
 #'   - *--header header.html* if outfile is an HTML file add this header after  the opening body tag
 #'   - *--javascript highlighjs|filename1,filename2* if outfile is an HTML file embeds either the hilightjs Javascript hilighter or the given local javascript filename(s) 
@@ -192,11 +195,11 @@ package require Tcl 8.6-
 package require yaml
 package require Markdown
 
-package provide mndoc 0.15.0
-package provide mndoc::mndoc 0.15.0
+package provide mndoc 0.15.1
+package provide mndoc::mndoc 0.15.1
 namespace eval ::mndoc {
     variable deindent [list \n\t \n "\n    " \n]
-    
+    variable scriptfile [info script]
     variable htmltemplate [string map $deindent {
 	<!DOCTYPE html>
 	<html>
@@ -355,6 +358,7 @@ proc ::mndoc::mndoc {filename outfile args} {
     variable footer
     variable htmlstart
     variable mndocstyle
+    variable scriptfile
     array set document [list title "" author "" css mndoc.css footer "" header "" javascript ""] 
     array set arg [list --css "" --footer "" --header "" --javascript "" \
                    --mathjax false --refresh 0 --base64 true --bodyonly false]
@@ -487,6 +491,9 @@ proc ::mndoc::mndoc {filename outfile args} {
         set css ""
         foreach cs [split $arg(--css) ","] {
             append css   "\n<link rel=\"stylesheet\" href=\"$cs\">\n"
+            if {![file exists $cs] && [file exists [file join [file dirname $scriptfile] $cs]]} {
+                file copy [file join [file dirname $scriptfile] $cs] $cs
+            }
         }
         dict set yamldict css $css
     }
@@ -785,7 +792,7 @@ set HELP [string map [list "\n    " "\n"] {
 #'
 #' ```
 #' #' ---
-#' #' title: mndoc::mndoc 0.15.0
+#' #' title: mndoc::mndoc 0.15.1
 #' #' author: Detlef Groth, University of Potsdam, Germany
 #' #' date: 2025-11-20
 #' #' css: mndoc.css
@@ -1082,8 +1089,8 @@ set HELP [string map [list "\n    " "\n"] {
 #' - 2019-12-06 Partial R-Roxygen/Markdown support
 #' - 2020-01-05 Documentation fixes and version information
 #' - 2020-02-02 Adding include syntax
-#' - 2020-02-26 Adding stylesheet option --css 
 #' - 2020-02-26 Adding files pandoc.css and dgw.css
+#' - 2020-02-26 Adding stylesheet option --css 
 #' - 2020-02-26 Making standalone file using pkgDeps and mk_tm
 #' - 2020-02-26 Release 0.3 to fossil
 #' - 2020-02-27 support for \_\_DATE\_\_, \_\_PKGNAME\_\_, \_\_PKGVERSION\_\_ macros  in Tcl code based on package provide line
@@ -1156,21 +1163,24 @@ set HELP [string map [list "\n    " "\n"] {
 #' - 2025-11-20 Release 0.15.0
 #'      - support for """#' and /**#' to start Markdown blocks and """ */ to end Markdown blocks
 #'        to document for example the Julia language
+#' - 2025-12-01 Release 0.15.1
+#'      - fix for non-existing stylesheet files like mndoc.css or tmdoc.css taking them from the 
+#'        package folder
 #'
 #' ## <a name='todo'>TODO</a>
 #'
 #' - [x] font embedding using https://european-alternatives.eu/de/produkt/bunny-fonts 
 #'   currently Ubuntu Mono and Andika are used from there within the default stylesheet (done)
 #' - [ ] dtplite support ?
-#' - [ ] inline online images and stylesheets?
+#' - [ ] inline online images and online stylesheets?
 #'
 #' ## <a name='authors'>AUTHOR(s)</a>
 #'
-#' The **mndoc::mndoc** package was written by Dr. Detlef Groth, University of Potdam, Germany.
+#' The **mndoc::mndoc** package was written by Detlef Groth, University of Potdam, Germany.
 #'
 #' ## <a name='license'>LICENSE AND COPYRIGHT</a>
 #'
-#' Markdown extractor and converter mndoc::mndoc, version 0.14.0
+#' Markdown extractor and converter mndoc::mndoc, version 0.15.1
 #'
 #' Copyright (c) 2019-25  Detlef Groth, E-mail: <dgroth(at)uni(minus)potsdam(dot)de>
 #' 

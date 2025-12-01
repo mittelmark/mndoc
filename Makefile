@@ -17,6 +17,8 @@ app:
 	mkdir mndoc.vfs/lib/mndoc
 	cp mndoc/mndoc.tcl mndoc.vfs/lib/mndoc/
 	cp mndoc/pkgIndex.tcl mndoc.vfs/lib/mndoc/
+	cp mndoc/mndoc.css mndoc.vfs/lib/mndoc/
+	cp mndoc/tmdoc.css mndoc.vfs/lib/mndoc/
 	mkdir mndoc.vfs/lib/cmdline
 	mkdir mndoc.vfs/lib/markdown
 	mkdir mndoc.vfs/lib/textutil

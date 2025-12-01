@@ -1,7 +1,7 @@
 [comment {-*- mode: tcl ; fill-column: 90 -*- doctools manpage}]
-[vset VERSION 0.13.0]
+[vset VERSION 0.15.1]
 [manpage_begin mndoc n [vset VERSION]]
-[copyright {2019-2025, Detlef Groth <detlef(at)dgroth(dot)de>}]
+[copyright {2019-2025, Detlef Groth <detlef(at)uni(minus)potsdam(dot)de>}]
 [moddesc   {Source code documentation using Markdown}]
 [titledesc {Source code documentation extractor/converter application}]
 [category  {Text processing}]
@@ -36,7 +36,10 @@ writes it to the [arg output] file.
 converted to HTML before being written.
 
 [para] When generating and writing HTML the default CSS stylesheet can be overridden by
-specifying the path to a custom stylesheet via option [option --css].
+specifying  the path to a custom  stylesheet via option [option --css]. If the
+--css file name is either 'mndoc.css' or 'tmdoc.css' and if it does not
+yet exists in the folder, then the file is copied from the package folder into
+the current folder.
 
 [para] If the input file is a [file .md] file it is expected to contain Markdown as-is,
 instead of Markdown embedded into code.
@@ -57,6 +60,9 @@ comments.
 [example {
     # Create HTML manual for a CPP file using a custom style sheet
     mndoc sample.cpp sample.html --css manual.css
+
+    # Create HTML manual for a Python file using the package mndoc.css file
+    mndoc sample.py sample.html --css mndoc.css
 
     # Extract the documentation from code as simple Markdown, ready to be processed
     # further, for example with pandoc, or similar

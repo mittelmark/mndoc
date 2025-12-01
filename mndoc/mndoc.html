@@ -3,10 +3,10 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="title" content="mndoc::mndoc 0.15.0">
+<meta name="title" content="mndoc::mndoc 0.15.1">
 <meta name="author" content="Detlef Groth, University of Potsdam, Germany">
     
-<title>mndoc::mndoc 0.15.0</title>
+<title>mndoc::mndoc 0.15.1</title>
     
                                       <link rel="stylesheet" href="https://unpkg.com/@highlightjs/cdn-assets@11.9.0/styles/atom-one-light.min.css">
                                       <script src="https://unpkg.com/@highlightjs/cdn-assets@11.9.0/highlight.min.js"></script>
@@ -40,9 +40,9 @@ pre, code { font-family: "Ubuntu Mono", monospaced ; }
 
 
     <div class="document-header">
-<h1 class="title">mndoc::mndoc 0.15.0</h1>
+<h1 class="title">mndoc::mndoc 0.15.1</h1>
 <h2 class="author">Detlef Groth, University of Potsdam, Germany</h2>
-<h2 class="date">2025-11-21</h2>
+<h2 class="date">2025-12-01</h2>
     </div>
 
 <h2>NAME</h2>
@@ -140,7 +140,8 @@ An explanation on how to do this, is given in the section <a href="#install">Ins
 <li><em>infile</em> - file with embedded markdown documentation</li>
 <li><em>outfile</em> -  name of output file extension</li>
 <li><em>--base64 false|true</em> should local images and CSS files be included, default: true</li>
-<li><em>--css cssfile</em> if outfile is an HTML file use the given <em>cssfile</em></li>
+<li><em>--css cssfile</em> if outfile is an HTML file use the given <em>cssfile</em>, if the filename is 'mndoc.css' or 'tmdoc.css'
+ and if the file is not yet existing in the appropiate location this file is copied from the package folder at this place<br/></li>
 <li><em>--footer footer.html</em> if outfile is an HTML file add this footer before the closing body tag</li>
 <li><em>--header header.html</em> if outfile is an HTML file add this header after  the opening body tag</li>
 <li><em>--javascript highlighjs|filename1,filename2</em> if outfile is an HTML file embeds either the hilightjs Javascript hilighter or the given local javascript filename(s) </li>
@@ -213,7 +214,7 @@ either in the css file, or if you like you can add as well a style section to th
 either like in this example:</p>
 
 <pre class='code'><code>#' ---
-#' title: mndoc::mndoc 0.15.0
+#' title: mndoc::mndoc 0.15.1
 #' author: Detlef Groth, University of Potsdam, Germany
 #' date: 2025-11-20
 #' css: mndoc.css
@@ -485,8 +486,8 @@ in your module path as <code>mndoc-0.1X.X.tm</code> for instance. See the <a hre
 <li>2019-12-06 Partial R-Roxygen/Markdown support</li>
 <li>2020-01-05 Documentation fixes and version information</li>
 <li>2020-02-02 Adding include syntax</li>
-<li>2020-02-26 Adding stylesheet option --css </li>
 <li>2020-02-26 Adding files pandoc.css and dgw.css</li>
+<li>2020-02-26 Adding stylesheet option --css </li>
 <li>2020-02-26 Making standalone file using pkgDeps and mk_tm</li>
 <li>2020-02-26 Release 0.3 to fossil</li>
 <li>2020-02-27 support for __DATE__, __PKGNAME__, __PKGVERSION__ macros  in Tcl code based on package provide line</li>
@@ -604,7 +605,13 @@ in your module path as <code>mndoc-0.1X.X.tm</code> for instance. See the <a hre
 <li>2025-11-20 Release 0.15.0
 <ul>
 <li>support for &quot;&quot;&quot;#' and /<em></em>#' to start Markdown blocks and &quot;&quot;&quot; */ to end Markdown blocks
-   to document for example the Julia language
+   to document for example the Julia language</li></ul>
+
+</li>
+<li>2025-12-XX Release 0.15.1
+<ul>
+<li>fix for non-existing stylesheet files like mndoc.css or tmdoc.css taking them from the 
+   package folder
 </li></ul>
 
 </li></ul>
@@ -615,16 +622,16 @@ in your module path as <code>mndoc-0.1X.X.tm</code> for instance. See the <a hre
 <li>&#9745 font embedding using https://european-alternatives.eu/de/produkt/bunny-fonts 
   currently Ubuntu Mono and Andika are used from there within the default stylesheet (done)</li>
 <li>&#9744 dtplite support ?</li>
-<li>&#9744 inline online images and stylesheets?
+<li>&#9744 inline online images and online stylesheets?
 </li></ul>
 
 <h2><a name='authors'>AUTHOR(s)</a></h2>
 
-<p>The <strong>mndoc::mndoc</strong> package was written by Dr. Detlef Groth, University of Potdam, Germany.</p>
+<p>The <strong>mndoc::mndoc</strong> package was written by Detlef Groth, University of Potdam, Germany.</p>
 
 <h2><a name='license'>LICENSE AND COPYRIGHT</a></h2>
 
-<p>Markdown extractor and converter mndoc::mndoc, version 0.14.0</p>
+<p>Markdown extractor and converter mndoc::mndoc, version 0.15.1</p>
 
 <p>Copyright (c) 2019-25  Detlef Groth, E-mail: &lt;dgroth(at)uni(minus)potsdam(dot)de&gt;</p>
 
