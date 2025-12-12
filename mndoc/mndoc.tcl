@@ -2,7 +2,7 @@
 ##############################################################################
 #  Author        : Dr. Detlef Groth
 #  Created       : Fri Nov 15 10:20:22 2019
-#  Last Modified : <251201.1846>
+#  Last Modified : <251212.1140>
 #
 #  Description	 : Command line utility and package to extract Markdown documentation 
 #                  from programming code if embedded as after comment sequence #' 
@@ -37,6 +37,9 @@
 #                                            for instance to support Julia or Python language
 #                  2025-12-01 Release 0.15.1 fix for non-existing files like mndoc.css or tmdoc.css taking them from the 
 #                                            package folder
+#                  2025-12-12 Release 0.15.2 also files with extension .Rmd, .rmd, .Pmd, .pmd, .Tmd and .tmd
+#                                            are taken as Markdown input
+#                                            support for br-tags in yaml title section
 #
 ##############################################################################
 #
@@ -51,7 +54,7 @@
 #
 ##############################################################################
 #' ---
-#' title: mndoc::mndoc 0.15.1
+#' title: mndoc::mndoc 0.15.2
 #' author: Detlef Groth, University of Potsdam, Germany
 #' date: 2025-12-01
 #' css: mndoc.css
@@ -195,8 +198,8 @@ package require Tcl 8.6-
 package require yaml
 package require Markdown
 
-package provide mndoc 0.15.1
-package provide mndoc::mndoc 0.15.1
+package provide mndoc 0.15.2
+package provide mndoc::mndoc 0.15.2
 namespace eval ::mndoc {
     variable deindent [list \n\t \n "\n    " \n]
     variable scriptfile [info script]
@@ -224,7 +227,7 @@ namespace eval ::mndoc {
 }]
 variable htmlstart [string map $deindent {
         <div class="document-header">
-	<h1 class="title">$document(title)</h1>
+	<h1 class="title">$document(htitle)</h1>
 	<h2 class="author">$document(author)</h2>
 	<h2 class="date">$document(date)</h2>
         </div>
@@ -393,7 +396,7 @@ proc ::mndoc::mndoc {filename outfile args} {
         set outmode markup
     }
     set inmode  code
-    if {[file extension $filename] in [list .md .man] || $filename eq "-"} {
+    if {[file extension $filename] in [list .Rmd .rmd .Tmd .tmd .Pmd .pmd .md .man] || $filename eq "-"} {
         set inmode markup
     }
     
@@ -581,7 +584,12 @@ proc ::mndoc::mndoc {filename outfile args} {
                     set document($key) [clock format [clock scan [dict get $yamldict $key]] -format "%Y-%m-%d"]
                 }
             } elseif {![info exists document($key)] || $document($key) eq ""} {
-                set document($key) [dict get $yamldict $key]
+                if {$key eq "title"} {
+                    set document(htitle) [dict get $yamldict $key]
+                    set document(title) [regsub {<br.+>} [dict get $yamldict $key] ""]
+                } else {
+                    set document($key) [dict get $yamldict $key]
+                }
             }
         }
         if {![dict exists $yamldict date]} {

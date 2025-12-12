@@ -51,7 +51,7 @@ docu:
 	#htmlark --ignore-js mndoc/mndoc.html -o mndoc/mndoc-out.html
 	cd mndoc && weasyprint -s small.css mndoc.html mndoc.pdf 
 	#cp mndoc/mndoc-out.html mndoc/mndoc.html
-tests:
+test:
 	@echo "Running tests..."
 	@TCLLIBPATH=`pwd`/../tmdoc/modules tclsh apps/mndoc examples/hilight.md examples/hilight.html --javascript highlightjs && grep -q "highlight.min.js" examples/hilight.html || (echo "Error: Expected highlightjs output not found"; exit 1) && echo "  ... highlight passing"
 	@TCLLIBPATH=`pwd`/../tmdoc/modules tclsh apps/mndoc examples/hilight.md examples/hilight-refresh.html --refresh 10 && grep -qE "http-equiv=.refresh.+10" examples/hilight-refresh.html || (echo "Error: Expected refresh output not found"; exit 1) && echo "  ... refresh passing"	
