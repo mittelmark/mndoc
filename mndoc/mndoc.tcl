@@ -2,7 +2,7 @@
 ##############################################################################
 #  Author        : Dr. Detlef Groth
 #  Created       : Fri Nov 15 10:20:22 2019
-#  Last Modified : <251212.1140>
+#  Last Modified : <251212.1205>
 #
 #  Description	 : Command line utility and package to extract Markdown documentation 
 #                  from programming code if embedded as after comment sequence #' 
@@ -56,7 +56,7 @@
 #' ---
 #' title: mndoc::mndoc 0.15.2
 #' author: Detlef Groth, University of Potsdam, Germany
-#' date: 2025-12-01
+#' date: 2025-12-12
 #' css: mndoc.css
 #' style: |
 #'    @import url('https://fonts.bunny.net/css?family=Andika&display=swap'); 
@@ -800,9 +800,9 @@ set HELP [string map [list "\n    " "\n"] {
 #'
 #' ```
 #' #' ---
-#' #' title: mndoc::mndoc 0.15.1
+#' #' title: mndoc::mndoc 0.15.2
 #' #' author: Detlef Groth, University of Potsdam, Germany
-#' #' date: 2025-11-20
+#' #' date: 2025-12-12
 #' #' css: mndoc.css
 #' #' style: |
 #' #'   @import url('https://fonts.bunny.net/css?family=Andika&display=swap'); 
@@ -1089,39 +1089,50 @@ set HELP [string map [list "\n    " "\n"] {
 #' 
 #' ## <a name='changes'>CHANGES</a>
 #'
-#' - 2019-11-19 Release 0.1
-#' - 2019-11-22 Adding direct conversion from Markdown files to HTML files.
-#' - 2019-11-27 Documentation fixes
-#' - 2019-11-28 Kit version
-#' - 2019-11-28 Release 0.2 to fossil
-#' - 2019-12-06 Partial R-Roxygen/Markdown support
-#' - 2020-01-05 Documentation fixes and version information
-#' - 2020-02-02 Adding include syntax
-#' - 2020-02-26 Adding files pandoc.css and dgw.css
-#' - 2020-02-26 Adding stylesheet option --css 
-#' - 2020-02-26 Making standalone file using pkgDeps and mk_tm
-#' - 2020-02-26 Release 0.3 to fossil
-#' - 2020-02-27 support for \_\_DATE\_\_, \_\_PKGNAME\_\_, \_\_PKGVERSION\_\_ macros  in Tcl code based on package provide line
-#' - 2020-09-01 Roxygen2 plugin
-#' - 2020-11-09 argument --run supprt
-#' - 2020-11-10 Release 0.4
-#' - 2020-11-11 command line option  --run with seconds
-#' - 2020-12-30 Release 0.5 (rox2md @section support with preformatted, emph and strong/bold)
-#' - 2022-02-11 Release 0.6.0 
-#'      - parsing yaml header
-#'      - workaround for images
-#'      - making standalone using tpack.tcl [mndoc-0.6.bin](https://github.com/mittelmark/DGTcl/blob/master/bin/mndoc-0.6.bin)
-#'      - terminal help update and cleanup
-#'      - moved to Github in Wiki
-#'      - code cleanup
-#' - 2022-04-XX Release 0.7.0
-#'      - removing features to simplify the code, so removed plugin support, underline placeholder and sorting facilitites to reduce code size
-#'      - creating tcllib compatible manual page
-#'      - aku changes and fixes to include mndoc into tcllib's infrastructure
-#'      - splitting of command line app to the apps folder
-#'      - adding hook package requirement (benefit?)
-#'      - changing license to BSD
-#' - 2023-09-07 Release 0.7.1 - image tag fix 
+#' - 2025-12-12 Release 0.15.2
+#'      - also files with extension .Rmd, .rmd, .Pmd, .pmd, .Tmd and .tmd are taken as Markdown input
+#'      - support for br-tags in yaml title section
+#' - 2025-12-01 Release 0.15.1
+#'      - fix for non-existing stylesheet files like mndoc.css or tmdoc.css taking them from the 
+#'        package folder
+#' - 2025-11-20 Release 0.15.0
+#'      - support for """#' and /**#' to start Markdown blocks and """ */ to end Markdown blocks
+#'        to document for example the Julia language
+#' - 2025-10-30 Release 0.14.2
+#'      - mathjax inline equations with $ equation $ to avoid backslash issues
+#' - 2025-10-26 Release 0.14.1
+#'      - file application cache file right fix for multiple users on the same machine try to run mndoc
+#' - 2025-10-23 Release 0.14.0
+#'      - adding support for inlining local images and stylesheets into exisiting
+#'        HTML files
+#'      - adding option --bodyonly to omit HTML header and footer as well as body tag
+#'      - support for style section in YAML header for instance to install and use Bunny fonts
+#'      - support for simple todo lists
+#'      - support for image attributes like width
+#' - 2025-10-16 Release 0.13.0
+#'      - renamed to mndoc with version 0.13.0 to avoid name collisions with
+#'        mkdoc package in tcllib
+#' - 2025-01-26 Release 0.11.3
+#'      - fixing wrong command line argument crash
+#'      - fixing uneven length option list
+#' - 2025-01-18 Release 0.11.2
+#'      - fixing inline multiple images on the same line
+#' - 2025-01-04 Release 0.11.1
+#'      - fixing outfile ending with Tmd, Rmd etc seen as HTML files
+#' - 2025-01-04 Release 0.11.0
+#'      - Tcl 9 support
+#' - 2024-12-24 Release 0.10.2
+#'      - amp-amp fix for source code blocks
+#' - 2024-11-28 Release 0.10.1
+#'      - minor documentation fix
+#' - 2024-11-28 Release 0.10.0
+#'      - support for refresh option to autorefresh a HTML page 
+#'      - removed run support, use pantcl instead
+#'      - fixing issues with greater, lower and quote signs in code fragments
+#'      - removing inlining external javascript files into HTML output
+#'      - adding --base64 option to inline local images and css files
+#' - 2024-11-16 Release 0.9.0
+#'      - support for mathjax
 #' - 2023-11-17 Release 0.8.0 
 #'      - removed hook package, sorry do not understand what it is doing
 #'        and what is the benefit and I could not extend my code with this 
@@ -1133,47 +1144,39 @@ set HELP [string map [list "\n    " "\n"] {
 #'        (issue is done on tcllib)
 #'      - adding example file in examples to show syntax highlighting
 #'      - adding Makefile to build standalone application using tpack (80kb)
-#' - 2024-11-16 Release 0.9.0
-#'      - support for mathjax
-#' - 2024-11-28 Release 0.10.0
-#'      - support for refresh option to autorefresh a HTML page 
-#'      - removed run support, use pantcl instead
-#'      - fixing issues with greater, lower and quote signs in code fragments
-#'      - removing inlining external javascript files into HTML output
-#'      - adding --base64 option to inline local images and css files
-#' - 2024-11-28 Release 0.10.1
-#'      - minor documentation fix
-#' - 2024-12-24 Release 0.10.2
-#'      - amp-amp fix for source code blocks
-#' - 2025-01-04 Release 0.11.0
-#'      - Tcl 9 support
-#' - 2025-01-04 Release 0.11.1
-#'      - fixing outfile ending with Tmd, Rmd etc seen as HTML files
-#' - 2025-01-18 Release 0.11.2
-#'      - fixing inline multiple images on the same line
-#' - 2025-01-26 Release 0.11.3
-#'      - fixing wrong command line argument crash
-#'      - fixing uneven length option list
-#' - 2025-10-16 Release 0.13.0
-#'      - renamed to mndoc with version 0.13.0 to avoid name collisions with
-#'        mkdoc package in tcllib
-#' - 2025-10-23 Release 0.14.0
-#'      - adding support for inlining local images and stylesheets into exisiting
-#'        HTML files
-#'      - adding option --bodyonly to omit HTML header and footer as well as body tag
-#'      - support for style section in YAML header for instance to install and use Bunny fonts
-#'      - support for simple todo lists
-#'      - support for image attributes like width
-#' - 2025-10-26 Release 0.14.1
-#'      - file application cache file right fix for multiple users on the same machine try to run mndoc
-#' - 2025-10-30 Release 0.14.2
-#'      - mathjax inline equations with $ equation $ to avoid backslash issues
-#' - 2025-11-20 Release 0.15.0
-#'      - support for """#' and /**#' to start Markdown blocks and """ */ to end Markdown blocks
-#'        to document for example the Julia language
-#' - 2025-12-01 Release 0.15.1
-#'      - fix for non-existing stylesheet files like mndoc.css or tmdoc.css taking them from the 
-#'        package folder
+#' - 2023-09-07 Release 0.7.1 - image tag fix 
+#' - 2022-04-01 Release 0.7.0
+#'      - removing features to simplify the code, so removed plugin support, underline placeholder and sorting facilitites to reduce code size
+#'      - creating tcllib compatible manual page
+#'      - aku changes and fixes to include mndoc into tcllib's infrastructure
+#'      - splitting of command line app to the apps folder
+#'      - adding hook package requirement (benefit?)
+#'      - changing license to BSD
+#' - 2022-02-11 Release 0.6.0 
+#'      - parsing yaml header
+#'      - workaround for images
+#'      - making standalone using tpack.tcl [mndoc-0.6.bin](https://github.com/mittelmark/DGTcl/blob/master/bin/mndoc-0.6.bin)
+#'      - terminal help update and cleanup
+#'      - moved to Github in Wiki
+#'      - code cleanup
+#' - 2020-12-30 Release 0.5 (rox2md @section support with preformatted, emph and strong/bold)
+#' - 2020-11-11 command line option  --run with seconds
+#' - 2020-11-10 Release 0.4
+#' - 2020-11-09 argument --run supprt
+#' - 2020-09-01 Roxygen2 plugin
+#' - 2020-02-27 support for \_\_DATE\_\_, \_\_PKGNAME\_\_, \_\_PKGVERSION\_\_ macros  in Tcl code based on package provide line
+#' - 2020-02-26 Release 0.3 to fossil
+#' - 2020-02-26 Making standalone file using pkgDeps and mk_tm
+#' - 2020-02-26 Adding stylesheet option --css 
+#' - 2020-02-26 Adding files pandoc.css and dgw.css
+#' - 2020-02-02 Adding include syntax
+#' - 2020-01-05 Documentation fixes and version information
+#' - 2019-12-06 Partial R-Roxygen/Markdown support
+#' - 2019-11-28 Release 0.2 to fossil
+#' - 2019-11-28 Kit version
+#' - 2019-11-27 Documentation fixes
+#' - 2019-11-22 Adding direct conversion from Markdown files to HTML files.
+#' - 2019-11-19 Release 0.1
 #'
 #' ## <a name='todo'>TODO</a>
 #'
