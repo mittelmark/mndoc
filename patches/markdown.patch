@@ -1,0 +1,11 @@
+--- /home/dgroth/Downloads/markdown.tcl	2026-01-15 14:45:08.436469675 +0000
++++ ../tmdoc/modules/markdown/markdown.tcl	2026-01-14 21:58:08.400151746 +0000
+@@ -441,7 +441,7 @@
+ 
+                     append result $buffer
+                 }
+-                {(?:^\s{0,3}|[^\\]+)\|} {
++                {^(?:^\s{0,3}[^\\]?|)\|} {
+                     # SIMPLE TABLES
+                     set cell_align {}
+                     set row_count 0

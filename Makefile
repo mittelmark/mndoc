@@ -26,6 +26,7 @@ app:
 	for file in $(cmdl-files); do wget $(tcllib)modules/cmdline/$${file} -O mndoc.vfs/lib/cmdline/$${file}; done	
 	for file in $(yaml-files); do wget $(tcllib)modules/yaml/$${file} -O mndoc.vfs/lib/yaml/$${file}; done	
 	for file in $(mdown-files); do wget $(tcllib)modules/markdown/$${file} -O mndoc.vfs/lib/markdown/$${file}; done
+	cd mndoc.vfs/lib/markdown && patch markdown.tcl -i ../../../patches/markdown.patch
 	## fix bug for code in triple backtick section
 	perl -pe 's/set code_result \[html_escape +.code_result\]//' mndoc.vfs/lib/markdown/markdown.tcl > temp.tcl
 	mv temp.tcl mndoc.vfs/lib/markdown/markdown.tcl

@@ -2,7 +2,7 @@
 ##############################################################################
 #  Author        : Dr. Detlef Groth
 #  Created       : Fri Nov 15 10:20:22 2019
-#  Last Modified : <251212.1205>
+#  Last Modified : <260114.2201>
 #
 #  Description	 : Command line utility and package to extract Markdown documentation 
 #                  from programming code if embedded as after comment sequence #' 
@@ -54,7 +54,7 @@
 #
 ##############################################################################
 #' ---
-#' title: mndoc::mndoc 0.15.2
+#' title: mndoc::mndoc 0.15.3
 #' author: Detlef Groth, University of Potsdam, Germany
 #' date: 2025-12-12
 #' css: mndoc.css
@@ -198,8 +198,8 @@ package require Tcl 8.6-
 package require yaml
 package require Markdown
 
-package provide mndoc 0.15.2
-package provide mndoc::mndoc 0.15.2
+package provide mndoc 0.15.3
+package provide mndoc::mndoc 0.15.3
 namespace eval ::mndoc {
     variable deindent [list \n\t \n "\n    " \n]
     variable scriptfile [info script]
