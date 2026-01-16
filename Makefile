@@ -29,6 +29,8 @@ app:
 	cd mndoc.vfs/lib/markdown && patch markdown.tcl -i ../../../patches/markdown.patch
 	## fix bug for code in triple backtick section
 	perl -pe 's/set code_result \[html_escape +.code_result\]//' mndoc.vfs/lib/markdown/markdown.tcl > temp.tcl
+	perl -i -pe 's/1\.2\.4/1.2.5/' temp.tcl
+	perl -i -pe 's/1\.2\.4/1.2.5/' mndoc.vfs/lib/markdown/pkgIndex.tcl
 	mv temp.tcl mndoc.vfs/lib/markdown/markdown.tcl
 	for file in $(txutl-files); do wget $(tcllib)modules/textutil/$${file} -O mndoc.vfs/lib/textutil/$${file}; done	
 	$(TCL) ../tpack/tpack-b64.tcl wrap mndoc.tapp --lz4
