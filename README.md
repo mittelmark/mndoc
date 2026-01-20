@@ -134,6 +134,8 @@ bash -c "$(curl -fsSL https://github.com/mittelmark/mndoc/releases/latest/downlo
 
 ## ChangeLog
 
+- 2026-01-20 Release 0.15.3
+    - fixing issues with pipes in normal text
 - 2025-12-12 Release 0.15.2
     - also files with extension .Rmd, .rmd, .Pmd, .pmd, .Tmd and .tmd are taken as Markdown input
     - support for br-tags in yaml title section
