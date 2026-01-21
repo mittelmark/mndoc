@@ -2,7 +2,7 @@
 ##############################################################################
 #  Author        : Dr. Detlef Groth
 #  Created       : Fri Nov 15 10:20:22 2019
-#  Last Modified : <260114.2201>
+#  Last Modified : <260121.0754>
 #
 #  Description	 : Command line utility and package to extract Markdown documentation 
 #                  from programming code if embedded as after comment sequence #' 
@@ -43,15 +43,9 @@
 #
 ##############################################################################
 #
-# Copyright (c) 2019-2025  Dr. Detlef Groth, E-mail: dgroth((at)uni-potsdam(dot)de
+# Copyright (c) 2019-2025  Detlef Groth, E-mail: dgroth((at)uni-potsdam(dot)de
+# License: BSD-3-Clause see FILE LICENSE
 # 
-# This library is free software; you can use, modify, and redistribute it for
-# any purpose, provided that existing copyright notices are retained in all
-# copies and that this notice is included verbatim in any distributions.
-# 
-# This software is distributed WITHOUT ANY WARRANTY; without even the implied
-# warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-#
 ##############################################################################
 #' ---
 #' title: mndoc::mndoc 0.15.3
@@ -1191,38 +1185,33 @@ set HELP [string map [list "\n    " "\n"] {
 #'
 #' ## <a name='license'>LICENSE AND COPYRIGHT</a>
 #'
-#' Markdown extractor and converter mndoc::mndoc, version 0.15.1
-#'
-#' Copyright (c) 2019-25  Detlef Groth, E-mail: <dgroth(at)uni(minus)potsdam(dot)de>
 #' 
-#' BSD License type:
-#'
-#' Sun Microsystems, Inc. The following terms apply to all files a ssociated
-#' with the software unless explicitly disclaimed in individual files. 
+#' BSD 3-Clause License
+#'  
+#' Copyright (c) 2019-2026, Detlef Groth
+#'  
+#' Redistribution and use in source and binary forms, with or without
+#' modification, are permitted provided that the following conditions are met:
 #' 
-#' The authors hereby grant permission to use, copy, modify, distribute, and
-#' license this software and its documentation for any purpose, provided that
-#' existing copyright notices are retained in all copies and that this notice
-#' is included verbatim in any distributions. No written agreement, license,
-#' or royalty fee is required for any of the authorized uses. Modifications to
-#' this software may be copyrighted by their authors and need not follow the
-#' licensing terms described here, provided that the new terms are clearly
-#' indicated on the first page of each file where they apply. 
-#'
-#' In no event shall the authors or distributors be liable to any party for
-#' direct, indirect, special, incidental, or consequential damages arising out
-#' of the use of this software, its documentation, or any derivatives thereof,
-#' even if the authors have been advised of the possibility of such damage. 
-#'
-#' The authors and distributors specifically disclaim any warranties,
-#' including, but not limited to, the implied warranties of merchantability,
-#' fitness for a particular purpose, and non-infringement. This software is
-#' provided on an "as is" basis, and the authors and distributors have no
-#' obligation to provide maintenance, support, updates, enhancements, or
-#' modifications. 
-#'
-#' RESTRICTED RIGHTS: Use, duplication or disclosure by the government is
-#' subject to the restrictions as set forth in subparagraph (c) (1) (ii) of
-#' the Rights in Technical Data and Computer Software Clause as DFARS
-#' 252.227-7013 and FAR 52.227-19. 
-#'
+#' 1. Redistributions of source code must retain the above copyright notice, this
+#'    list of conditions and the following disclaimer.
+#' 
+#' 2. Redistributions in binary form must reproduce the above copyright notice,
+#'    this list of conditions and the following disclaimer in the documentation
+#'    and/or other materials provided with the distribution.
+#' 
+#' 3. Neither the name of the copyright holder nor the names of its
+#'    contributors may be used to endorse or promote products derived from
+#'    this software without specific prior written permission.
+#' 
+#' THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+#' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+#' IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+#' DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+#' FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+#' DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+#' SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+#' CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+#' OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+#' OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#' 
