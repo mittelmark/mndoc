@@ -2,7 +2,7 @@
 ##############################################################################
 #  Author        : Dr. Detlef Groth
 #  Created       : Fri Nov 15 10:20:22 2019
-#  Last Modified : <260128.0725>
+#  Last Modified : <260128.0738>
 #
 #  Description	 : Command line utility and package to extract Markdown documentation 
 #                  from programming code if embedded as after comment sequence #' 
@@ -40,7 +40,8 @@
 #                  2025-12-12 Release 0.15.2 also files with extension .Rmd, .rmd, .Pmd, .pmd, .Tmd and .tmd
 #                                            are taken as Markdown input
 #                                            support for br-tags in yaml title section
-#                  2025-12-12 Release 0.15.3 fixing LICENSE issues stating mixes of BSD/MIT, LICENSE should be BSD3 
+#                  2026-01-28 Release 0.15.3 fixing fixing LICENSE issues stating mixes of BSD/MIT, LICENSE should be BSD3 
+#                                           
 ##############################################################################
 #
 # Copyright (c) 2019-2025  Detlef Groth, E-mail: dgroth((at)uni-potsdam(dot)de
@@ -50,7 +51,7 @@
 #' ---
 #' title: mndoc::mndoc 0.15.3
 #' author: Detlef Groth, University of Potsdam, Germany
-#' date: 2025-12-12
+#' date: 2026-01-28
 #' css: mndoc.css
 #' style: |
 #'    @import url('https://fonts.bunny.net/css?family=Andika&display=swap'); 
@@ -794,9 +795,9 @@ set HELP [string map [list "\n    " "\n"] {
 #'
 #' ```
 #' #' ---
-#' #' title: mndoc::mndoc 0.15.2
+#' #' title: mndoc::mndoc 0.15.3
 #' #' author: Detlef Groth, University of Potsdam, Germany
-#' #' date: 2025-12-12
+#' #' date: 2026-01-28
 #' #' css: mndoc.css
 #' #' style: |
 #' #'   @import url('https://fonts.bunny.net/css?family=Andika&display=swap'); 
@@ -1083,6 +1084,10 @@ set HELP [string map [list "\n    " "\n"] {
 #' 
 #' ## <a name='changes'>CHANGES</a>
 #'
+#' - 2026-01-28 Release 0.15.3
+#'       - fixing fixing LICENSE issues stating mixes of BSD/MIT, LICENSE should be BSD3
+#'       - fixing issues with pipes in text, leading to tables, can be avoided by adding backticks around
+#'         pipes
 #' - 2025-12-12 Release 0.15.2
 #'      - also files with extension .Rmd, .rmd, .Pmd, .pmd, .Tmd and .tmd are taken as Markdown input
 #'      - support for br-tags in yaml title section

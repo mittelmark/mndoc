@@ -3,10 +3,10 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="title" content="mndoc::mndoc 0.15.2">
+<meta name="title" content="mndoc::mndoc 0.15.3">
 <meta name="author" content="Detlef Groth, University of Potsdam, Germany">
     
-<title>mndoc::mndoc 0.15.2</title>
+<title>mndoc::mndoc 0.15.3</title>
     
                                       <link rel="stylesheet" href="https://unpkg.com/@highlightjs/cdn-assets@11.9.0/styles/atom-one-light.min.css">
                                       <script src="https://unpkg.com/@highlightjs/cdn-assets@11.9.0/highlight.min.js"></script>
@@ -40,9 +40,9 @@ pre, code { font-family: "Ubuntu Mono", monospaced ; }
 
 
     <div class="document-header">
-<h1 class="title">mndoc::mndoc 0.15.2</h1>
+<h1 class="title">mndoc::mndoc 0.15.3</h1>
 <h2 class="author">Detlef Groth, University of Potsdam, Germany</h2>
-<h2 class="date">2025-12-12</h2>
+<h2 class="date">2026-01-28</h2>
     </div>
 
 <h2>NAME</h2>
@@ -214,9 +214,9 @@ either in the css file, or if you like you can add as well a style section to th
 either like in this example:</p>
 
 <pre class='code'><code>#' ---
-#' title: mndoc::mndoc 0.15.2
+#' title: mndoc::mndoc 0.15.3
 #' author: Detlef Groth, University of Potsdam, Germany
-#' date: 2025-12-12
+#' date: 2026-01-28
 #' css: mndoc.css
 #' style: |
 #'   @import url('https://fonts.bunny.net/css?family=Andika&amp;display=swap'); 
@@ -478,6 +478,13 @@ in your module path as <code>mndoc-0.1X.X.tm</code> for instance. See the <a hre
 <h2><a name='changes'>CHANGES</a></h2>
 
 <ul>
+<li>2026-01-28 Release 0.15.3
+<ul>
+<li>fixing fixing LICENSE issues stating mixes of BSD/MIT, LICENSE should be BSD3</li>
+<li>fixing issues with pipes in text, leading to tables, can be avoided by adding backticks around
+pipes</li></ul>
+
+</li>
 <li>2025-12-12 Release 0.15.2
 <ul>
 <li>also files with extension .Rmd, .rmd, .Pmd, .pmd, .Tmd and .tmd are taken as Markdown input</li>
@@ -637,40 +644,39 @@ in your module path as <code>mndoc-0.1X.X.tm</code> for instance. See the <a hre
 
 <h2><a name='license'>LICENSE AND COPYRIGHT</a></h2>
 
-<p>Markdown extractor and converter mndoc::mndoc, version 0.15.1</p>
+<p>BSD 3-Clause License</p>
 
-<p>Copyright (c) 2019-25  Detlef Groth, E-mail: &lt;dgroth(at)uni(minus)potsdam(dot)de&gt;</p>
+<p>Copyright (c) 2019-2026, Detlef Groth</p>
 
-<p>BSD License type:</p>
+<p>Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:</p>
 
-<p>Sun Microsystems, Inc. The following terms apply to all files a ssociated
-with the software unless explicitly disclaimed in individual files.</p>
+<ol>
+<li><p>Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.</p>
 
-<p>The authors hereby grant permission to use, copy, modify, distribute, and
-license this software and its documentation for any purpose, provided that
-existing copyright notices are retained in all copies and that this notice
-is included verbatim in any distributions. No written agreement, license,
-or royalty fee is required for any of the authorized uses. Modifications to
-this software may be copyrighted by their authors and need not follow the
-licensing terms described here, provided that the new terms are clearly
-indicated on the first page of each file where they apply.</p>
+</li>
+<li><p>Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.</p>
 
-<p>In no event shall the authors or distributors be liable to any party for
-direct, indirect, special, incidental, or consequential damages arising out
-of the use of this software, its documentation, or any derivatives thereof,
-even if the authors have been advised of the possibility of such damage.</p>
+</li>
+<li><p>Neither the name of the copyright holder nor the names of its
+   contributors may be used to endorse or promote products derived from
+   this software without specific prior written permission.</p>
 
-<p>The authors and distributors specifically disclaim any warranties,
-including, but not limited to, the implied warranties of merchantability,
-fitness for a particular purpose, and non-infringement. This software is
-provided on an &quot;as is&quot; basis, and the authors and distributors have no
-obligation to provide maintenance, support, updates, enhancements, or
-modifications.</p>
+</li></ol>
 
-<p>RESTRICTED RIGHTS: Use, duplication or disclosure by the government is
-subject to the restrictions as set forth in subparagraph (c) (1) (ii) of
-the Rights in Technical Data and Computer Software Clause as DFARS
-252.227-7013 and FAR 52.227-19.</p>
+<p>THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS &quot;AS IS&quot;
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</p>
 
 
 
