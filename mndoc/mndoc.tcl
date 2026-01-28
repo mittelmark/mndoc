@@ -2,7 +2,7 @@
 ##############################################################################
 #  Author        : Dr. Detlef Groth
 #  Created       : Fri Nov 15 10:20:22 2019
-#  Last Modified : <260121.0754>
+#  Last Modified : <260128.0725>
 #
 #  Description	 : Command line utility and package to extract Markdown documentation 
 #                  from programming code if embedded as after comment sequence #' 
@@ -40,7 +40,7 @@
 #                  2025-12-12 Release 0.15.2 also files with extension .Rmd, .rmd, .Pmd, .pmd, .Tmd and .tmd
 #                                            are taken as Markdown input
 #                                            support for br-tags in yaml title section
-#
+#                  2025-12-12 Release 0.15.3 fixing LICENSE issues stating mixes of BSD/MIT, LICENSE should be BSD3 
 ##############################################################################
 #
 # Copyright (c) 2019-2025  Detlef Groth, E-mail: dgroth((at)uni-potsdam(dot)de
