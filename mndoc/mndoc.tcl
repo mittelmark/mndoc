@@ -2,7 +2,7 @@
 ##############################################################################
 #  Author        : Dr. Detlef Groth
 #  Created       : Fri Nov 15 10:20:22 2019
-#  Last Modified : <260128.0738>
+#  Last Modified : <260128.0743>
 #
 #  Description	 : Command line utility and package to extract Markdown documentation 
 #                  from programming code if embedded as after comment sequence #' 
@@ -40,16 +40,16 @@
 #                  2025-12-12 Release 0.15.2 also files with extension .Rmd, .rmd, .Pmd, .pmd, .Tmd and .tmd
 #                                            are taken as Markdown input
 #                                            support for br-tags in yaml title section
-#                  2026-01-28 Release 0.15.3 fixing fixing LICENSE issues stating mixes of BSD/MIT, LICENSE should be BSD3 
-#                                           
+#                  2026-01-20 Release 0.15.3 fixing pipes in backticks creating tables
+#                  2026-01-28 Release 0.15.4 fixing fixing LICENSE issues stating mixes of BSD/MIT, LICENSE should be BSD3, more pipe fixes
 ##############################################################################
 #
-# Copyright (c) 2019-2025  Detlef Groth, E-mail: dgroth((at)uni-potsdam(dot)de
+# Copyright (c) 2019-2026  Detlef Groth, E-mail: dgroth((at)uni-potsdam(dot)de
 # License: BSD-3-Clause see FILE LICENSE
 # 
 ##############################################################################
 #' ---
-#' title: mndoc::mndoc 0.15.3
+#' title: mndoc::mndoc 0.15.4
 #' author: Detlef Groth, University of Potsdam, Germany
 #' date: 2026-01-28
 #' css: mndoc.css
@@ -193,8 +193,8 @@ package require Tcl 8.6-
 package require yaml
 package require Markdown
 
-package provide mndoc 0.15.3
-package provide mndoc::mndoc 0.15.3
+package provide mndoc 0.15.4
+package provide mndoc::mndoc 0.15.4
 namespace eval ::mndoc {
     variable deindent [list \n\t \n "\n    " \n]
     variable scriptfile [info script]
@@ -795,7 +795,7 @@ set HELP [string map [list "\n    " "\n"] {
 #'
 #' ```
 #' #' ---
-#' #' title: mndoc::mndoc 0.15.3
+#' #' title: mndoc::mndoc 0.15.4
 #' #' author: Detlef Groth, University of Potsdam, Germany
 #' #' date: 2026-01-28
 #' #' css: mndoc.css
@@ -1084,8 +1084,10 @@ set HELP [string map [list "\n    " "\n"] {
 #' 
 #' ## <a name='changes'>CHANGES</a>
 #'
-#' - 2026-01-28 Release 0.15.3
+#' - 2026-01-28 Release 0.15.4
 #'       - fixing fixing LICENSE issues stating mixes of BSD/MIT, LICENSE should be BSD3
+#'       - fixing more issues with pipes in text
+#' - 2026-01-20 Release 0.15.3
 #'       - fixing issues with pipes in text, leading to tables, can be avoided by adding backticks around
 #'         pipes
 #' - 2025-12-12 Release 0.15.2
