@@ -1,0 +1,62 @@
+--- a/bin/tpack
++++ b/bin/tpack
+@@ -938,20 +938,26 @@
+             set untar true
+         }
+         if {$untar} {
++            # Extract to process-specific temporary names and rename into place,
++            # so that concurrent first runs cannot read a partially written file.
++            set stage [pid]
+             if {$lzmode} {
+-                if {[file exists $lzfile]} {
+-                    file delete $lzfile
+-                }
+-                set tmp [open $lzfile w 6000]
++                set lzstage $lzfile.stage$stage
++                set tarstage $tarfile.stage$stage
++                set tmp [open $lzstage w 6000]
+                 fconfigure $tmp -translation binary
+                 puts -nonewline $tmp $archive
+                 close $tmp
+-                lz4::unzip $lzfile $tarfile
++                lz4::unzip $lzstage $tarstage
++                file rename -force $tarstage $tarfile
++                file delete -force $lzstage
+             } else {
+-                set tmp [open $tarfile wb 0600]
++                set tarstage $tarfile.stage$stage
++                set tmp [open $tarstage wb 0600]
+                 #fconfigure $tmp -translation binary
+                 puts -nonewline $tmp $archive
+                 close $tmp
++                file rename -force $tarstage $tarfile
+             }
+         }
+     } else {
+@@ -962,15 +968,17 @@
+         }
+     }
+     set ttime [file mtime $tarfile]
+-    set appdir [file join $tmpdir $tail-$ttime]
+-    foreach dir [glob -nocomplain [file join $tmpdir $rname]*] {
+-        if {$dir ne $appdir && [file isdir $dir]} {
+-            file delete -force $dir
+-        } 
+-    }
+-    if {![file exists $appdir]} {
+-        file mkdir $appdir
+-        decode_file $tarfile $appdir
++    # Use a process-specific cache directory so that concurrent first runs do
++    # not share a single appdir.  Each process writes to its own directory, so
++    # there is no cross-process glob/read race on the unpacked tree.
++    set appdir [file join $tmpdir $tail-$ttime.[pid]]
++    # Unpack into a process-specific cache directory.  Every process writes to
++    # its own directory, so concurrent first runs never read or glob a
++    # partially unpacked tree and there is no shared appdir to race on.
++    file mkdir $appdir
++    if {[catch {decode_file $tarfile $appdir} err]} {
++        file delete -force $appdir
++        error $err
+     }
+     set vfspath [lindex [glob [file join $appdir *]] 0]
+     if {[file exists [file join $vfspath tpack.tcl]]} {
