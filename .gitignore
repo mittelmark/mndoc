@@ -1,0 +1,17 @@
+# Build output
+/mndoc.vfs/
+/mndoc.tapp
+/mndoc.tb64
+/mndoc.tb64.lz4
+/mndoc.ttcl
+/mndoc.tcl
+/mndoc.css
+/tpack
+/bin/tpack
+/bin/mndoc-*.bin
+
+# Test output
+/tests/date.html
+
+# Editor and build backups
+*~
