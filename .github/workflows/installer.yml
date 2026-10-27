@@ -1,0 +1,40 @@
+# Verifies the mndoc installer and standalone binary on a clean Linux runner.
+#
+# The installer script (bin/install-mndoc.sh) downloads the latest release
+# asset, so this job must run only after a release with that asset exists.
+# It is triggered manually (workflow_dispatch) and automatically on release,
+# so it can never fail the normal push flow because no release is present yet.
+name: installer
+
+on:
+  workflow_dispatch:
+  release:
+    types: [published, created]
+
+jobs:
+  check-installer:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Show latest release
+        run: |
+          curl -sI "https://github.com/mittelmark/mndoc/releases/latest" \
+            | grep -i '^location:' || true
+
+      # Non-interactive: answer "no" to the optional PATH/.bashrc prompt by
+      # piping "n". This mirrors the CI use case and keeps the job deterministic.
+      - name: Run installer one-liner against the real release
+        run: |
+          printf 'n\n' | bash -c "$(curl -fsSL https://github.com/mittelmark/mndoc/releases/latest/download/install-mndoc.sh)"
+
+      - name: Check the installed binary
+        run: |
+          export PATH="$HOME/.local/bin:$PATH"
+          mndoc --version
+          printf '# CI check\n\nhello world\n' > ci-input.md
+          mndoc ci-input.md ci-output.html
+          grep -q '<h1>CI check</h1>' ci-output.html
+          grep -q '<p>hello world</p>' ci-output.html
+          echo "installer + binary functional check passed"

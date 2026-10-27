@@ -115,6 +115,14 @@ into `~/.local/bin`. You can execute it like this:
 bash -c "$(curl -fsSL https://github.com/mittelmark/mndoc/releases/latest/download/install-mndoc.sh)"
 ```
 
+This downloads the latest `mndoc-<version>.bin` release asset, places it as
+`~/.local/bin/mndoc`, and offers to add `~/.local/bin` to your `PATH`
+(`.bashrc`/`.zshrc`). If Tcl is not installed on the machine, just use the
+resulting `mndoc` command (or add `~/.local/bin` to your `PATH`).
+
+The installer is verified on every release by the `installer` GitHub Action,
+which runs it in a clean Linux environment and checks the installed binary.
+
 ## Changes in Comparison to the Tcllib mkdoc Package
 
 - adding header and footer support
