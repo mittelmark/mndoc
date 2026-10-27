@@ -42,6 +42,7 @@
 #                                            support for br-tags in yaml title section
 #                  2026-01-20 Release 0.15.3 fixing pipes in backticks creating tables
 #                  2026-01-28 Release 0.15.4 fixing fixing LICENSE issues stating mixes of BSD/MIT, LICENSE should be BSD3, more pipe fixes
+#                  2026-10-27 Release 0.15.5 fix YAML date handling for non-ISO date formats
 ##############################################################################
 #
 # Copyright (c) 2019-2026  Detlef Groth, E-mail: dgroth((at)uni-potsdam(dot)de
@@ -49,9 +50,9 @@
 # 
 ##############################################################################
 #' ---
-#' title: mndoc::mndoc 0.15.4
+#' title: mndoc::mndoc 0.15.5
 #' author: Detlef Groth, University of Potsdam, Germany
-#' date: 2026-01-28
+#' date: 2026-10-27
 #' css: mndoc.css
 #' style: |
 #'    @import url('https://fonts.bunny.net/css?family=Andika&display=swap'); 
@@ -64,7 +65,7 @@
 #'
 #' **mndoc::mndoc**  - Tcl package and command line application to extract and format 
 #' embedded programming documentation from source code files written in Markdown or
-#' doctools format and optionally converting it into HTML. The **nmdoc** tool can be as
+#' doctools format and optionally converting it into HTML. The **mndoc** tool can be as
 #' well used to convert Markdown files to HTML files and to embed local images and stylesheets into 
 #' the output document. It supports standard Markdown with a few extensions which are
 #' explained below.
@@ -123,7 +124,7 @@
 #'
 #' ```
 #' mndoc inputfile.md outputfile.html ?--css file.css,file2.css --header header.html \
-#'   --footer footer.html --javascript highlighjs|filename1,filename2  --mathjax true \
+#'   --footer footer.html --javascript highlightjs|filename1,filename2  --mathjax true \
 #'   --refresh 10 --base64 true --bodyonly false?  
 #' ```
 #'
@@ -151,15 +152,15 @@
 #' 
 #' > - *infile* - file with embedded markdown documentation
 #'   - *outfile* -  name of output file extension
-#'   - *--base64 false|true* should local images and CSS files be included, default: true
+#'   - *--base64 false|true* should local images and CSS files be embedded as base64 data, default: true
 #'   - *--css cssfile* if outfile is an HTML file use the given *cssfile*, if the filename is 'mndoc.css' or 'tmdoc.css'
-#'      and if the file is not yet existing in the appropiate location this file is copied from the package folder at this place  
+#'      and if the file is not yet existing in the appropriate location this file is copied from the package folder at this place  
 #'   - *--footer footer.html* if outfile is an HTML file add this footer before the closing body tag
 #'   - *--header header.html* if outfile is an HTML file add this header after  the opening body tag
-#'   - *--javascript highlighjs|filename1,filename2* if outfile is an HTML file embeds either the hilightjs Javascript hilighter or the given local javascript filename(s) 
+#'   - *--javascript highlightjs|filename1,filename2* if outfile is an HTML file embeds either the highlight.js Javascript highlighter or the given local javascript filename(s) 
 #'   - *--mathjax false|true* should there be the MathJax library included, default: false
 #'   - *--refresh 0|10* should there be the autorefresh header included only values above 9 are considered, default: 0
-#'   - *--bodyonly false|true* should only the part within the body tags safed to the new file, default: false
+#'   - *--bodyonly false|true* should only the part within the body tags be saved to the new file, default: false
 #' 
 #' > If the file extension of the outfile is either html or htm a HTML file is created. If the output
 #'   file has other file extension the documentation after _#'_ comments is simply extracted and stored
@@ -193,8 +194,8 @@ package require Tcl 8.6-
 package require yaml
 package require Markdown
 
-package provide mndoc 0.15.4
-package provide mndoc::mndoc 0.15.4
+package provide mndoc 0.15.5
+package provide mndoc::mndoc 0.15.5
 namespace eval ::mndoc {
     variable deindent [list \n\t \n "\n    " \n]
     variable scriptfile [info script]
@@ -294,6 +295,46 @@ variable htmlstart [string map $deindent {
     }]
 } 
 
+proc ::mndoc::normalize-date {value} {
+    # Normalize ISO dates to YYYY-MM-DD.  All other values are returned
+    # unchanged, so that dates like the German "28.10.2026" are displayed
+    # exactly as written and unknown formats never stop the conversion.
+    set original $value
+    set value [string trim $value]
+    if {$value eq ""} {
+        return ""
+    }
+    if {[regexp {^[0-9]{9,13}$} $value]} {
+        # Treat plausible epoch values as timestamps.  Eight-digit values such
+        # as 20261028 are YYYYMMDD dates and must be preserved.
+        set timestamp $value
+        if {[string length $value] == 13} {
+            set timestamp [expr {$timestamp / 1000}]
+        }
+        if {$timestamp >= 0 && $timestamp <= 4102444800} {
+            if {![catch {clock format $timestamp -format "%Y-%m-%d"} result]} {
+                return $result
+            }
+        }
+        return $original
+    }
+    set formats [list \
+        "%Y-%m-%d" \
+        "%Y-%m-%d %H:%M" \
+        "%Y-%m-%d %H:%M:%S" \
+        "%Y-%m-%dT%H:%M" \
+        "%Y-%m-%dT%H:%M:%S" \
+        "%Y-%m-%dT%H:%M:%S%z" \
+        "%Y-%m-%d %H:%M:%S %z" \
+    ]
+    foreach fmt $formats {
+        if {![catch {clock scan $value -format $fmt} timestamp]} {
+            return [clock format $timestamp -format "%Y-%m-%d"]
+        }
+    }
+    return $original
+}
+
 proc ::mndoc::img-replace {line filename} {
     #set line [regsub {<img src="((data:|https?:))} $line "<imgsrc=\"\\1"]
     set imgname [regsub {.*?<img src="([^"]+)".+$} $line "\\1"] ;# "
@@ -333,17 +374,19 @@ proc ::mndoc::inline-assets {filename html} {
                 }
             }
             set line [regsub -all {imgXXXXsrc} $line {img src}]
-        } elseif {[regexp -nocase {<link +rel="stylesheet" +href="(.+?.css)">} $line match cssfile]} {
-            if {[file exists [file join [file dirname $cssfile]]]} {
-                set fname [file join [file dirname $filename] $cssfile]
-                if [catch {open $fname} infhc] {
-                    error "Cannot open $fname: $infhc"
-                } else {
-                    set css [binary encode base64 [read $infhc]]
-                    close $infhc
-                    set line "\n<style>\n@import url(\"data:text/css;base64,$css\");\n</style>\n"
+        } elseif {[regexp -nocase {<link +rel="stylesheet" +href="(.+?\.css)">} $line match cssfile]} {
+            if {![regexp {^(https?:)?//} $cssfile]} {
+                set fname [file normalize [file join [file dirname $filename] $cssfile]]
+                if {[file exists $fname]} {
+                    if [catch {open $fname} infhc] {
+                        error "Cannot open $fname: $infhc"
+                    } else {
+                        set css [binary encode base64 [read $infhc]]
+                        close $infhc
+                        set line "\n<style>\n@import url(\"data:text/css;base64,$css\");\n</style>\n"
+                    }
                 }
-            } 
+            }
         }
         append htm "$line\n"
     }
@@ -375,7 +418,9 @@ proc ::mndoc::mndoc {filename outfile args} {
                 return -code error "Cannot open $filename: $infh"
             } else {
                 set html [read $infh]
-                set html [inline-assets $filename $html]
+                if {$arg(--base64)} {
+                    set html [inline-assets $filename $html]
+                }
                 set out [open $outfile w 0600]
                 puts $out "$html"
                 close $out
@@ -570,14 +615,9 @@ proc ::mndoc::mndoc {filename outfile args} {
         ## fixing curly brace issues in backtick code chunk
         set html [regsub -all "code class='\{" $html {code class='}] 
         set html [regsub -all "code class='(\[^'\]+)\}'" $html {code class='\1'}]
-        set out [open $outfile w 0644]
         foreach key [dict keys $yamldict] {
-            if {$key == "date"} {
-                if {[string is integer [dict get $yamldict $key]]} {
-                    set document($key) [clock format [dict get $yamldict $key] -format "%Y-%m-%d"]
-                } else {
-                    set document($key) [clock format [clock scan [dict get $yamldict $key]] -format "%Y-%m-%d"]
-                }
+            if {$key eq "date"} {
+                set document($key) [normalize-date [dict get $yamldict $key]]
             } elseif {![info exists document($key)] || $document($key) eq ""} {
                 if {$key eq "title"} {
                     set document(htitle) [dict get $yamldict $key]
@@ -588,13 +628,14 @@ proc ::mndoc::mndoc {filename outfile args} {
             }
         }
         if {![dict exists $yamldict date]} {
-            dict set yamldict date [clock format [clock seconds] format "%Y-%m-%d"]
+            dict set yamldict date [clock format [clock seconds] -format "%Y-%m-%d"]
         } 
         set header [subst -nobackslashes -nocommands $header]
         set head ""
         if {$arg(--base64)} {
             set header [mndoc::inline-assets $filename $header]
         }
+        set out [open $outfile w 0644]
         if {!$arg(--bodyonly)} {
             puts $out $header
             if {$hasyaml} {
@@ -662,11 +703,11 @@ set HELP [string map [list "\n    " "\n"] {
         --header HTMLFILE  - file with HTML code to be included after the body tag
         --footer HTMLFILE  - file with HTML code to be included before the closing
                              body tag
-        --base64     BOOL  - should local images, css files and JavaScript files being embedded as base 64 codes, default: true
-        --javascript JSLIB - hightlightjs|file1,file2,... using these Javascript libs / files, default: NULL
+        --base64     BOOL  - embed local images and CSS files as base64 data, default: true
+        --javascript JSLIB - highlightjs|file1,file2,... use these Javascript libs / files, default: NULL
         --mathjax    BOOL  - Embed the Mathjax Javascript library to add LaTeX formulas, default: false
         --refresh    INT   - Create a HTML page which does automatic refreshing after N seconds, default: 0
-        --bodyonly   BOOL  - should the document contain HTML header and footer, default: true
+        --bodyonly   BOOL  - omit the HTML header and footer, keeping only the body content, default: false
     Examples:
 
         # create manual page for mndoc.tcl itself 
@@ -688,9 +729,7 @@ set HELP [string map [list "\n    " "\n"] {
         # convert a Markdown file to HTML with own css, header and foot
         __APP__ sample.md sample.html --css my.css --footer foot.html --header head.html
         
-        # convert a Markdown file to HTML parsing embedded Latex Formula
-        # using \\( inline formula \\) or \\[ block formula syntax \\]
-        
+        # convert a Markdown file to HTML with highlight.js syntax highlighting
         __APP__ sample.md sample.html --javascript highlightjs
         
         # convert a Markdown file to HTML parsing embedded Latex Formula
@@ -703,9 +742,9 @@ set HELP [string map [list "\n    " "\n"] {
         
         __APP__ sample.md sample.html --bodyonly true
         
-    Author: @ Detlef Groth, University of Potsdam, Germany 2019-2025
+    Author: @ Detlef Groth, University of Potsdam, Germany 2019-2026
 
-    License: BSD
+    License: BSD-3-Clause
 }]
 
     
@@ -773,6 +812,12 @@ set HELP [string map [list "\n    " "\n"] {
 #' ```
 #' 
 #' Those five lines produce the three lines on top of this document. You can extend the header if you would like to process your document after extracting the Markdown with other tools, for instance with Pandoc.
+#'
+#' The date value is normalized to `YYYY-MM-DD` if it is an ISO date such as
+#' `2026-10-28` or `2026-10-28T07:33:23`; time and timezone information are
+#' dropped. Unix timestamps in seconds or milliseconds are converted as well.
+#' All other values, for example `28.10.2026`, are kept exactly as written.
+#' This avoids stopping the conversion because of an unusual date format.
 #' 
 #' <a name="styling">**CSS Styles**</a>
 #'
@@ -795,9 +840,9 @@ set HELP [string map [list "\n    " "\n"] {
 #'
 #' ```
 #' #' ---
-#' #' title: mndoc::mndoc 0.15.4
+#' #' title: mndoc::mndoc 0.15.5
 #' #' author: Detlef Groth, University of Potsdam, Germany
-#' #' date: 2026-01-28
+#' #' date: 2026-10-27
 #' #' css: mndoc.css
 #' #' style: |
 #' #'   @import url('https://fonts.bunny.net/css?family=Andika&display=swap'); 
@@ -822,7 +867,7 @@ set HELP [string map [list "\n    " "\n"] {
 #'   #'  line above ...
 #' ```
 #'
-#' This produces a level 2 header. Please note, if you have a section name `synopsis` the code fragments thereafer will be hilighted different than the other code fragments. You should only use level 2 and 3 headers for the documentation. Level 1 header are reserved for the title.
+#' This produces a level 2 header. Please note, if you have a section name `synopsis` the code fragments thereafter will be highlighted differently than the other code fragments. You should only use level 2 and 3 headers for the documentation. Level 1 header are reserved for the title.
 #' 
 #' <a name="lists">**Lists**</a>
 #'
@@ -893,7 +938,7 @@ set HELP [string map [list "\n    " "\n"] {
 #' 
 #' produces: [Tcler's Wiki](https://wiki.tcl-lang.org/)
 #'
-#' <a neme="indentations">**Indentations**</a>
+#' <a name="indentations">**Indentations**</a>
 #'
 #' Indentations are achieved using the greater sign:
 #' 
@@ -982,7 +1027,7 @@ set HELP [string map [list "\n    " "\n"] {
 #' ```
 #'
 #' Since version 0.8.0 mndoc as well included the inclusion of Javascript files or libraries like the library 
-#' [highlighjs](https://highlightjs.org/). Just use the command line or mndoc function argument `--javascript highlightjs`
+#' [highlight.js](https://highlightjs.org/). Just use the command line or mndoc function argument `--javascript highlightjs`
 #' and you get syntax highlighting for code blocks. Here an example:
 #' 
 #' ```
@@ -1053,7 +1098,7 @@ set HELP [string map [list "\n    " "\n"] {
 #' ## <a name='install'>INSTALLATION</a>
 #' 
 #' The mndoc::mndoc package can be installed either as command line application or as a Tcl module. 
-#' It requires the markdown, cmdline, yaml and textutils packages from tcllib to be installed.
+#' It requires the markdown, cmdline, yaml and textutil packages from tcllib to be installed.
 #' 
 #' Installation as command line application is easiest by executing the following shell one liner:
 #'
@@ -1084,6 +1129,9 @@ set HELP [string map [list "\n    " "\n"] {
 #' 
 #' ## <a name='changes'>CHANGES</a>
 #'
+#' - 2026-10-27 Release 0.15.5
+#'       - fix YAML date handling for non-ISO date formats; unknown dates are
+#'         kept as written instead of aborting the conversion
 #' - 2026-01-28 Release 0.15.4
 #'       - fixing fixing LICENSE issues stating mixes of BSD/MIT, LICENSE should be BSD3
 #'       - fixing more issues with pipes in text
@@ -1104,7 +1152,7 @@ set HELP [string map [list "\n    " "\n"] {
 #' - 2025-10-26 Release 0.14.1
 #'      - file application cache file right fix for multiple users on the same machine try to run mndoc
 #' - 2025-10-23 Release 0.14.0
-#'      - adding support for inlining local images and stylesheets into exisiting
+#'      - adding support for inlining local images and stylesheets into existing
 #'        HTML files
 #'      - adding option --bodyonly to omit HTML header and footer as well as body tag
 #'      - support for style section in YAML header for instance to install and use Bunny fonts
@@ -1140,14 +1188,14 @@ set HELP [string map [list "\n    " "\n"] {
 #'      - adding --header and --footer options
 #'      - adding --javascript option, single oder multiple files
 #'      - extending --css option, single or multiple files
-#'      - support for syntax highlighting using hilightjs Javascript
+#'      - support for syntax highlighting using highlight.js Javascript
 #'      - fixing issues with triple backtick codes, by fixing markdown package
 #'        (issue is done on tcllib)
 #'      - adding example file in examples to show syntax highlighting
 #'      - adding Makefile to build standalone application using tpack (80kb)
 #' - 2023-09-07 Release 0.7.1 - image tag fix 
 #' - 2022-04-01 Release 0.7.0
-#'      - removing features to simplify the code, so removed plugin support, underline placeholder and sorting facilitites to reduce code size
+#'      - removing features to simplify the code, so removed plugin support, underline placeholder and sorting facilities to reduce code size
 #'      - creating tcllib compatible manual page
 #'      - aku changes and fixes to include mndoc into tcllib's infrastructure
 #'      - splitting of command line app to the apps folder
@@ -1163,7 +1211,7 @@ set HELP [string map [list "\n    " "\n"] {
 #' - 2020-12-30 Release 0.5 (rox2md @section support with preformatted, emph and strong/bold)
 #' - 2020-11-11 command line option  --run with seconds
 #' - 2020-11-10 Release 0.4
-#' - 2020-11-09 argument --run supprt
+#' - 2020-11-09 argument --run support
 #' - 2020-09-01 Roxygen2 plugin
 #' - 2020-02-27 support for \_\_DATE\_\_, \_\_PKGNAME\_\_, \_\_PKGVERSION\_\_ macros  in Tcl code based on package provide line
 #' - 2020-02-26 Release 0.3 to fossil

@@ -1,14 +1,14 @@
 [comment {-*- mode: tcl ; fill-column: 90 -*- doctools manpage}]
-[vset VERSION 0.15.1]
+[vset VERSION 0.15.5]
 [manpage_begin mndoc n [vset VERSION]]
-[copyright {2019-2025, Detlef Groth <detlef(at)uni(minus)potsdam(dot)de>}]
+[copyright {2019-2026, Detlef Groth <detlef(at)uni(minus)potsdam(dot)de>}]
 [moddesc   {Source code documentation using Markdown}]
 [titledesc {Source code documentation extractor/converter application}]
 [category  {Text processing}]
 [description]
 
 This document describes [cmd mndoc], an application to extract documentation embedded in
-source code files, be they [file .tcl], or other.
+source code files, be they [file .tcl], or other, and to convert Markdown files to HTML.
 
 
 [section {Command Line}]
@@ -27,7 +27,7 @@ The application prints its version number to standard output and exits.
 
 The application prints its license to standard output and exits.
 
-[call [cmd mndoc] [arg input] [arg output] [opt "[option --css] [arg cssfile]"]]
+[call [cmd mndoc] [arg input] [arg output] [arg options]]
 
 The application reads the [arg input] file, extracts the embedded documentation, and
 writes it to the [arg output] file.
@@ -35,10 +35,13 @@ writes it to the [arg output] file.
 [para] If the output file is not a [file .md] file the extracted documentation is
 converted to HTML before being written.
 
+[para] If both [arg input] and [arg output] are HTML files, the application only
+embeds local images and stylesheets as base64 data into a standalone HTML file.
+
 [para] When generating and writing HTML the default CSS stylesheet can be overridden by
-specifying  the path to a custom  stylesheet via option [option --css]. If the
---css file name is either 'mndoc.css' or 'tmdoc.css' and if it does not
-yet exists in the folder, then the file is copied from the package folder into
+specifying the path to a custom stylesheet via option [option --css]. If the
+--css file name is either [file mndoc.css] or [file tmdoc.css] and if it does not
+yet exist in the folder, then the file is copied from the package folder into
 the current folder.
 
 [para] If the input file is a [file .md] file it is expected to contain Markdown as-is,
@@ -52,6 +55,53 @@ documentation is contained in the so-flagged comments.
 
 For other languages the marker and documentation may have to be embedded into multi-line
 comments.
+
+[list_end]
+
+[section Options]
+
+[list_begin definitions]
+
+[call [option --base64] [arg boolean]]
+
+Embed local images and CSS files as base64 data. The default is [const true].
+JavaScript files are not embedded. When both the input and output files are HTML,
+this option controls whether the assets are inlined.
+
+[call [option --bodyonly] [arg boolean]]
+
+Write only the content of the HTML body, omitting the HTML header and footer. The
+default is [const false].
+
+[call [option --css] [arg cssfile[,cssfile...]]]
+
+Use the given stylesheet or stylesheets instead of the built-in default
+stylesheet. Multiple files can be separated by commas.
+
+[call [option --footer] [arg footer.html]]
+
+Insert the given HTML file before the closing [const body] tag of an HTML output
+file.
+
+[call [option --header] [arg header.html]]
+
+Insert the given HTML file after the opening [const body] tag of an HTML output
+file.
+
+[call [option --javascript] [arg highlightjs|file1.js,file2.js]]
+
+Embed the highlight.js highlighter or the given local JavaScript files into an
+HTML output file. Multiple local files can be separated by commas.
+
+[call [option --mathjax] [arg boolean]]
+
+Include the MathJax JavaScript library so that embedded LaTeX formulas are
+rendered. The default is [const false].
+
+[call [option --refresh] [arg seconds]]
+
+Add an automatic refresh header to an HTML output file. Values of 10 or above
+are considered. The default is [const 0], which disables refreshing.
 
 [list_end]
 
@@ -70,47 +120,59 @@ comments.
 
     # Convert a Markdown file to HTML
     mndoc sample.md sample.html
-    
-    # Embed images and stylesheet files into the HTML file
+
+    # Convert a Markdown file to HTML with syntax highlighting
+    mndoc sample.md sample.html --javascript highlightjs
+
+    # Convert a Markdown file to HTML and render LaTeX formulas
+    mndoc sample.md sample.html --mathjax true
+
+    # Embed images and stylesheet files into an existing HTML file
     mndoc sample.html sample-out.html
 }]
 
 [section "Bugs, Ideas, Feedback"]
 
 This document, and the package it describes, will undoubtedly contain bugs and
-other problems. Please report such to the author of this package. Please also report any ideas for enhancements you may have for
-either package and/or documentation.
+other problems. Please report such to the author of this package. Please also report any
+ideas for enhancements you may have for either package and/or documentation.
 
 [section "Code Copyright"]
 
-BSD License type:
+BSD 3-Clause License
 
-[para] The following terms apply to all files a ssociated with the software unless
-explicitly disclaimed in individual files.
+[para] Copyright (c) 2019-2026, Detlef Groth, University of Potsdam, Germany
 
-[para] The authors hereby grant permission to use, copy, modify, distribute, and license
-this software and its documentation for any purpose, provided that existing copyright
-notices are retained in all copies and that this notice is included verbatim in any
-distributions. No written agreement, license, or royalty fee is required for any of the
-authorized uses.  Modifications to this software may be copyrighted by their authors and
-need not follow the licensing terms described here, provided that the new terms are
-clearly indicated on the first page of each file where they apply.
+[para] All rights reserved.
 
-[para] In no event shall the authors or distributors be liable to any party for direct,
-indirect, special, incidental, or consequential damages arising out of the use of this
-software, its documentation, or any derivatives thereof, even if the authors have been
-advised of the possibility of such damage.
+[para] Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
 
-[para] The authors and distributors specifically disclaim any warranties, including, but
-not limited to, the implied warranties of merchantability, fitness for a particular
-purpose, and non-infringement.
+[list_begin enumerated]
 
-This software is provided on an "as is" basis, and the authors and distributors have no
-obligation to provide maintenance, support, updates, enhancements, or modifications.
+[enum] Redistributions of source code must retain the above copyright notice, this
+list of conditions and the following disclaimer.
 
-[para] [strong {RESTRICTED RIGHTS}]: Use, duplication or disclosure by the government is
-subject to the restrictions as set forth in subparagraph (c) (1) (ii) of the Rights in
-Technical Data and Computer Software Clause as DFARS 252.227-7013 and FAR 52.227-19.
+[enum] Redistributions in binary form must reproduce the above copyright notice,
+this list of conditions and the following disclaimer in the documentation
+and/or other materials provided with the distribution.
+
+[enum] Neither the name of the copyright holder nor the names of its
+contributors may be used to endorse or promote products derived from
+this software without specific prior written permission.
+
+[list_end]
+
+[para] THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 [vset CATEGORY mndoc]
 [manpage_end]

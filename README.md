@@ -21,11 +21,11 @@ languages supporting either multiline comments or at least the # character for c
     * support for Syntax highlighting using Javascript highlighters
     * support for embedded LaTeX equations using mathjax
     * header, footer support
-    * base64 encoding of local images, stylsheets and Javascript files for 
+    * base64 encoding of local images and stylesheets for 
       creating standalone applications during conversion from Markdown
       or in already existing HTML files
     * support for image attributes like width
-    * suppport for styling via YAML header
+    * support for styling via YAML header
     * omission of HTML header and footer if requested
     * refresh option for development  
 
@@ -39,7 +39,7 @@ Since version 0.9.0 it as well supports embedding LaTeX equations using the
 * Manual page [mndoc.html](http://htmlpreview.github.io/?https://github.com/mittelmark/mndoc/blob/master/mndoc/mndoc.html)
 * Manual page as PDF [mndoc.pdf](https://github.com/mittelmark/mndoc/releases/latest/download/mndoc.pdf)
 
-Please note that Mathjax and Hilightjs do not work in these manuals, there only work in HTML page.
+Please note that MathJax and highlight.js do not work in these manuals, they only work in the HTML page.
 
 Here an example of an embedded mndoc comment for a Python script:
 
@@ -67,9 +67,9 @@ def hw(n=3):
     
 ```
 
-Markdown  documentation  comments for programming languages which have not the
-hash  character  as a  comment  character  can be  embedded  using  multliline
-comments. Here an example for a C or C++ programm:
+Markdown documentation comments for programming languages which have not the
+hash character as a comment character can be embedded using multiline
+comments. Here an example for a C or C++ program:
 
 ```c
 /*
@@ -91,7 +91,7 @@ itself.
 These comments are used to create the manual which can be seen here: 
 [mndoc.html](http://htmlpreview.github.io/?https://github.com/mittelmark/mndoc/blob/master/mndoc/mndoc.html).
 
-An example using syntax hilighting can be seen here (seems not to work in preview mode):
+An example using syntax highlighting can be seen here (seems not to work in preview mode):
 
 * [hilight.md](https://github.com/mittelmark/mndoc/blob/master/examples/hilight.md)
 * [hilight.html](http://htmlpreview.github.io/?https://github.com/mittelmark/mndoc/blob/master/examples/hilight.html).
@@ -119,7 +119,7 @@ bash -c "$(curl -fsSL https://github.com/mittelmark/mndoc/releases/latest/downlo
 
 - adding header and footer support
 - adding javascript (single and multiple file support)
-- adding code highlight support [highligthjs](https://highlightjs.org/)
+- adding code highlight support [highlight.js](https://highlightjs.org/)
 - adding equation support using [MathJax](https://www.mathjax.org/)
 - adding css support for multiple files
 - adding standalone  binary  mndoc.bin  with  embedded  Tcllib  packages  for
@@ -134,6 +134,9 @@ bash -c "$(curl -fsSL https://github.com/mittelmark/mndoc/releases/latest/downlo
 
 ## ChangeLog
 
+- 2026-10-27 Release 0.15.5
+    - fix YAML date handling for non-ISO date formats; unknown dates are kept
+      as written instead of aborting the conversion
 - 2026-01-28 Release 0.15.4
     - fixing LICENSE hints, extending pipe fix
 - 2026-01-20 Release 0.15.3
@@ -152,7 +155,7 @@ bash -c "$(curl -fsSL https://github.com/mittelmark/mndoc/releases/latest/downlo
 - 2025-10-26 Release 0.14.1
     - file application cache file right fix for multiple users on the same machine try to run mndoc
 - 2025-10-23 Release 0.14.0
-    - adding support for inlining local images and stylesheets into exisiting
+    - adding support for inlining local images and stylesheets into existing
        HTML files
     - adding option --bodyonly to omit HTML header and footer as well as body tag
     - support for style section in YAML header for instance to install and use Bunny fonts
@@ -188,14 +191,14 @@ bash -c "$(curl -fsSL https://github.com/mittelmark/mndoc/releases/latest/downlo
     - adding --header and --footer options
     - adding --javascript option, single oder multiple files
     - extending --css option, single or multiple files
-    - support for syntax highlighting using hilightjs Javascript
+    - support for syntax highlighting using highlight.js Javascript
     - fixing issues with triple backtick codes, by fixing markdown package
        (issue is done on tcllib)
     - adding example file in examples to show syntax highlighting
     - adding Makefile to build standalone application using tpack (80kb)
 - 2023-09-07 Release 0.7.1 - image tag fix 
 - 2022-04-01 Release 0.7.0
-    - removing features to simplify the code, so removed plugin support, underline placeholder and sorting facilitites to reduce code size
+    - removing features to simplify the code, so removed plugin support, underline placeholder and sorting facilities to reduce code size
     - creating tcllib compatible manual page
     - aku changes and fixes to include mndoc into tcllib's infrastructure
     - splitting of command line app to the apps folder
@@ -211,7 +214,7 @@ bash -c "$(curl -fsSL https://github.com/mittelmark/mndoc/releases/latest/downlo
 - 2020-12-30 Release 0.5 (rox2md @section support with preformatted, emph and strong/bold)
 - 2020-11-11 command line option  --run with seconds
 - 2020-11-10 Release 0.4
-- 2020-11-09 argument --run supprt
+- 2020-11-09 argument --run support
 - 2020-09-01 Roxygen2 plugin
 - 2020-02-27 support for \_\_DATE\_\_, \_\_PKGNAME\_\_, \_\_PKGVERSION\_\_ macros  in Tcl code based on package provide line
 - 2020-02-26 Release 0.3 to fossil
@@ -234,12 +237,12 @@ bash -c "$(curl -fsSL https://github.com/mittelmark/mndoc/releases/latest/downlo
     - [x] css files (v.0.14.0)
     - [ ] javascript files
 - [x] allow linking of https://european-alternatives.eu/de/produkt/bunny-fonts  (v0.14.0)  
-- [ ] provide a very minimal  hilighter  for standard  keywords,  comments and
+- [ ] provide a very minimal highlighter for standard keywords, comments and
       strings at least for Python and R based on this article [How to Create and Use a Syntax Highlighter using JavaScript?](https://www.geeksforgeeks.org/javascript/how-to-create-and-use-a-syntax-highlighter-using-javascript/)
 
 ## Author
 
-@ 2020-2025 - Detlef  Groth,  University  of  Potsdam,  Germany  -
+@ 2019-2026 - Detlef  Groth,  University  of  Potsdam,  Germany  -
   dgroth(at)uni(minus)potsdam(dot)de
 
 ## License
@@ -248,7 +251,7 @@ bash -c "$(curl -fsSL https://github.com/mittelmark/mndoc/releases/latest/downlo
 ```
 BSD 3-Clause License
 
-Copyright (c) 2020-2025, Detlef Groth, University of Potsdam, Germany
+Copyright (c) 2019-2026, Detlef Groth, University of Potsdam, Germany
 
 All rights reserved.
 
