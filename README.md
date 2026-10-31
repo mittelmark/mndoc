@@ -4,7 +4,7 @@
 [![Release](https://img.shields.io/github/v/release/mittelmark/mndoc.svg?label=current+release)](https://github.com/mittelmark/mndoc/releases)
 ![Downloads](https://img.shields.io/github/downloads/mittelmark/mndoc/total)
 ![Commits](https://img.shields.io/github/commits-since/mittelmark/mndoc/latest)
-[![DocuHTML](https://img.shields.io/badge/DocuHTML-blue)](http://htmlpreview.github.io/?https://github.com/mittelmark/mndoc/blob/master/mndoc/mndoc.html)
+[![DocuHTML](https://img.shields.io/badge/DocuHTML-blue)](http://htmlpreview.github.io/?https://github.com/mittelmark/mndoc/blob/main/mndoc/mndoc.html)
 [![DocuPDF](https://img.shields.io/badge/DocuPDF-blue)](https://github.com/mittelmark/mndoc/releases/latest/download/mndoc.pdf)
 
 Markdown to HTML converter and source code documentation tool using embedded Markdown for programming
@@ -39,10 +39,10 @@ Since version 0.9.0 it as well supports embedding LaTeX equations using the
 [MathJax Javascript library](https://www.mathjax.org/)
 
 * current code and manuals:  [mndoc.zip](https://github.com/mittelmark/mndoc/archive/refs/heads/main.zip)
-* Manual page [mndoc.html](http://htmlpreview.github.io/?https://github.com/mittelmark/mndoc/blob/master/mndoc/mndoc.html)
+* Manual page [mndoc.html](http://htmlpreview.github.io/?https://github.com/mittelmark/mndoc/blob/main/mndoc/mndoc.html)
 * Manual page as PDF [mndoc.pdf](https://github.com/mittelmark/mndoc/releases/latest/download/mndoc.pdf)
 * Manual page rendered with the book stylesheet:
-  [manual-book.html](http://htmlpreview.github.io/?https://github.com/mittelmark/mndoc/blob/master/examples/manual-book.html),
+  [manual-book.html](http://htmlpreview.github.io/?https://github.com/mittelmark/mndoc/blob/main/examples/manual-book.html),
   [manual-book.pdf](https://github.com/mittelmark/mndoc/raw/main/examples/manual-book.pdf)
 
 Please note that MathJax and highlight.js do not work in these manuals, they only work in the HTML page.
@@ -95,17 +95,17 @@ A more extended example can be seen within the script
 itself. 
 
 These comments are used to create the manual which can be seen here: 
-[mndoc.html](http://htmlpreview.github.io/?https://github.com/mittelmark/mndoc/blob/master/mndoc/mndoc.html).
+[mndoc.html](http://htmlpreview.github.io/?https://github.com/mittelmark/mndoc/blob/main/mndoc/mndoc.html).
 
 An example using syntax highlighting can be seen here (seems not to work in preview mode):
 
-* [hilight.md](https://github.com/mittelmark/mndoc/blob/master/examples/hilight.md)
-* [hilight.html](http://htmlpreview.github.io/?https://github.com/mittelmark/mndoc/blob/master/examples/hilight.html).
+* [hilight.md](https://github.com/mittelmark/mndoc/blob/main/examples/hilight.md)
+* [hilight.html](http://htmlpreview.github.io/?https://github.com/mittelmark/mndoc/blob/main/examples/hilight.html).
 
 An example using equation embedding can be seen here (seems not to work in preview mode):
 
-* [equations.md](https://github.com/mittelmark/mndoc/blob/master/examples/equations.md)
-* [equations.html](http://htmlpreview.github.io/?https://github.com/mittelmark/mndoc/blob/master/examples/equations.html).
+* [equations.md](https://github.com/mittelmark/mndoc/blob/main/examples/equations.md)
+* [equations.html](http://htmlpreview.github.io/?https://github.com/mittelmark/mndoc/blob/main/examples/equations.html).
 
 ## Installation
 
