@@ -278,5 +278,10 @@ Before tagging a release, make sure:
 
 - [ ] `make app` and `make test` pass, and `bin/mndoc-<version>.bin` is current.
 - [ ] `mndoc/mndoc.html` and `mndoc/mndoc.pdf` are regenerated (version/date updated).
+- [ ] `make docu-book` was run if the manual or `book.css` changed.
 - [ ] `bin/install-mndoc.sh` works on a fresh account (`~/.local/bin` is created).
-- [ ] The GitHub release attaches `mndoc-<version>.bin`, `install-mndoc.sh`, and `mndoc.pdf`.
+- [ ] The GitHub release attaches `mndoc-<version>.bin`, `install-mndoc.sh`, `mndoc.pdf`
+      and the book stylesheet showcase `manual-book.html`/`manual-book.pdf`.
+- [ ] The release is created as a prerelease and marked as the latest release only
+      after the assets were checked: the installer and the README badges follow
+      `releases/latest`, so nothing changes for users until then.

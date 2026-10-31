@@ -26,6 +26,9 @@ languages supporting either multiline comments or at least the # character for c
       or in already existing HTML files
     * support for image attributes like width
     * support for styling via YAML header
+    * book.css, a flat, greyish stylesheet for traditional book style
+      documents, marking standalone images as figures and honoring
+      explicit image sizes
     * omission of HTML header and footer if requested
     * refresh option for development  
 
@@ -38,6 +41,9 @@ Since version 0.9.0 it as well supports embedding LaTeX equations using the
 * current code and manuals:  [mndoc.zip](https://github.com/mittelmark/mndoc/archive/refs/heads/main.zip)
 * Manual page [mndoc.html](http://htmlpreview.github.io/?https://github.com/mittelmark/mndoc/blob/master/mndoc/mndoc.html)
 * Manual page as PDF [mndoc.pdf](https://github.com/mittelmark/mndoc/releases/latest/download/mndoc.pdf)
+* Manual page rendered with the book stylesheet:
+  [manual-book.html](http://htmlpreview.github.io/?https://github.com/mittelmark/mndoc/blob/master/examples/manual-book.html),
+  [manual-book.pdf](https://github.com/mittelmark/mndoc/raw/main/examples/manual-book.pdf)
 
 Please note that MathJax and highlight.js do not work in these manuals, they only work in the HTML page.
 
