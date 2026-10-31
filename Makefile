@@ -91,17 +91,33 @@ test:
 	  '![e](dot.png){width="50%"}' '' > "$$tmp/size.md"; \
 	cp examples/dot.png "$$tmp/dot.png"; \
 	tclsh apps/mndoc "$$tmp/size.md" "$$tmp/size.html"; \
-	grep -q 'width="800" style="width:800px"' "$$tmp/size.html"; \
-	grep -q 'width="150" style="width:150px"' "$$tmp/size.html"; \
+	grep -q 'alt="a" width="800" style="width:800px"' "$$tmp/size.html"; \
+	grep -q 'alt="b" width="150" style="width:150px"' "$$tmp/size.html"; \
 	! grep -q 'width="150px"' "$$tmp/size.html"; \
-	grep -q 'width="600" height="400" style="width:600px;height:400px"' "$$tmp/size.html"; \
-	grep -q 'height="200" style="height:200px"' "$$tmp/size.html"; \
-	grep -q 'style="width:50%"' "$$tmp/size.html"; \
+	grep -q 'alt="c" width="600" height="400" style="width:600px;height:400px"' "$$tmp/size.html"; \
+	grep -q 'alt="d" height="200" style="height:200px"' "$$tmp/size.html"; \
+	grep -qE 'alt="e"[[:space:]]+style="width:50%"' "$$tmp/size.html"; \
 	! grep -q 'width="50%"' "$$tmp/size.html"; \
 	echo "  ... image width translation passing"; \
 	grep -q 'max-width: 1000px' "$$tmp/size.html"; \
 	! grep -q 'max-width: 800px' "$$tmp/size.html"; \
 	echo "  ... 1000px measure passing"; \
+	printf '%s\n' '---' 'title: T' '---' '' \
+	  'prose with an inline ![i](dot.png) mark' '' \
+	  '![f](dot.png)' '' \
+	  'lazy text' '![l](dot.png)' '' \
+	  '- ![b](dot.png)' '' > "$$tmp/fig.md"; \
+	cp examples/dot.png "$$tmp/dot.png"; \
+	tclsh apps/mndoc "$$tmp/fig.md" "$$tmp/fig.html" --base64 false; \
+	grep -qE 'alt="f" data-figure' "$$tmp/fig.html"; \
+	grep -qE 'alt="b" data-figure' "$$tmp/fig.html"; \
+	! grep -qE 'alt="i" data-figure' "$$tmp/fig.html"; \
+	! grep -qE 'alt="l" data-figure' "$$tmp/fig.html"; \
+	tclsh apps/mndoc examples/extern.html "$$tmp/fig-html.html"; \
+	grep -qE 'data-figure ?/?>' "$$tmp/fig-html.html"; \
+	tclsh apps/mndoc examples/extern.html "$$tmp/fig-html-plain.html" --base64 false; \
+	grep -qE 'data-figure ?/?>' "$$tmp/fig-html-plain.html"; \
+	echo "  ... figure marking passing"; \
 	printf '%s\n' '---' 'title: test-title' 'author: NN' 'date: 2024-11-20' '---' '' 'hello' '' > "$$tmp/test.md"; \
 	tclsh apps/mndoc "$$tmp/test.md" "$$tmp/test.html"; \
 	grep -q '<h1 class="title">test-title</h1>' "$$tmp/test.html"; \

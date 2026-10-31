@@ -283,23 +283,28 @@ img {
     border: 1px solid var(--rule);
     vertical-align: middle;    /* keep inline images in the text flow */
 }
-/* A paragraph holding nothing but one image is a figure: centre it and let
-   it use the full measure. Put every real illustration on a line of its own. */
-p:has(> img:only-child) {
-    margin: 1.6em 0;
-    text-align: center;
+/* mndoc marks an image that is the only content of its paragraph or list
+   item with data-figure, since CSS cannot tell a figure from an inline image
+   by itself: text nodes cannot be selected, so a lone plate and one sitting
+   mid-sentence look identical to a selector. The marked plate takes its own
+   line, centred, up to the full measure. */
+img[data-figure] {
+    display: block;
+    margin: 1.6em auto;
 }
 /* An image sharing a paragraph with text is an inline ornament: hold it to
    about the text size so it never shatters the justified line -- but only
    while no explicit width was given, since that width is the author's own
-   suggestion and must be taken as the default instead. */
-p:not(:has(> img:only-child)) img:not([width]):not([style*="width"]) {
+   suggestion and must be taken as the default instead. The :where() keeps
+   this rule at plain 'img' specificity, so a hand-written <figure> can opt
+   out below without an elaborate selector. */
+img:where(:not([data-figure]):not([width]):not([style*="width"])) {
     max-height: 3em;
     width: auto;
     vertical-align: text-bottom;
 }
 figure { margin: 1.6em 0; text-align: center; }
-figure img { display: block; margin: 0 auto; max-width: 100%; }
+figure img { display: block; margin: 0 auto; max-width: 100%; max-height: none; }
 figcaption {
     margin-top: .5em;
     color: var(--ink-faint);

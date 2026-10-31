@@ -419,6 +419,72 @@ proc ::mndoc::img-size-tag {tag} {
     return $tag
 }
 
+# Put the data-figure marker at the end of an <img> opening tag, just before
+# the bracket -- and before a trailing slash too, so a self-closing tag stays
+# well formed. A tag that already carries the marker is left alone.
+proc ::mndoc::mark-img {img} {
+    if {[regexp {data-figure} $img] || ![regexp -indices {<img [^>]*>} $img span]} {
+        return $img
+    }
+    lassign $span start end
+    set tag [string range $img $start $end]
+    set tag [string range $tag 0 end-1]             ;# strip the closing bracket
+    if {[string match "*/" $tag]} {
+        set tag "[string trimright [string range $tag 0 end-1]] data-figure/>"
+    } else {
+        set tag "[string trimright $tag] data-figure>"
+    }
+    return [string replace $img $start $end $tag]
+}
+
+# Mark every image that is the only content of its paragraph or list item.
+#
+# Markdown has no notion of "this image stands alone", and CSS cannot recover
+# it either: text nodes cannot be selected, so a plate sitting on a line of
+# its own and one buried mid-sentence look identical to a selector. mndoc can
+# see both, so it tags the lone ones with data-figure and book.css keys its
+# figure layout off that marker instead of guessing. Nothing else interprets
+# it, so it is inert in every other stylesheet.
+#
+# The decision is taken on the converted HTML, not on the markdown line: a
+# text line and an image line without a blank between them are one paragraph,
+# and that image is still an inline one. tcllib markdown wraps even a lone
+# raw <img> in <p>, so paragraph (and list item) content is the reliable test.
+proc ::mndoc::mark-figures {html} {
+    set re {(<(?:p|li)(?:\s[^>]*)?>)([ \t\r\n]*)(<img [^>]*>(?:</img>)?)([ \t\r\n]*)(</(?:p|li)>)}
+    set pos 0
+    set out ""
+    while {[regexp -indices -start $pos $re $html whole tagopen ws1 img ws2 tagclose]} {
+        lassign $tagopen o1 o2
+        lassign $ws1 w1 w2
+        lassign $img i1 i2
+        lassign $ws2 x1 x2
+        lassign $tagclose c1 c2
+        append out [string range $html $pos [expr {$o1 - 1}]]
+        append out [string range $html $o1 $o2]                       ;# <p> or <li>
+        append out [string range $html $w1 $w2]                       ;# whitespace
+        append out [mark-img [string range $html $i1 $i2]]
+        append out [string range $html $x1 $x2]                       ;# whitespace
+        append out [string range $html $c1 $c2]                       ;# </p> or </li>
+        set pos [expr {[lindex $whole 1] + 1}]
+    }
+    append out [string range $html $pos end]
+    return $out
+}
+
+# The same for raw HTML input, which never sees markdown: an <img> alone on
+# its line (optionally inside a blockquote) is a figure.
+proc ::mndoc::mark-figures-html {html} {
+    set out {}
+    foreach line [split $html "\n"] {
+        if {[regexp {^[ \t]*(?:>[ \t]*)*<img [^>]*>[ \t]*$} $line]} {
+            set line [mark-img $line]
+        }
+        lappend out $line
+    }
+    return [join $out \n]
+}
+
 proc ::mndoc::inline-assets {filename html} {
     set htm ""
     foreach line [split $html "\n"] {
@@ -480,6 +546,11 @@ proc ::mndoc::mndoc {filename outfile args} {
                 return -code error "Cannot open $filename: $infh"
             } else {
                 set html [read $infh]
+                # Mark standalone images here too: the marker is about layout
+                # (book.css), not about embedding, so it does not depend on
+                # --base64.
+                set html [mark-figures-html $html]
+                set html [mark-figures $html]
                 if {$arg(--base64)} {
                     set html [inline-assets $filename $html]
                 }
@@ -694,6 +765,7 @@ proc ::mndoc::mndoc {filename outfile args} {
             append style "\n<style>\n[dict get $yamldict style]</style>"
         }
         set html [Markdown::convert $mdhtml]
+        set html [mndoc::mark-figures $html]
         if {$arg(--base64)} {
             set html [mndoc::inline-assets $filename $html]
         }
@@ -1095,6 +1167,13 @@ set HELP [string map [list "\n    " "\n"] {
 #' as weasyprint ignore them completely and any stylesheet rule outranks them.
 #' The author's size is thus taken as the default, while a stylesheet may still
 #' apply a ceiling of its own, for instance *max-width: 100%*.
+#'
+#' An image that is the only content of its paragraph or list item, one that
+#' stands alone, is additionally marked with a *data-figure* attribute in the
+#' output. CSS cannot make that distinction itself: text nodes cannot be
+#' selected, so an image sitting mid-sentence looks exactly like a lone one to
+#' a selector. The bundled *book.css* uses the marker to set such a plate on
+#' its own line; the marker is inert in any other stylesheet.
 #'
 #' Here the output:
 #'
