@@ -273,9 +273,13 @@ th, td { padding: .45em .7em; }
 
 /* --- figures / images ---------------------------------------------------- */
 
+/* Sizes the author writes explicitly ({width="800"}) are re-stated by mndoc
+   as an inline style, which outranks everything below. What follows is only
+   the default that applies while the writer stays silent: a ceiling of the
+   measure, and -- for an image sharing a paragraph with text -- a cap at the
+   text height. No height is ever forced, so an explicit height survives too. */
 img {
     max-width: 100%;
-    height: auto;
     border: 1px solid var(--rule);
     vertical-align: middle;    /* keep inline images in the text flow */
 }
@@ -286,8 +290,10 @@ p:has(> img:only-child) {
     text-align: center;
 }
 /* An image sharing a paragraph with text is an inline ornament: hold it to
-   about the text size so it never shatters the justified line. */
-p:not(:has(> img:only-child)) img {
+   about the text size so it never shatters the justified line -- but only
+   while no explicit width was given, since that width is the author's own
+   suggestion and must be taken as the default instead. */
+p:not(:has(> img:only-child)) img:not([width]):not([style*="width"]) {
     max-height: 3em;
     width: auto;
     vertical-align: text-bottom;

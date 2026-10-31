@@ -4,8 +4,12 @@
 @import url('https://fonts.bunny.net/css?family=Ubuntu+Mono&display=swap'); /* ' */
 
 body {
-    margin-left: 10%; margin-right: 10%;
-    max-width: 90%;
+    /* a comfortable reading measure, centred: at most 1000px of text, with
+       the classic 10% of breathing room kept on either side by the padding
+       (margins cannot be percentage and auto at the same time as a cap) */
+    margin: 0 auto;
+    padding: 0 10%;
+    max-width: 1000px;
     font-family: "Andika", sans-serif;
 }
 pre {

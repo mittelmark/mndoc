@@ -240,11 +240,11 @@ variable htmlstart [string map $deindent {
             margin: 0 auto;
 	}
         div.document-header {
-            max-width: 800px;
+            max-width: 1000px;
             text-align: center;
         }
-        hr { max-width: 800px; }
-        p, ul { max-width: 800px; }        
+        hr { max-width: 1000px; }
+        p, ul { max-width: 1000px; }        
         img { margin-left: 25px; }
 
         h1.title, p.author, p.date, h2.author, h2.date {
@@ -257,7 +257,7 @@ variable htmlstart [string map $deindent {
             border-bottom: 2px solid #CCCCCC; 
             font-family: monospace;
             margin-left: 30px;
-            max-width: 800px;
+            max-width: 1000px;
         }
         code { font-size: 80% ;}
         pre:has(code) {
@@ -361,6 +361,64 @@ proc ::mndoc::img-replace {line filename} {
     } 
     return $line
 }
+
+# Restate an explicit image size as an inline style.
+#
+# The markdown image syntax lets an author suggest a size, as in
+# ![dot](dot.png){width="800"}. A unitless value means pixels, but the
+# width and height *attributes* are only presentational hints: weasyprint
+# ignores them altogether and any stylesheet rule outranks them, so the
+# requested size would silently be lost. Restating the size as an inline
+# style keeps the attribute -- normalised to the unitless integer the HTML
+# spec requires, since width="800px" is not valid and would be dropped by
+# browsers -- and adds the declaration that every renderer honours, which
+# is also what makes the author's suggestion win over stylesheet defaults.
+proc ::mndoc::img-size {line} {
+    set pos 0
+    set out ""
+    while {[regexp -indices -start $pos {<img [^>]*>} $line match]} {
+        lassign $match s e
+        append out [string range $line $pos [expr {$s - 1}]]
+        append out [::mndoc::img-size-tag [string range $line $s $e]]
+        set pos [expr {$e + 1}]
+    }
+    append out [string range $line $pos end]
+    return $out
+}
+
+proc ::mndoc::img-size-tag {tag} {
+    set decl {}
+    # plain numbers and 'px' both mean pixels
+    foreach {prop re} {
+        width  {width[ \t]*=[ \t]*"([0-9]+(?:\.[0-9]+)?)(px)?"}
+        height {height[ \t]*=[ \t]*"([0-9]+(?:\.[0-9]+)?)(px)?"}
+    } {
+        if {[regexp -nocase $re $tag -> num unit]} {
+            lappend decl "$prop:${num}px"
+            set tag [regsub -nocase $re $tag "$prop=\"$num\""]
+        }
+    }
+    # a percentage cannot be carried by the HTML attribute at all
+    foreach {prop re} {
+        width  {width[ \t]*=[ \t]*"([0-9]+(?:\.[0-9]+)?)%"}
+        height {height[ \t]*=[ \t]*"([0-9]+(?:\.[0-9]+)?)%"}
+    } {
+        if {[regexp -nocase $re $tag -> num]} {
+            lappend decl "$prop:${num}%"
+            set tag [regsub -nocase $re $tag ""]
+        }
+    }
+    if {[llength $decl]} {
+        set css [join $decl ";"]
+        if {[regexp {style[ \t]*=[ \t]*"([^"]*)"} $tag -> have]} {
+            set tag [regsub {style[ \t]*=[ \t]*"[^"]*"} $tag "style=\"$have;$css\""]
+        } else {
+            set tag [regsub {>$} $tag " style=\"$css\">"]
+        }
+    }
+    return $tag
+}
+
 proc ::mndoc::inline-assets {filename html} {
     set htm ""
     foreach line [split $html "\n"] {
@@ -528,6 +586,7 @@ proc ::mndoc::mndoc {filename outfile args} {
                 set line [regsub -all {!\[(.+?)\]\((.+?)\)\{(.+?)\}} $line "<img src=\"\\2\" alt=\"\\1\" \\3></img>"]
                 set line [regsub -all {!\[\]\((.+?)\)\{(.+?)\}} $line "<img src=\"\\1\" \\2></img>"]            
                 set line [regsub -all {!\[\]\((.+?)\)} $line "<img src=\"\\1\"></img>"]
+                set line [::mndoc::img-size $line]
                 set line [regsub {^- \[ \]} $line "- AMPERSAND#9744" ] 
                 set line [regsub {^- \[x\]} $line "- AMPERSAND#9745"]
             }
@@ -1028,6 +1087,14 @@ set HELP [string map [list "\n    " "\n"] {
 #' ```
 #' ![dot image](../examples/dot.png){width="150px"}
 #' ```
+#'
+#' A unitless value means pixels as well, so *width="150"* and *width="150px"*
+#' are the same suggestion, and a percentage like *width="50%"* is accepted too.
+#' mndoc restates the size as an inline style, because the width and height
+#' *attributes* on their own are only presentational hints: PDF renderers such
+#' as weasyprint ignore them completely and any stylesheet rule outranks them.
+#' The author's size is thus taken as the default, while a stylesheet may still
+#' apply a ceiling of its own, for instance *max-width: 100%*.
 #'
 #' Here the output:
 #'

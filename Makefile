@@ -83,6 +83,25 @@ test:
 	tclsh apps/mndoc examples/image.md "$$tmp/image.html" --base64 false; \
 	! grep -q 'data:image/png;base64' "$$tmp/image.html"; \
 	echo "  ... base64 markdown passing"; \
+	printf '%s\n' '---' 'title: T' '---' '' \
+	  '![a](dot.png){width="800"}' '' \
+	  '![b](dot.png){width="150px"}' '' \
+	  '![c](dot.png){width="600" height="400"}' '' \
+	  '![d](dot.png){height="200"}' '' \
+	  '![e](dot.png){width="50%"}' '' > "$$tmp/size.md"; \
+	cp examples/dot.png "$$tmp/dot.png"; \
+	tclsh apps/mndoc "$$tmp/size.md" "$$tmp/size.html"; \
+	grep -q 'width="800" style="width:800px"' "$$tmp/size.html"; \
+	grep -q 'width="150" style="width:150px"' "$$tmp/size.html"; \
+	! grep -q 'width="150px"' "$$tmp/size.html"; \
+	grep -q 'width="600" height="400" style="width:600px;height:400px"' "$$tmp/size.html"; \
+	grep -q 'height="200" style="height:200px"' "$$tmp/size.html"; \
+	grep -q 'style="width:50%"' "$$tmp/size.html"; \
+	! grep -q 'width="50%"' "$$tmp/size.html"; \
+	echo "  ... image width translation passing"; \
+	grep -q 'max-width: 1000px' "$$tmp/size.html"; \
+	! grep -q 'max-width: 800px' "$$tmp/size.html"; \
+	echo "  ... 1000px measure passing"; \
 	printf '%s\n' '---' 'title: test-title' 'author: NN' 'date: 2024-11-20' '---' '' 'hello' '' > "$$tmp/test.md"; \
 	tclsh apps/mndoc "$$tmp/test.md" "$$tmp/test.html"; \
 	grep -q '<h1 class="title">test-title</h1>' "$$tmp/test.html"; \
