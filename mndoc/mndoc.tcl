@@ -532,11 +532,35 @@ proc ::mndoc::mndoc {filename outfile args} {
     }
     if {$arg(--css) ne ""} {
         set css ""
+        set docdir [file dirname $filename]
         foreach cs [split $arg(--css) ","] {
-            append css   "\n<link rel=\"stylesheet\" href=\"$cs\">\n"
-            if {![file exists $cs] && [file exists [file join [file dirname $scriptfile] $cs]]} {
-                file copy [file join [file dirname $scriptfile] $cs] $cs
+            set href $cs
+            set bundle [file join [file dirname $scriptfile] $cs]
+            if {$arg(--base64)} {
+                # Embedding (inline-assets) resolves local stylesheets relative
+                # to the document path, not the current working directory. To
+                # make embedding independent of where the process was started,
+                # resolve a local stylesheet to an absolute path here; the
+                # base64 data replaces the <link> and the path never survives
+                # into the output.
+                foreach cand [list [file join $docdir $cs] [file normalize $cs] $bundle] {
+                    if {![regexp {^(https?:)?//} $cand] && [file exists $cand]} {
+                        set href [file normalize $cand]
+                        break
+                    }
+                }
+            } else {
+                # External-link mode: keep a relative href that stays valid
+                # next to the output file. Fall back to the stylesheet bundled
+                # with mndoc by copying it next to the output (never into the
+                # current working directory).
+                if {![file exists [file join $docdir $cs]] && ![file exists $cs] && [file exists $bundle]} {
+                    set outdir [file dirname $outfile]
+                    if {$outfile eq "-" || $outfile eq ""} {set outdir "."}
+                    file copy $bundle [file join $outdir $cs]
+                }
             }
+            append css   "\n<link rel=\"stylesheet\" href=\"$href\">\n"
         }
         dict set yamldict css $css
     }

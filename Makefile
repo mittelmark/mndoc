@@ -108,6 +108,13 @@ test:
 	! grep -q '<link rel="stylesheet" href="css/style.css">' "$$tmp/docs/out.html"; \
 	grep -q 'data:text/css;base64' "$$tmp/docs/out.html"; \
 	echo "  ... nested css inlining passing"; \
+	printf '%s\n' '# T' '' 'text' '' > "$$tmp/docs/in2.md"; \
+	rm -f tmdoc.css; \
+	tclsh apps/mndoc "$$tmp/docs/in2.md" "$$tmp/docs/out2.html" --css tmdoc.css; \
+	grep -q 'data:text/css;base64' "$$tmp/docs/out2.html"; \
+	! grep -q 'href="tmdoc.css"' "$$tmp/docs/out2.html"; \
+	! test -e tmdoc.css; \
+	echo "  ... document-relative css fallback passing"; \
 	tclsh apps/mndoc "$$tmp/test.md" "$$tmp/bodyonly.html" --bodyonly true; \
 	! grep -q '<!DOCTYPE html>' "$$tmp/bodyonly.html"; \
 	grep -q '<p>hello</p>' "$$tmp/bodyonly.html"; \
