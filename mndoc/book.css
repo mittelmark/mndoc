@@ -1,0 +1,348 @@
+/* ---------------------------------------------------------------------------
+   book.css -- a flat, greyish stylesheet for a traditional book layout.
+
+   Mndoc replaces its built-in base style with this file whenever you pass
+   --css book.css, so everything below is self-contained: no remote @import,
+   no external fonts. It therefore survives --base64 true (the file is inlined
+   as data and the page renders fully offline) and prints cleanly.
+
+   Design notes:
+     - flat    : no shadows, no gradients, no rounded corners.
+     - greyish : a single neutral grey palette, one restrained ink tone.
+     - book    : serif face, justified text, a comfortable reading measure,
+                 restrained headings, understated links, indented quotes.
+   --------------------------------------------------------------------------- */
+
+:root {
+    --paper:   #f4f4f2;  /* page background   */
+    --panel:   #eaeae7;  /* code / quote fill */
+    --panel-2: #e2e2df;  /* alt panel tone    */
+    --ink:     #2b2b29;  /* primary text      */
+    --ink-soft:#5f5f5c;  /* secondary text    */
+    --ink-faint:#8a8a86; /* labels / captions */
+    --rule:    #d4d4d0;  /* hairlines         */
+    --rule-2:  #c3c3be;  /* stronger rules    */
+    --link:    #4c4c49;  /* link colour       */
+
+    --serif: Georgia, "Times New Roman", Times, "Nimbus Roman", serif;
+    --mono:  "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    --measure: 40rem;    /* ~65-70 characters per line */
+}
+
+* { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+    margin: 0 auto;
+    padding: 4rem 1.5rem 5rem;
+    max-width: var(--measure);
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--serif);
+    font-size: 1.0625rem;      /* ~17px */
+    line-height: 1.65;
+    text-align: justify;
+    text-justify: inter-word;
+    hyphens: auto;
+    font-kerning: normal;
+}
+
+/* --- title page ---------------------------------------------------------- */
+
+.document-header {
+    max-width: var(--measure);
+    margin: 8vh auto 3rem;
+    padding-bottom: 2rem;
+    text-align: center;
+    border-bottom: 1px solid var(--rule);
+}
+
+.document-header .title,
+h1.title {
+    width: 60%;                 /* short centred rule under the title */
+    margin: 0 auto .8em;
+    padding-bottom: .45em;
+    font-family: var(--serif);
+    font-weight: normal;
+    font-size: 2.1rem;
+    line-height: 1.2;
+    letter-spacing: .01em;
+    color: var(--ink);
+    text-align: center;
+    background: transparent;
+    border-bottom: 1px solid var(--rule);
+}
+
+/* the title page carries its own rules -- never the generic h1/h2 ones */
+.document-header h1,
+.document-header h2 {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.document-header .author,
+.document-header .date,
+p.author, p.date,
+h2.author, h2.date {
+    margin: .2em 0;
+    width: 100%;
+    font-size: .95rem;
+    font-weight: normal;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    text-align: center;
+    background: transparent;
+    border-bottom: 0;
+    padding-bottom: 0;
+}
+
+/* --- headings ------------------------------------------------------------ */
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--serif);
+    font-weight: normal;
+    color: var(--ink);
+    background: transparent;
+    text-align: left;
+    hyphens: none;             /* never break a heading */
+    line-height: 1.25;
+}
+
+h1 {
+    margin: 2.4em 0 .9em;
+    padding-bottom: .35em;
+    font-size: 1.85rem;
+    text-align: center;        /* chapter title */
+    letter-spacing: .01em;
+    border-bottom: 1px solid var(--rule);
+}
+
+h2 {
+    margin: 2em 0 .7em;
+    padding-bottom: .3em;
+    font-size: 1.4rem;
+    border-bottom: 1px solid var(--rule);
+}
+
+h3 { margin: 1.6em 0 .5em; font-size: 1.175rem; color: var(--ink); }
+h4 { margin: 1.4em 0 .4em; font-size: 1.05rem; color: var(--ink-soft); }
+h5, h6 {
+    margin: 1.3em 0 .4em;
+    font-size: .95rem;
+    color: var(--ink-faint);
+    letter-spacing: .08em;
+    text-transform: uppercase;
+}
+
+p { margin: 0 0 1em; }
+
+/* --- links --------------------------------------------------------------- */
+
+a {
+    color: var(--link);
+    text-decoration: underline;
+    text-underline-offset: .15em;
+    text-decoration-thickness: from-font;
+    background: transparent;
+}
+a:hover { color: var(--ink); }
+a:focus-visible { outline: 2px solid var(--ink-soft); outline-offset: 2px; }
+
+/* --- lists --------------------------------------------------------------- */
+
+ul, ol { margin: 0 0 1em; padding-left: 1.6em; }
+li { margin: .3em 0; }
+li::marker { color: var(--ink-faint); }
+ul ul, ol ol, ul ol, ol ul { margin: .25em 0 0; }
+
+dt { font-weight: bold; color: var(--ink); }
+dd { margin: 0 0 .5em 1.6em; }
+
+/* --- horizontal rule ----------------------------------------------------- */
+
+hr {
+    border: 0;
+    width: 40%;
+    margin: 2.75em auto;
+    border-top: 1px solid var(--rule-2);
+}
+
+/* --- block quotes -------------------------------------------------------- */
+
+blockquote {
+    margin: 1.2em 0;
+    padding: .1em 0 .1em 1.2em;
+    border-left: 3px solid var(--rule-2);
+    color: var(--ink-soft);
+    font-style: italic;
+}
+blockquote p:last-child { margin-bottom: 0; }
+
+/* --- code ---------------------------------------------------------------- */
+
+code, kbd, samp { font-family: var(--mono); font-size: .9em; }
+
+code {
+    background: var(--panel);
+    color: var(--ink);
+    padding: .1em .35em;
+    border: 1px solid var(--rule);
+    white-space: nowrap;
+}
+
+pre {
+    display: block;
+    margin: 1.2em 0;
+    padding: .9rem 1rem;
+    background: var(--panel);
+    color: var(--ink);
+    border: 1px solid var(--rule);
+    line-height: 1.5;
+    overflow-x: auto;
+    white-space: pre;
+    text-align: left;          /* never justify code */
+    hyphens: none;
+}
+pre code {
+    background: transparent;
+    border: 0;
+    padding: 0;
+    font-size: .9rem;
+    white-space: inherit;
+}
+
+/* tmdoc/tcl chunk classes, kept in the grey palette but still distinguishable */
+pre:has(code.tclcode),
+pre code.tclcode { background: var(--panel); }
+pre:has(code.tclin),
+pre code.tclin   { background: var(--panel); }
+pre:has(code.tclout),
+pre code.tclout  { background: var(--panel-2); }
+pre:has(code.tclerr),
+pre code.tclerr,
+pre:has(code.error),
+pre code.error {
+    background: var(--panel-2);
+    border-left: 3px solid var(--ink-faint);
+}
+
+kbd {
+    display: inline-block;
+    padding: .1em .4em;
+    background: var(--panel);
+    border: 1px solid var(--rule-2);
+    color: var(--ink);
+    font-size: .85em;
+}
+
+/* --- tables -------------------------------------------------------------- */
+
+table {
+    width: 100%;
+    margin: 1.4em 0;
+    border-collapse: collapse;
+    border: 0;
+    font-size: .975rem;
+    text-align: left;          /* tables read left-to-right */
+    hyphens: none;
+}
+caption {
+    caption-side: top;
+    margin-bottom: .5em;
+    color: var(--ink-faint);
+    font-size: .9rem;
+    font-style: italic;
+}
+thead th {
+    background: var(--panel-2);
+    color: var(--ink);
+    font-weight: bold;
+    border-top: 1px solid var(--rule-2);
+    border-bottom: 1px solid var(--rule-2);
+}
+tbody td, tbody th {
+    background: transparent;
+    border-bottom: 1px solid var(--rule);
+    vertical-align: top;
+}
+tbody tr:nth-child(even) td,
+tbody tr:nth-child(even) th { background: var(--panel); }
+th, td { padding: .45em .7em; }
+
+/* --- figures / images ---------------------------------------------------- */
+
+img {
+    max-width: 100%;
+    height: auto;
+    border: 1px solid var(--rule);
+    vertical-align: middle;    /* keep inline images in the text flow */
+}
+/* A paragraph holding nothing but one image is a figure: centre it and let
+   it use the full measure. Put every real illustration on a line of its own. */
+p:has(> img:only-child) {
+    margin: 1.6em 0;
+    text-align: center;
+}
+/* An image sharing a paragraph with text is an inline ornament: hold it to
+   about the text size so it never shatters the justified line. */
+p:not(:has(> img:only-child)) img {
+    max-height: 3em;
+    width: auto;
+    vertical-align: text-bottom;
+}
+figure { margin: 1.6em 0; text-align: center; }
+figure img { display: block; margin: 0 auto; max-width: 100%; }
+figcaption {
+    margin-top: .5em;
+    color: var(--ink-faint);
+    font-size: .9rem;
+    font-style: italic;
+    text-align: center;
+}
+
+/* --- inline emphasis & misc ---------------------------------------------- */
+
+strong, b { font-weight: bold; color: var(--ink); }
+em, i, cite, var { font-style: italic; }
+small { font-size: .875em; color: var(--ink-soft); }
+mark { background: var(--panel-2); color: var(--ink); padding: 0 .15em; }
+sub, sup { font-size: .75em; line-height: 0; }
+
+/* --- disclosure (details/summary) ---------------------------------------- */
+
+details {
+    margin: 1.2em 0;
+    padding: .6em .9em;
+    background: var(--panel);
+    border: 1px solid var(--rule);
+}
+summary { cursor: pointer; color: var(--ink); font-weight: bold; }
+details[open] summary { margin-bottom: .5em; }
+
+/* --- footer (if used) ---------------------------------------------------- */
+
+footer, .document-footer {
+    margin-top: 3rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--rule);
+    color: var(--ink-faint);
+    font-size: .875rem;
+    text-align: center;
+}
+
+/* --- print --------------------------------------------------------------- */
+
+@media print {
+    body {
+        background: #fff;
+        color: #000;
+        padding: 0;
+        font-size: 11pt;
+    }
+    a { color: #000; text-decoration: underline; }
+    pre, code, table, blockquote, details { background: #fff; }
+    pre, table, blockquote, img, figure, h1, h2, h3 { break-inside: avoid; }
+    h1, h2, h3 { break-after: avoid; }
+}

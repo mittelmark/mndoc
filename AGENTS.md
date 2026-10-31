@@ -27,7 +27,7 @@ It started as an extended fork of Tcllib's `mkdoc`; the name was changed to
 | --- | --- |
 | `mndoc/mndoc.tcl` | **Main source of truth**: library + CLI logic + embedded manual (`#'` comments) |
 | `mndoc/pkgIndex.tcl` | Package index; version used by the Makefile |
-| `mndoc/mndoc.css`, `tmdoc.css`, `small.css` | Bundled stylesheets |
+| `mndoc/mndoc.css`, `tmdoc.css`, `small.css`, `book.css` | Bundled stylesheets (`book.css` is a flat, greyish traditional-book layout) |
 | `mndoc/mndoc.html` | Generated manual (tracked in git) |
 | `mndoc/mndoc.pdf` | Generated manual PDF (regenerated with `make docu`, weasyprint) |
 | `apps/mndoc` | Small launcher: `package require mndoc; ::mndoc::main $argv` |

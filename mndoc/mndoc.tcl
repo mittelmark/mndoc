@@ -153,8 +153,11 @@
 #' > - *infile* - file with embedded markdown documentation
 #'   - *outfile* -  name of output file extension
 #'   - *--base64 false|true* should local images and CSS files be embedded as base64 data, default: true
-#'   - *--css cssfile* if outfile is an HTML file use the given *cssfile*, if the filename is 'mndoc.css' or 'tmdoc.css'
-#'      and if the file is not yet existing in the appropriate location this file is copied from the package folder at this place  
+#'   - *--css cssfile* if outfile is an HTML file use the given *cssfile*, one of the bundled stylesheets
+#'      'mndoc.css', 'tmdoc.css' or the flat, greyish book layout 'book.css', as well as any other local or remote stylesheet.
+#'      Local stylesheets are resolved relative to the document being converted rather than the current working directory:
+#'      with *--base64 true* (default) they are inlined as base64 data, with *--base64 false* a stylesheet bundled with mndoc
+#'      is copied next to the output file so that the relative link stays valid
 #'   - *--footer footer.html* if outfile is an HTML file add this footer before the closing body tag
 #'   - *--header header.html* if outfile is an HTML file add this header after  the opening body tag
 #'   - *--javascript highlightjs|filename1,filename2* if outfile is an HTML file embeds either the highlight.js Javascript highlighter or the given local javascript filename(s) 
