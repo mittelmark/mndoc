@@ -107,6 +107,17 @@ An example using equation embedding can be seen here (seems not to work in previ
 * [equations.md](https://github.com/mittelmark/mndoc/blob/main/examples/equations.md)
 * [equations.html](http://htmlpreview.github.io/?https://github.com/mittelmark/mndoc/blob/main/examples/equations.html).
 
+An example using the bundled book stylesheet book.css, showing a traditional
+book layout with a standing figure, an explicitly sized plate and an inline
+ornament, can be seen here:
+
+* [chapter.md](https://github.com/mittelmark/mndoc/blob/main/examples/chapter.md)
+* [chapter.html](http://htmlpreview.github.io/?https://github.com/mittelmark/mndoc/blob/main/examples/chapter.html).
+* [chapter.pdf](https://github.com/mittelmark/mndoc/raw/main/examples/chapter.pdf)
+
+It was rendered from the Markdown source with
+`mndoc chapter.md chapter.html --css book.css`.
+
 ## Installation
 
 On Linux, MacOS or Windows  with  installed  Msys2, Cygwin or WSL   download the
