@@ -116,6 +116,11 @@ test:
 	! grep -q 'href="tmdoc.css"' "$$tmp/docs/out2.html"; \
 	! test -e tmdoc.css; \
 	echo "  ... document-relative css fallback passing"; \
+	printf '%s\n' '---' 'title: T' '---' '' 'Grüße — mit UTF-8' '' > "$$tmp/utf8.md"; \
+	tclsh apps/mndoc "$$tmp/utf8.md" "$$tmp/utf8.html"; \
+	grep -q '<meta charset="utf-8">' "$$tmp/utf8.html"; \
+	grep -q 'Grüße — mit UTF-8' "$$tmp/utf8.html"; \
+	echo "  ... utf8 charset passing"; \
 	tclsh apps/mndoc "$$tmp/test.md" "$$tmp/bodyonly.html" --bodyonly true; \
 	! grep -q '<!DOCTYPE html>' "$$tmp/bodyonly.html"; \
 	grep -q '<p>hello</p>' "$$tmp/bodyonly.html"; \
