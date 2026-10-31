@@ -43,6 +43,10 @@
 #                  2026-01-20 Release 0.15.3 fixing pipes in backticks creating tables
 #                  2026-01-28 Release 0.15.4 fixing fixing LICENSE issues stating mixes of BSD/MIT, LICENSE should be BSD3, more pipe fixes
 #                  2026-10-27 Release 0.15.5 fix YAML date handling for non-ISO date formats
+#                  2026-10-31 Release 0.16.0 book.css stylesheet for a traditional book layout, standalone images are
+#                                            marked as figures (data-figure), explicit image sizes are honored as inline
+#                                            styles, reading measure widened to 1000px, --css embedding resolves
+#                                            relative to the document path rather than the working directory
 ##############################################################################
 #
 # Copyright (c) 2019-2026  Detlef Groth, E-mail: dgroth((at)uni-potsdam(dot)de
@@ -50,9 +54,9 @@
 # 
 ##############################################################################
 #' ---
-#' title: mndoc::mndoc 0.15.5
+#' title: mndoc::mndoc 0.16.0
 #' author: Detlef Groth, University of Potsdam, Germany
-#' date: 2026-10-27
+#' date: 2026-10-31
 #' css: mndoc.css
 #' style: |
 #'    @import url('https://fonts.bunny.net/css?family=Andika&display=swap'); 
@@ -197,8 +201,8 @@ package require Tcl 8.6-
 package require yaml
 package require Markdown
 
-package provide mndoc 0.15.5
-package provide mndoc::mndoc 0.15.5
+package provide mndoc 0.16.0
+package provide mndoc::mndoc 0.16.0
 namespace eval ::mndoc {
     variable deindent [list \n\t \n "\n    " \n]
     variable scriptfile [info script]
@@ -999,9 +1003,9 @@ set HELP [string map [list "\n    " "\n"] {
 #'
 #' ```
 #' #' ---
-#' #' title: mndoc::mndoc 0.15.5
+#' #' title: mndoc::mndoc 0.16.0
 #' #' author: Detlef Groth, University of Potsdam, Germany
-#' #' date: 2026-10-27
+#' #' date: 2026-10-31
 #' #' css: mndoc.css
 #' #' style: |
 #' #'   @import url('https://fonts.bunny.net/css?family=Andika&display=swap'); 
@@ -1303,6 +1307,23 @@ set HELP [string map [list "\n    " "\n"] {
 #' 
 #' ## <a name='changes'>CHANGES</a>
 #'
+#' - 2026-10-31 Release 0.16.0
+#'       - new book.css stylesheet: a flat, greyish layout in the style of a
+#'         traditional book, self-contained without remote font imports
+#'       - images that are the only content of their paragraph or list item
+#'         are marked with data-figure, which book.css uses to tell a figure
+#'         from an inline ornament; CSS alone cannot tell them apart, because
+#'         text nodes are invisible to selectors
+#'       - explicit image sizes are honored: *width="800"* is restated as an
+#'         inline style and the width/height attributes are normalized to the
+#'         unitless integers the HTML spec requires, so renderers like
+#'         weasyprint no longer drop the author's size; while no size is
+#'         given, stylesheet defaults such as the book text-height cap apply
+#'       - reading measure widened from 800px to 1000px; mndoc.css is now
+#'         centred with a 1000px maximum width
+#'       - fix --css embedding to resolve relative to the document rather
+#'         than the current working directory
+#'       - declare the output charset so UTF-8 text renders correctly
 #' - 2026-10-27 Release 0.15.5
 #'       - fix YAML date handling for non-ISO date formats; unknown dates are
 #'         kept as written instead of aborting the conversion

@@ -4,10 +4,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="title" content="mndoc::mndoc 0.15.5">
+<meta name="title" content="mndoc::mndoc 0.16.0">
 <meta name="author" content="Detlef Groth, University of Potsdam, Germany">
     
-<title>mndoc::mndoc 0.15.5</title>
+<title>mndoc::mndoc 0.16.0</title>
     
                                       <link rel="stylesheet" href="https://unpkg.com/@highlightjs/cdn-assets@11.9.0/styles/atom-one-light.min.css">
                                       <script src="https://unpkg.com/@highlightjs/cdn-assets@11.9.0/highlight.min.js"></script>
@@ -41,9 +41,9 @@ pre, code { font-family: "Ubuntu Mono", monospaced ; }
 
 
     <div class="document-header">
-<h1 class="title">mndoc::mndoc 0.15.5</h1>
+<h1 class="title">mndoc::mndoc 0.16.0</h1>
 <h2 class="author">Detlef Groth, University of Potsdam, Germany</h2>
-<h2 class="date">2026-10-27</h2>
+<h2 class="date">2026-10-31</h2>
     </div>
 
 <h2>NAME</h2>
@@ -224,9 +224,9 @@ either in the css file, or if you like you can add as well a style section to th
 either like in this example:</p>
 
 <pre class='code'><code>#' ---
-#' title: mndoc::mndoc 0.15.5
+#' title: mndoc::mndoc 0.16.0
 #' author: Detlef Groth, University of Potsdam, Germany
-#' date: 2026-10-27
+#' date: 2026-10-31
 #' css: mndoc.css
 #' style: |
 #'   @import url('https://fonts.bunny.net/css?family=Andika&amp;display=swap'); 
@@ -503,6 +503,26 @@ in your module path as <code>mndoc-0.1X.X.tm</code> for instance. See the <a hre
 <h2><a name='changes'>CHANGES</a></h2>
 
 <ul>
+<li>2026-10-31 Release 0.16.0
+<ul>
+<li>new book.css stylesheet: a flat, greyish layout in the style of a
+traditional book, self-contained without remote font imports</li>
+<li>images that are the only content of their paragraph or list item
+are marked with data-figure, which book.css uses to tell a figure
+from an inline ornament; CSS alone cannot tell them apart, because
+text nodes are invisible to selectors</li>
+<li>explicit image sizes are honored: <em>width=&quot;800&quot;</em> is restated as an
+inline style and the width/height attributes are normalized to the
+unitless integers the HTML spec requires, so renderers like
+weasyprint no longer drop the author's size; while no size is
+given, stylesheet defaults such as the book text-height cap apply</li>
+<li>reading measure widened from 800px to 1000px; mndoc.css is now
+centred with a 1000px maximum width</li>
+<li>fix --css embedding to resolve relative to the document rather
+than the current working directory</li>
+<li>declare the output charset so UTF-8 text renders correctly</li></ul>
+
+</li>
 <li>2026-10-27 Release 0.15.5
 <ul>
 <li>fix YAML date handling for non-ISO date formats; unknown dates are

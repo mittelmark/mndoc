@@ -60,6 +60,10 @@ docu:
 	#htmlark --ignore-js mndoc/mndoc.html -o mndoc/mndoc-out.html
 	cd mndoc && weasyprint -s small.css mndoc.html mndoc.pdf 
 	#cp mndoc/mndoc-out.html mndoc/mndoc.html
+# render the manual itself with the book stylesheet, as a showcase for book.css
+docu-book:
+	TCLLIBPATH=`pwd`/mndoc.vfs/lib tclsh apps/mndoc mndoc/mndoc.tcl examples/manual-book.html --css book.css --mathjax true --javascript highlightjs
+	cd examples && weasyprint manual-book.html manual-book.pdf
 test:
 	@echo "Running tests..."
 	@set -e; \

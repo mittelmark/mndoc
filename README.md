@@ -139,9 +139,22 @@ which runs it in a clean Linux environment and checks the installed binary.
 - adding support for TODO lists
 - adding support for YAML headers and styles
 - adding support for image attributes
+- adding  book.css, a flat, greyish stylesheet in the style of a
+  traditional book, including figure and image size handling
 
 ## ChangeLog
 
+- 2026-10-31 Release 0.16.0
+    - new book.css stylesheet: a flat, greyish layout in the style of a
+      traditional book, self-contained without remote font imports
+    - images that are the only content of their paragraph are marked with
+      data-figure so book.css can tell a figure from an inline ornament
+    - explicit image sizes are honored ({width="800"} is restated as an
+      inline style, the width/height attributes are normalized), the reading
+      measure is widened from 800px to 1000px
+    - fix --css embedding to resolve relative to the document rather than
+      the current working directory
+    - declare the output charset so UTF-8 text renders correctly
 - 2026-10-27 Release 0.15.5
     - fix YAML date handling for non-ISO date formats; unknown dates are kept
       as written instead of aborting the conversion

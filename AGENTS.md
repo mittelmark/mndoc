@@ -15,7 +15,7 @@ extractor. It reads:
 
 and writes HTML, or extracts the Markdown for further processing.
 
-Current version: **0.15.5**. License: **BSD-3-Clause**. Upstream:
+Current version: **0.16.0**. License: **BSD-3-Clause**. Upstream:
 <https://github.com/mittelmark/mndoc>.
 
 It started as an extended fork of Tcllib's `mkdoc`; the name was changed to
@@ -61,7 +61,7 @@ If `mndoc.vfs/` is missing, run `make app` (see caveats below).
 Run the prebuilt standalone binary:
 
 ```sh
-./bin/mndoc-0.15.5.bin input.md output.html
+./bin/mndoc-0.16.0.bin input.md output.html
 ```
 
 The root `mndoc.tcl` is **not** standalone: it only does
@@ -139,10 +139,14 @@ directory, and covers:
 
 - highlight.js and auto-refresh output,
 - base64 inlining for HTML and Markdown input, including `--base64 false`,
+- image width translation (`{width="800"}` to attribute plus inline style),
+- the 1000px reading measure,
+- `data-figure` marking of standalone images (markdown and HTML input),
+- UTF-8 charset declaration,
 - YAML title/author/date output,
 - non-ISO and integer date fallback,
 - table/pipe handling from `tests/tables.md`,
-- nested CSS paths,
+- nested CSS paths and document-relative `--css` lookup,
 - `--bodyonly`.
 
 The suite should pass under both Tcl 8.6 and Tcl 9. The tracked
@@ -180,6 +184,10 @@ TCLLIBPATH="$PWD/mndoc.vfs/lib" \
 `make docu` does the same but then also runs `weasyprint` to build
 `mndoc/mndoc.pdf`; the PDF step may fail if `weasyprint` is not installed, after
 the HTML has already been written.
+
+`make docu-book` renders the same manual with `--css book.css` into
+`examples/manual-book.html` and `examples/manual-book.pdf` — a showcase of the
+book stylesheet, regenerated whenever the manual or `book.css` changes.
 
 ## Code conventions
 
@@ -264,7 +272,7 @@ TCLLIBPATH="$PWD/mndoc.vfs/lib" tclsh apps/mndoc examples/hilight.md /tmp/hiligh
 TCLLIBPATH="$PWD/mndoc.vfs/lib" tclsh8.6 apps/mndoc examples/hilight.md /tmp/hilight86.html --javascript highlightjs
 ```
 
-## Release checklist (0.15.x)
+## Release checklist (0.16.x)
 
 Before tagging a release, make sure:
 
