@@ -48,19 +48,19 @@ pre, code { font-family: "Ubuntu Mono", monospaced ; }
 
 <h2>NAME</h2>
 
-<p><strong>mndoc::mndoc</strong>  - Tcl package and command line application to extract and format 
-embedded programming documentation from source code files written in Markdown or
-doctools format and optionally converting it into HTML. The <strong>mndoc</strong> tool can be as
-well used to convert Markdown files to HTML files and to embed local images and stylesheets into 
-the output document. It supports standard Markdown with a few extensions which are
+<p><strong>mndoc::mndoc</strong>  - Tcl package and command line application to convert Markdown
+files to HTML files and to extract and format embedded programming documentation
+from source code files written in Markdown or doctools format. Local images and
+stylesheets can be embedded into the output document as base64 data. The <strong>mndoc</strong>
+tool supports standard Markdown with a few extensions which are
 explained below.</p>
 
 <h2>USE CASES</h2>
 
 <ul>
 <li>simple install with small file size &lt; 150kb</li>
-<li>extract in source code embedded Markdown documentation</li>
 <li>convert Markdown files to HTML</li>
+<li>extract in source code embedded Markdown documentation</li>
 <li>embed local images into HTML files</li>
 <li>use provided extensions for better display experiences
 </li></ul>
@@ -104,20 +104,20 @@ mndoc::mndoc inputfile outputfile ?--css file1.css,file2.css? \
    ?--header header.html? ?--footer footer.html? ?--base64 true? ?--bodyonly false?\
    ?--javascript highlightjs|file1.js,file2.js? ?--mathjax true? ?--refresh 10?</code></pre>
 
-<p>Usage as command line application for extraction of Markdown comments prefixed with <code>#'</code>:</p>
-
-<pre class='code'><code>mndoc inputcodefile outputfile.md ?options?</code></pre>
-
 <p>Usage as command line application for conversion of Markdown to HTML:</p>
 
 <pre class='code'><code>mndoc inputfile.md outputfile.html ?--css file.css,file2.css --header header.html \
   --footer footer.html --javascript highlightjs|filename1,filename2  --mathjax true \
   --refresh 10 --base64 true --bodyonly false?  </code></pre>
 
+<p>Usage as command line application for extraction of Markdown comments prefixed with <code>#'</code>:</p>
+
+<pre class='code'><code>mndoc inputcodefile outputfile.md ?options?</code></pre>
+
 <h2><a name='description'>DESCRIPTION</a></h2>
 
-<p><strong>mndoc::mndoc</strong>  extracts embedded Markdown or doctools documentation from source code files
-and  as well converts Markdown the output to HTML if desired.
+<p><strong>mndoc::mndoc</strong>  converts Markdown files to HTML files and extracts embedded
+Markdown or doctools documentation from source code files.
 The documentation inside the source code must be prefixed with the <code>#'</code> character sequence.
 The file extension of the output file determines the output format. 
 File extensions can bei either <code>.md</code> for Markdown output, <code>.man</code> for doctools output or <code>.html</code> for html output.

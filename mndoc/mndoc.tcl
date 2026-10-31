@@ -67,18 +67,18 @@
 #' 
 #' ## NAME
 #'
-#' **mndoc::mndoc**  - Tcl package and command line application to extract and format 
-#' embedded programming documentation from source code files written in Markdown or
-#' doctools format and optionally converting it into HTML. The **mndoc** tool can be as
-#' well used to convert Markdown files to HTML files and to embed local images and stylesheets into 
-#' the output document. It supports standard Markdown with a few extensions which are
+#' **mndoc::mndoc**  - Tcl package and command line application to convert Markdown
+#' files to HTML files and to extract and format embedded programming documentation
+#' from source code files written in Markdown or doctools format. Local images and
+#' stylesheets can be embedded into the output document as base64 data. The **mndoc**
+#' tool supports standard Markdown with a few extensions which are
 #' explained below.
 #'
 #' ## USE CASES
 #'
 #' - simple install with small file size < 150kb
-#' - extract in source code embedded Markdown documentation
 #' - convert Markdown files to HTML
+#' - extract in source code embedded Markdown documentation
 #' - embed local images into HTML files
 #' - use provided extensions for better display experiences
 #'
@@ -118,12 +118,6 @@
 #'    ?--javascript highlightjs|file1.js,file2.js? ?--mathjax true? ?--refresh 10?
 #' ```
 #'
-#' Usage as command line application for extraction of Markdown comments prefixed with `#'`:
-#'
-#' ```
-#' mndoc inputcodefile outputfile.md ?options?
-#' ```
-#'
 #' Usage as command line application for conversion of Markdown to HTML:
 #'
 #' ```
@@ -132,10 +126,16 @@
 #'   --refresh 10 --base64 true --bodyonly false?  
 #' ```
 #'
+#' Usage as command line application for extraction of Markdown comments prefixed with `#'`:
+#'
+#' ```
+#' mndoc inputcodefile outputfile.md ?options?
+#' ```
+#'
 #' ## <a name='description'>DESCRIPTION</a>
 #' 
-#' **mndoc::mndoc**  extracts embedded Markdown or doctools documentation from source code files
-#' and  as well converts Markdown the output to HTML if desired.
+#' **mndoc::mndoc**  converts Markdown files to HTML files and extracts embedded
+#' Markdown or doctools documentation from source code files.
 #' The documentation inside the source code must be prefixed with the `#'` character sequence.
 #' The file extension of the output file determines the output format. 
 #' File extensions can bei either `.md` for Markdown output, `.man` for doctools output or `.html` for html output.
@@ -827,27 +827,31 @@ proc ::mndoc::mndoc {filename outfile args} {
 
 proc ::mndoc::main {argv} {
     global argv0
-    set valid_args [list --help --version --license --css --header --footer --mathjax \
+    set valid_args [list --help -h --version --license --css --header --footer --mathjax \
                     --javascript --refresh --base64 --bodyonly]
     set APP $argv0
     if {[regexp {tclmain} $APP]} {
         set APP "tclmain -m mndoc"
     }
 set USAGE [string map [list "\n    " "\n"] {
-    Usage: __APP__ ?--help|--version|--license? INFILE OUTFILE ?--css file.css? 
-                      ?--header header.html? ?--footer footer.html? ?--mathjax true? 
-                      ?--javascript JSLIB|JSFile? ?--refresh 10? ?--base64 true? ?--bodyonly false?
+    Usage: __APP__ INFILE OUTFILE ?--css file.css? ?--header header.html? ?--footer footer.html?
+                      ?--mathjax true? ?--javascript JSLIB|JSFile? ?--refresh 10?
+                      ?--base64 true? ?--bodyonly false?
+    Info:   __APP__ ?-h|--help? | ?--version? | ?--license?
 }]
 set HELP [string map [list "\n    " "\n"] {
-    mndoc __VERSION__ - code documentation tool to process embedded Markdown markup
-                        given after "#'" comments 
+    mndoc __VERSION__ - Markdown to HTML converter and source code documentation tool
+
+        converts Markdown files to HTML (optionally with syntax highlighting,
+        LaTeX formulas, custom stylesheets, header and footer) and extracts
+        embedded documentation written after "#'" comments from source code.
 
     Positional arguments (required):
     
         INFILE  - input file with:
+                - pure Markdown code (file.md, .Rmd, .tmd, ...)
                 - embedded Markdown comments: #' Markdown markup
-                - pure Markdown code (file.md)
-                - HTML file 
+                - an existing HTML file (assets are inlined into it)
                 - if INFILE is given as - input is taken from STDIN
 
         OUTFILE - output file usually HTML or Markdown file
@@ -858,7 +862,7 @@ set HELP [string map [list "\n    " "\n"] {
 
     Optional arguments:
 
-        --help             - display this help page, and exit
+        --help, -h         - display this help page, and exit
         --version          - display version number, and exit
         --license          - display license information, and exit
         --css CSSFILE      - use the specified CSSFILE instead of internal default 
@@ -871,20 +875,8 @@ set HELP [string map [list "\n    " "\n"] {
         --mathjax    BOOL  - Embed the Mathjax Javascript library to add LaTeX formulas, default: false
         --refresh    INT   - Create a HTML page which does automatic refreshing after N seconds, default: 0
         --bodyonly   BOOL  - omit the HTML header and footer, keeping only the body content, default: false
+
     Examples:
-
-        # create manual page for mndoc.tcl itself 
-        __APP__ mndoc.tcl mndoc.html
-        
-        # inline all local images and stylesheets into an HTML file
-        __APP__ sample.html sample-out.html
-        
-        # create manual code for a CPP file using a custom style sheet
-        __APP__ sample.cpp sample.html --css manual.css
-
-        # extract code documentation as simple Markdown
-        # ready to be processed further with pandoc
-        __APP__ sample.cpp sample.md 
 
         # convert a Markdown file to HTML
         __APP__ sample.md sample.html
@@ -905,6 +897,19 @@ set HELP [string map [list "\n    " "\n"] {
         
         __APP__ sample.md sample.html --bodyonly true
         
+        # inline all local images and stylesheets into an HTML file
+        __APP__ sample.html sample-out.html
+        
+        # create the manual page for mndoc.tcl itself from its #' comments
+        __APP__ mndoc.tcl mndoc.html
+        
+        # extract the documentation of a CPP file as simple Markdown
+        # ready to be processed further with pandoc
+        __APP__ sample.cpp sample.md 
+
+        # create a manual page for a CPP file using a custom style sheet
+        __APP__ sample.cpp sample.html --css manual.css
+
     Author: @ Detlef Groth, University of Potsdam, Germany 2019-2026
 
     License: BSD-3-Clause
@@ -915,7 +920,7 @@ set HELP [string map [list "\n    " "\n"] {
         puts "[package provide mndoc]"
     } elseif {[lsearch -exact $argv {--license}] > -1} {
         puts "BSD License - see manual page"
-    } elseif {[lsearch -exact $argv {--help}] > -1} {
+    } elseif {[lsearch -exact $argv {--help}] > -1 || [lsearch -exact $argv {-h}] > -1} {
         set usage [regsub -all {__VERSION__} [regsub -all {__APP__} $USAGE $APP] [package provide mndoc]]
         puts $usage
         set help [regsub -all {__VERSION__} [regsub -all {__APP__} $HELP $APP] [package provide mndoc]]

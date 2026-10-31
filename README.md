@@ -121,7 +121,7 @@ It was rendered from the Markdown source with
 ## Installation
 
 On Linux, MacOS or Windows  with  installed  Msys2, Cygwin or WSL   download the
-latest  _mndoc-VERSION.bin_ file  (100-130kb in size), rename the bin file to
+latest  _mndoc-VERSION.bin_ file  (about 135kb in size), rename the bin file to
 _mndoc_  and  copy  the  file  to a  folder  belonging  to your  _PATH_  variable.
 Thereafter make the file executable and check that it is correctly  installed.
 
