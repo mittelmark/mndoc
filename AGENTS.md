@@ -236,6 +236,13 @@ book stylesheet, regenerated whenever the manual or `book.css` changes.
   same `lsearch` branch in `main`). Keep the option list in `main`
   (`valid_args`), the `array set arg` defaults, and the `USAGE`/`HELP` text in
   sync.
+- On the command line options may appear **before, between or after** the
+  `INFILE OUTFILE` arguments (`mndoc --css my.css in.md out.html`), following
+  the usual `appname options files` convention. `main` collects the two
+  non-dash arguments as files and pairs every dash argument with the argument
+  behind it, then calls `mndoc::mndoc {*}$files {*}$options` — the public
+  package API keeps its fixed `infile outfile ?options?` order. Document both
+  orders in `USAGE`, `HELP`, `apps/mndoc.man` and README examples.
 - mndoc presents itself as a **Markdown to HTML converter first**, source code
   documentation extractor second (help page, embedded manual NAME/USE
   CASES/SYNOPSIS/DESCRIPTION sections, `apps/mndoc.man` and README all follow

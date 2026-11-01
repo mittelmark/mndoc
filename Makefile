@@ -164,6 +164,12 @@ test:
 	! grep -q '<!DOCTYPE html>' "$$tmp/bodyonly.html"; \
 	grep -q '<p>hello</p>' "$$tmp/bodyonly.html"; \
 	echo "  ... bodyonly passing"; \
+	tclsh apps/mndoc --bodyonly true "$$tmp/test.md" "$$tmp/opts-first.html"; \
+	! grep -q '<!DOCTYPE html>' "$$tmp/opts-first.html"; \
+	grep -q '<p>hello</p>' "$$tmp/opts-first.html"; \
+	tclsh apps/mndoc "$$tmp/test.md" --refresh 10 "$$tmp/opts-mixed.html"; \
+	grep -qE 'http-equiv="refresh" content="10"' "$$tmp/opts-mixed.html"; \
+	echo "  ... option order passing"; \
 	echo "Tests passed successfully!"
 run:
 	@TCLLIBPATH=`pwd` tclsh apps/mndoc mndoc.tcl --run

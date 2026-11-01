@@ -29,10 +29,16 @@ The application prints its version number to standard output and exits.
 The application prints its license to standard output and exits.
 
 [call [cmd mndoc] [arg input] [arg output] [arg options]]
+[call [cmd mndoc] [arg options] [arg input] [arg output]]
 
 The application reads the [arg input] file and writes it to the [arg output] file,
 converting Markdown to HTML, or extracting embedded documentation, depending on
 the file types.
+
+[para] The two file arguments are always the input and the output file. The
+options may be placed before, between or after them, as long as each option is
+immediately followed by its value. The examples section below shows both
+styles.
 
 [para] If the input file is a [file .md] file it is expected to contain Markdown as-is,
 instead of Markdown embedded into code, and it is converted to HTML if the output
@@ -110,6 +116,9 @@ are considered. The default is [const 0], which disables refreshing.
 [example {
     # Convert a Markdown file to HTML
     mndoc sample.md sample.html
+
+    # Options may also be given before the file arguments
+    mndoc --css my.css --bodyonly true sample.md sample.html
 
     # Convert a Markdown file to HTML with syntax highlighting
     mndoc sample.md sample.html --javascript highlightjs

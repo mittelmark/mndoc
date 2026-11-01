@@ -110,6 +110,10 @@ mndoc::mndoc inputfile outputfile ?--css file1.css,file2.css? \
   --footer footer.html --javascript highlightjs|filename1,filename2  --mathjax true \
   --refresh 10 --base64 true --bodyonly false?  </code></pre>
 
+<p>The options may be placed before, between or after the two file arguments,
+each option directly followed by its value, for example
+<code>mndoc --css file.css --bodyonly false inputfile.md outputfile.html</code>.</p>
+
 <p>Usage as command line application for extraction of Markdown comments prefixed with <code>#'</code>:</p>
 
 <pre class='code'><code>mndoc inputcodefile outputfile.md ?options?</code></pre>

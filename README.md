@@ -116,7 +116,9 @@ ornament, can be seen here:
 * [chapter.pdf](https://github.com/mittelmark/mndoc/raw/main/examples/chapter.pdf)
 
 It was rendered from the Markdown source with
-`mndoc chapter.md chapter.html --css book.css`.
+`mndoc chapter.md chapter.html --css book.css`. Options may be placed before,
+between or after the two file arguments, each option directly followed by its
+value, so `mndoc --css book.css chapter.md chapter.html` is equivalent.
 
 ## Installation
 
@@ -143,6 +145,8 @@ which runs it in a clean Linux environment and checks the installed binary.
 ## Changes in Comparison to the Tcllib mkdoc Package
 
 - adding header and footer support
+- flexible command line option order: options may be given before or after the
+  file arguments, for example `mndoc --css book.css chapter.md chapter.html`
 - adding javascript (single and multiple file support)
 - adding code highlight support [highlight.js](https://highlightjs.org/)
 - adding equation support using [MathJax](https://www.mathjax.org/)

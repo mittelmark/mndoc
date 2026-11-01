@@ -126,6 +126,10 @@
 #'   --refresh 10 --base64 true --bodyonly false?  
 #' ```
 #'
+#' The options may be placed before, between or after the two file arguments,
+#' each option directly followed by its value, for example
+#' `mndoc --css file.css --bodyonly false inputfile.md outputfile.html`.
+#'
 #' Usage as command line application for extraction of Markdown comments prefixed with `#'`:
 #'
 #' ```
@@ -834,9 +838,13 @@ proc ::mndoc::main {argv} {
         set APP "tclmain -m mndoc"
     }
 set USAGE [string map [list "\n    " "\n"] {
-    Usage: __APP__ INFILE OUTFILE ?--css file.css? ?--header header.html? ?--footer footer.html?
-                      ?--mathjax true? ?--javascript JSLIB|JSFile? ?--refresh 10?
-                      ?--base64 true? ?--bodyonly false?
+    Usage: __APP__ ?options? INFILE OUTFILE
+           __APP__ INFILE OUTFILE ?options?
+
+           options: ?--css file.css? ?--header header.html? ?--footer footer.html?
+                    ?--mathjax true? ?--javascript JSLIB|JSFile? ?--refresh 10?
+                    ?--base64 true? ?--bodyonly false?
+
     Info:   __APP__ ?-h|--help? | ?--version? | ?--license?
 }]
 set HELP [string map [list "\n    " "\n"] {
@@ -880,6 +888,9 @@ set HELP [string map [list "\n    " "\n"] {
 
         # convert a Markdown file to HTML
         __APP__ sample.md sample.html
+        
+        # options may also be given before the file names
+        __APP__ --css my.css --bodyonly true sample.md sample.html
         
         # convert a Markdown file to HTML with own css, header and foot
         __APP__ sample.md sample.html --css my.css --footer foot.html --header head.html
@@ -926,35 +937,44 @@ set HELP [string map [list "\n    " "\n"] {
         set help [regsub -all {__VERSION__} [regsub -all {__APP__} $HELP $APP] [package provide mndoc]]
         puts $help
         exit 0
-    } elseif {[llength $argv] < 2} {
-        set usage [regsub -all {__VERSION__} [regsub -all {__APP__} $USAGE $APP] [package provide mndoc]]
-        puts $usage
-    } elseif {[llength $argv] == 2} {
-        if {[regexp {^-.} [lindex $argv 1]]} {
-            puts stderr "Error: wrong outfile name [lindex $argv 1]"
-            exit 1
-        }
-        mndoc::mndoc [lindex $argv 0] [lindex $argv 1]
-    
-    } elseif {[llength $argv] > 2} {
-        foreach arg $argv {
-            if {[regexp {^-.+} $arg]} {
-                if {$arg ni $valid_args} {
-                    puts "Error: The argument '$arg' is not valid!"
-                    set usage [regsub -all {__VERSION__} [regsub -all {__APP__} $USAGE $APP] [package provide mndoc]]
-                    puts $usage
-                    exit 0
+    } else {
+        # options may be given before, between or after the file names,
+        # every option consumes the argument right behind it as its value
+        set files [list]
+        set options [list]
+        set err ""
+        set max [llength $argv]
+        for {set i 0} {$i < $max} {incr i} {
+            set opt [lindex $argv $i]
+            if {[regexp {^-.+} $opt]} {
+                if {$opt ni $valid_args} {
+                    set err "Error: The argument '$opt' is not valid!"
+                    break
                 }
-                    
+                incr i
+                if {$i >= $max || [lindex $argv $i] in $valid_args} {
+                    set err "Error: the option '$opt' needs a value!"
+                    break
+                }
+                lappend options $opt [lindex $argv $i]
+            } else {
+                lappend files $opt
             }
         }
-        if {! [expr {[llength $argv] % 2 == 0}]} {
-            puts "Error: option List must have an even length of type '--option value'!"
-            set usage [regsub -all {__VERSION__} [regsub -all {__APP__} $USAGE $APP] [package provide mndoc]]
+        set usage [regsub -all {__VERSION__} [regsub -all {__APP__} $USAGE $APP] [package provide mndoc]]
+        if {$err ne ""} {
+            puts $err
             puts $usage
             exit 0
+        } elseif {[llength $files] < 2} {
+            puts $usage
+        } elseif {[llength $files] > 2} {
+            puts "Error: expected INFILE OUTFILE, got: [join $files { }]"
+            puts $usage
+            exit 0
+        } else {
+            mndoc::mndoc {*}[lrange $files 0 1] {*}$options
         }
-        mndoc::mndoc {*}$argv
     }
 }
 #'
