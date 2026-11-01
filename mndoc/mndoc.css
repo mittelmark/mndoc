@@ -3,6 +3,17 @@
 @import url('https://fonts.bunny.net/css?family=Aleo&display=swap'); 
 @import url('https://fonts.bunny.net/css?family=Ubuntu+Mono&display=swap'); /* ' */
 
+/* printed documents are A4, whichever engine converts them
+   (WeasyPrint defaults to A4, headless Chromium to Letter) */
+@page { size: A4; }
+
+/* in print, long code lines wrap instead of producing a scrollbar
+   (headless Chromium prints the overflow scrollbar of the highlight.js
+   styles, WeasyPrint ignores overflow altogether) */
+@media print {
+    pre, pre code, code { overflow: visible !important; white-space: pre-wrap; }
+}
+
 body {
     /* a comfortable reading measure, centred: at most 1000px of text, with
        the classic 10% of breathing room kept on either side by the padding

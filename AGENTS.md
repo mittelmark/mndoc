@@ -40,7 +40,7 @@ It started as an extended fork of Tcllib's `mkdoc`; the name was changed to
 | `mndoc/pkgIndex.tcl` | Package index; version used by the Makefile |
 | `mndoc/mndoc.css`, `tmdoc.css`, `small.css`, `book.css` | Bundled stylesheets (`book.css` is a flat, greyish traditional-book layout) |
 | `mndoc/mndoc.html` | Generated manual (tracked in git) |
-| `mndoc/mndoc.pdf` | Generated manual PDF (regenerated with `make docu`, weasyprint) |
+| `mndoc/mndoc.pdf` | Generated manual PDF (regenerate with `make docu-browser`; `make docu` uses WeasyPrint, which cannot run MathJax) |
 | `apps/mndoc` | Small launcher: `package require mndoc; ::mndoc::main $argv` |
 | `apps/mndoc.man` | Doctools man page; documents all options and BSD-3-Clause license |
 | `Makefile` | Builds the standalone bundle and runs smoke tests |
@@ -207,7 +207,8 @@ regenerate the manual:
 3. `mndoc/mndoc.html` — regenerate (see below).
 4. `README.md` — ChangeLog.
 5. `apps/mndoc.man` — `[vset VERSION ...]`.
-6. `mndoc/mndoc.pdf` — regenerate via `make docu` (needs `weasyprint`).
+6. `mndoc/mndoc.pdf` — regenerate via `make docu-browser` (needs
+   `chromium-browser`).
 
 Regenerate the manual:
 
@@ -224,6 +225,16 @@ the HTML has already been written.
 `make docu-book` renders the same manual with `--css book.css` into
 `examples/manual-book.html` and `examples/manual-book.pdf` — a showcase of the
 book stylesheet, regenerated whenever the manual or `book.css` changes.
+
+WeasyPrint (the PDF step of `make docu` / `make docu-book`) cannot run
+JavaScript, so MathJax equations and highlight.js code stay unrendered in its
+PDFs. The browser variants `make docu-browser` and `make docu-book-browser`
+print the very same HTML to PDF with headless Chromium instead — that is how
+the tracked PDFs are built. They need `chromium-browser` (override the binary
+with `CHROME=google-chrome` etc.) and network access for the CDN-hosted
+MathJax/highlight.js assets. `mndoc.css` and `book.css` pin
+`@page { size: A4 }` so Chromium (Letter by default) and WeasyPrint (A4 by
+default) agree on the paper size.
 
 ## Code conventions
 
@@ -320,6 +331,11 @@ as `28.10.2026`.
 - Do not confuse `mndoc/mndoc.tcl` (source) with root `mndoc.tcl` (generated
   launcher). Do not confuse the tracked `mndoc/mndoc.html` (manual) with
   generated test output.
+- WeasyPrint has no JavaScript engine (and no MathML support), so its PDFs
+  leave `--mathjax` equations and highlight.js code unrendered; the tracked
+  PDFs are built with `make docu-browser` / `make docu-book-browser`
+  (headless Chromium), which also needs network access for the CDN-hosted
+  MathJax/highlight.js assets.
 
 ## Useful one-liners
 
@@ -353,8 +369,9 @@ Before tagging a release, make sure:
 - [ ] Work was merged from `devel` into `main` (releases are cut from `main`).
 - [ ] Version bumped everywhere (see "Version bumps"), correct level (minor vs patch).
 - [ ] `make app` and `make test` pass, and `bin/mndoc-<version>.bin` is current.
-- [ ] `mndoc/mndoc.html` and `mndoc/mndoc.pdf` are regenerated (version/date updated).
-- [ ] `make docu-book` was run if the manual or `book.css` changed.
+- [ ] `mndoc/mndoc.html` and `mndoc/mndoc.pdf` are regenerated (version/date
+      updated; use `make docu-browser` so equations are rendered).
+- [ ] `make docu-book-browser` was run if the manual or `book.css` changed.
 - [ ] Tracked reference outputs refreshed via `make test-hightlight test-equations
       test-inline` if the generated HTML changed (see "Refreshing the reference outputs").
 - [ ] `bin/install-mndoc.sh` works on a fresh account (`~/.local/bin` is created).

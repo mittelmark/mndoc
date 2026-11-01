@@ -13,6 +13,18 @@
                  restrained headings, understated links, indented quotes.
    --------------------------------------------------------------------------- */
 
+/* printed documents are A4, whichever engine converts them
+   (WeasyPrint defaults to A4, headless Chromium to Letter) */
+@page { size: A4; }
+
+/* in print, long code lines wrap instead of producing a scrollbar
+   (headless Chromium prints the overflow scrollbar, WeasyPrint ignores
+   overflow altogether); inline code may break as well */
+@media print {
+    pre, pre code { overflow: visible !important; white-space: pre-wrap; }
+    code { white-space: normal; }
+}
+
 :root {
     --paper:   #f4f4f2;  /* page background   */
     --panel:   #eaeae7;  /* code / quote fill */

@@ -64,6 +64,20 @@ docu:
 docu-book:
 	TCLLIBPATH=`pwd`/mndoc.vfs/lib tclsh apps/mndoc mndoc/mndoc.tcl examples/manual-book.html --css book.css --mathjax true --javascript highlightjs
 	cd examples && weasyprint manual-book.html manual-book.pdf
+## headless Chromium variants of the two PDF steps above: WeasyPrint cannot
+## run JavaScript, so equations rendered by MathJax (and code highlighted by
+## highlight.js) only appear in the PDF when a browser does the HTML to PDF
+## step. CHROME can be overridden, e.g. CHROME=google-chrome.
+CHROME?=chromium-browser
+CHROMEFLAGS=--headless=new --disable-gpu --no-pdf-header-footer --virtual-time-budget=15000
+
+docu-browser:
+	TCLLIBPATH=`pwd`/mndoc.vfs/lib tclsh apps/mndoc mndoc/mndoc.tcl mndoc/mndoc.html --css mndoc.css --mathjax true --javascript highlightjs
+	$(CHROME) $(CHROMEFLAGS) --print-to-pdf=mndoc/mndoc.pdf file://`pwd`/mndoc/mndoc.html
+
+docu-book-browser:
+	TCLLIBPATH=`pwd`/mndoc.vfs/lib tclsh apps/mndoc mndoc/mndoc.tcl examples/manual-book.html --css book.css --mathjax true --javascript highlightjs
+	$(CHROME) $(CHROMEFLAGS) --print-to-pdf=examples/manual-book.pdf file://`pwd`/examples/manual-book.html
 test:
 	@echo "Running tests..."
 	@set -e; \
