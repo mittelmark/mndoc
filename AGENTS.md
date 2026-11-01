@@ -21,6 +21,17 @@ Current version: **0.16.0**. License: **BSD-3-Clause**. Upstream:
 It started as an extended fork of Tcllib's `mkdoc`; the name was changed to
 `mndoc` in 0.13.0 to avoid a package-name collision.
 
+## Branch workflow
+
+- `main` is the release branch and matches the latest tagged release (`vX.Y.Z`).
+  The maintainer pushes to `origin` and cuts the releases/tags.
+- New work happens on a `devel` branch: commit locally there, let the maintainer
+  review, merge into `main`, push and tag. Do not push `devel` or create tags
+  from it.
+- A release is first published as a GitHub prerelease. The installer and the
+  README badges follow `releases/latest`, so nothing changes for users until the
+  maintainer promotes the prerelease (see the release checklist below).
+
 ## Repository layout
 
 | Path | Purpose |
@@ -151,12 +162,37 @@ directory, and covers:
 
 The suite should pass under both Tcl 8.6 and Tcl 9. The tracked
 `examples/*.html` files are reference outputs and must not be overwritten by
-tests.
+tests — `make test` writes everything into a temporary directory.
+
+### Refreshing the reference outputs
+
+Three `test-*` Makefile targets (note: `test-hightlight` is misspelled in the
+Makefile, keep the name) **do** overwrite tracked reference outputs in
+`examples/`. Re-run them when the generated HTML changes, so the outputs stay
+in sync with the current code:
+
+```sh
+make test-hightlight   # examples/hilight.html  (--javascript highlightjs)
+make test-equations    # examples/equations.html (--mathjax true)
+make test-inline       # examples/intern.html   (from extern.html)
+```
+
+They were stale after 0.16.0 (missing charset meta, old 800px measure, missing
+`data-figure` marker) — a good sign they need a refresh is `git diff` showing
+only `<meta charset>`, `max-width:` or `data-figure` lines after a release.
+
+`make test-header` and `make test-image` also write into `examples/`
+(`header.html`, `image.html`), but those two files are neither tracked nor
+gitignored — running the targets leaves untracked files behind; delete them
+afterwards or add them to `.gitignore`.
 
 `tests/date.md` is a manual German-format date fixture; the automated date
 coverage lives inline in `make test`.
 
 ## Version bumps
+
+Decide the level first: a new user-visible feature or option (like the `-h`
+alias in 0.17.0) means a **minor** bump, pure fixes mean a **patch** bump.
 
 The version appears in several independent places. Update all of them and
 regenerate the manual:
@@ -195,9 +231,15 @@ book stylesheet, regenerated whenever the manual or `book.css` changes.
 - 4-space indentation, opening brace on the same line.
 - Public entry point is `::mndoc::mndoc infile outfile ?--option value ...?`;
   command-line handling is `::mndoc::main argv`.
-- Options are `--long-option value` pairs, not flags with a separate parser.
-  Keep the option list in `main` (`valid_args`), the `array set arg` defaults,
-  and the `USAGE`/`HELP` text in sync.
+- Options are `--long-option value` pairs, not flags with a separate parser,
+  with one exception: `-h` is accepted as an alias for `--help` (checked in the
+  same `lsearch` branch in `main`). Keep the option list in `main`
+  (`valid_args`), the `array set arg` defaults, and the `USAGE`/`HELP` text in
+  sync.
+- mndoc presents itself as a **Markdown to HTML converter first**, source code
+  documentation extractor second (help page, embedded manual NAME/USE
+  CASES/SYNOPSIS/DESCRIPTION sections, `apps/mndoc.man` and README all follow
+  that order — keep them consistent when editing any of them).
 - Functions are namespaced and kebab-cased (`img-replace`, `inline-assets`).
 - The manual is embedded in `mndoc/mndoc.tcl` as `#'` comments; user-facing
   behaviour changes should be documented there and in `README.md`.
@@ -252,7 +294,7 @@ as `28.10.2026`.
 ```sh
 # show version / help from source
 TCLLIBPATH="$PWD/mndoc.vfs/lib" tclsh apps/mndoc --version
-TCLLIBPATH="$PWD/mndoc.vfs/lib" tclsh apps/mndoc --help
+TCLLIBPATH="$PWD/mndoc.vfs/lib" tclsh apps/mndoc --help   # or -h
 
 # convert a C++ file with embedded '#' documentation
 TCLLIBPATH="$PWD/mndoc.vfs/lib" tclsh apps/mndoc examples/cpp.cpp /tmp/cpp.html
@@ -272,13 +314,17 @@ TCLLIBPATH="$PWD/mndoc.vfs/lib" tclsh apps/mndoc examples/hilight.md /tmp/hiligh
 TCLLIBPATH="$PWD/mndoc.vfs/lib" tclsh8.6 apps/mndoc examples/hilight.md /tmp/hilight86.html --javascript highlightjs
 ```
 
-## Release checklist (0.16.x)
+## Release checklist
 
 Before tagging a release, make sure:
 
+- [ ] Work was merged from `devel` into `main` (releases are cut from `main`).
+- [ ] Version bumped everywhere (see "Version bumps"), correct level (minor vs patch).
 - [ ] `make app` and `make test` pass, and `bin/mndoc-<version>.bin` is current.
 - [ ] `mndoc/mndoc.html` and `mndoc/mndoc.pdf` are regenerated (version/date updated).
 - [ ] `make docu-book` was run if the manual or `book.css` changed.
+- [ ] Tracked reference outputs refreshed via `make test-hightlight test-equations
+      test-inline` if the generated HTML changed (see "Refreshing the reference outputs").
 - [ ] `bin/install-mndoc.sh` works on a fresh account (`~/.local/bin` is created).
 - [ ] The GitHub release attaches `mndoc-<version>.bin`, `install-mndoc.sh`, `mndoc.pdf`
       and the book stylesheet showcase `manual-book.html`/`manual-book.pdf`.
