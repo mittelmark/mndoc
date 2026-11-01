@@ -126,6 +126,20 @@
 #'   --refresh 10 --base64 true --bodyonly false?  
 #' ```
 #'
+#' Usage as command line application for conversion of Markdown to PDF:
+#'
+#' ```
+#' mndoc inputfile.md outputfile.pdf ?options?
+#' ```
+#'
+#' This first writes the matching `outputfile.html` and then prints it to PDF
+#' with headless chrome/chromium, or with weasyprint if no browser is
+#' installed. Without either of those tools the application refuses to run,
+#' because then only HTML documents can be produced. The paper size follows
+#' the `LC_PAPER` locale (A4 by default, US Letter for locales such as
+#' `en_US`) and can be overridden with the environment variable `PAPER`,
+#' for instance `PAPER=Letter`.
+#'
 #' The options may be placed before, between or after the two file arguments,
 #' each option directly followed by its value, for example
 #' `mndoc --css file.css --bodyonly false inputfile.md outputfile.html`.
@@ -146,6 +160,10 @@
 #' The latter requires the tcllib Markdown or the doctools extensions to be installed.
 #' If the file extension of the inputfile is *.md* and file extension of the output files is *.html* 
 #' there will be simply a conversion from a Markdown to a HTML file.
+#' The command line application additionally accepts a *.pdf* output file:
+#' it writes the matching HTML file and prints it to PDF, see the SYNOPSIS
+#' section above for the details and the requirements on chrome/chromium or
+#' weasyprint.
 #'
 #' The file `mndoc.tcl` can be as well directly used as a console application. 
 #' An explanation on how to do this, is given in the section [Installation](#install).
@@ -829,6 +847,121 @@ proc ::mndoc::mndoc {filename outfile args} {
     }
 }
 
+## look for a PDF renderer: a Chromium based browser first, because it runs
+## MathJax and highlight.js while WeasyPrint cannot, then WeasyPrint.
+## Returns a two element list {kind executable}, or an empty list if neither
+## tool is installed. The CHROME environment variable can name a specific
+## browser binary.
+proc ::mndoc::pdf-engine {} {
+    set candidates [list]
+    if {[info exists ::env(CHROME)] && $::env(CHROME) ne ""} {
+        lappend candidates $::env(CHROME)
+    }
+    lappend candidates chromium-browser chromium google-chrome google-chrome-stable chrome
+    foreach bin $candidates {
+        if {[auto_execok $bin] ne ""} {
+            return [list chrome $bin]
+        }
+    }
+    if {[auto_execok weasyprint] ne ""} {
+        return [list weasyprint weasyprint]
+    }
+    return [list]
+}
+## the @page paper size rule for a throwaway print copy of a document: the
+## PAPER environment variable overrides, otherwise the paper follows the
+## LC_PAPER locale category (which falls back to LANG), where width 216 or
+## 215.9 is US Letter and every other width, including the C/POSIX locale,
+## is A4 - the same rule the Makefile uses for its PDF targets.
+proc ::mndoc::paper-style {} {
+    set paper ""
+    if {[info exists ::env(PAPER)] && $::env(PAPER) ne ""} {
+        set paper $::env(PAPER)
+    } else {
+        set width ""
+        if {![catch {exec locale -k LC_PAPER} out]} {
+            regexp {width=([0-9.]+)} $out -> width
+        }
+        if {$width in {216 215.9}} {
+            set paper Letter
+        } else {
+            set paper A4
+        }
+    }
+    return "<style>@page { size: $paper; }</style>"
+}
+## write the paper size rule into an existing HTML file: before the closing
+## head tag if the document has one, else after the opening body tag, else
+## at the very beginning (a bodyonly fragment)
+proc ::mndoc::paper-inject {htmlfile style} {
+    if {$style eq ""} {
+        return
+    }
+    set in [open $htmlfile r]
+    set html [read $in]
+    close $in
+    set idx [string first "</head>" $html]
+    if {$idx >= 0} {
+        set html "[string range $html 0 [expr {$idx - 1}]]$style\n[string range $html $idx end]"
+    } else {
+        regexp {<body[^>]*>} $html -> tag
+        if {[info exists tag] && $tag ne ""} {
+            regsub -- $tag $html "$style\n$tag" html
+        } else {
+            set html "$style\n$html"
+        }
+    }
+    set out [open $htmlfile w 0644]
+    puts -nonewline $out $html
+    close $out
+}
+## command line helper for an OUTFILE with the extension .pdf: make sure a
+## renderer is installed before anything is written, then create the
+## matching .html file and print that to the PDF file. Chrome and WeasyPrint
+## are tried in this order, CHROME points to a specific browser binary. If
+## neither tool is installed the conversion is refused, because without
+## chrome/chromium or weasyprint only HTML documents can be produced.
+proc ::mndoc::pdf-output {filename outfile args} {
+    set engine [pdf-engine]
+    if {[llength $engine] == 0} {
+        return -code error "Error: PDF output needs chrome/chromium or weasyprint - without installing one of them only HTML documents can be produced!\n       Write the HTML document instead: '[file rootname $outfile].html'"
+    }
+    lassign $engine kind bin
+    set root [file rootname $outfile]
+    set htmlfile "$root.html"
+    set printhtml "$root.print.html"
+    set printcopy false
+    if {[file normalize $htmlfile] eq [file normalize $filename] } {
+        ## converting an HTML file whose own name would be the output: keep
+        ## the input untouched and print a temporary inlined copy of it
+        set htmlfile $printhtml
+        set printcopy true
+    }
+    if {[catch {mndoc $filename $htmlfile {*}$args} err]} {
+        file delete -force $printhtml
+        return -code error $err
+    }
+    if {!$printcopy} {
+        file copy -force $htmlfile $printhtml
+    }
+    paper-inject $printhtml [paper-style]
+    if {$kind eq "chrome"} {
+        set cmd [list {*}[auto_execok $bin] --headless=new --disable-gpu \
+                 --no-pdf-header-footer --virtual-time-budget=15000 \
+                 --print-to-pdf=[file normalize $outfile] \
+                 "file://[file normalize $printhtml]"]
+    } else {
+        set cmd [list {*}[auto_execok $bin] [file normalize $printhtml] \
+                 [file normalize $outfile]]
+    }
+    set status [catch {exec {*}$cmd 2>@1} out]
+    file delete -force $printhtml
+    if {$status} {
+        return -code error "Error: PDF conversion with '$bin' failed!\n$out"
+    }
+    return $outfile
+}
+
 proc ::mndoc::main {argv} {
     global argv0
     set valid_args [list --help -h --version --license --css --header --footer --mathjax \
@@ -844,6 +977,11 @@ set USAGE [string map [list "\n    " "\n"] {
            options: ?--css file.css? ?--header header.html? ?--footer footer.html?
                     ?--mathjax true? ?--javascript JSLIB|JSFile? ?--refresh 10?
                     ?--base64 true? ?--bodyonly false?
+
+           OUTFILE extension: .html or .htm for HTML, .md for Markdown,
+                              .pdf for a PDF document printed with
+                              chrome/chromium or weasyprint (refused if
+                              neither of them is installed)
 
     Info:   __APP__ ?-h|--help? | ?--version? | ?--license?
 }]
@@ -863,10 +1001,15 @@ set HELP [string map [list "\n    " "\n"] {
                 - if INFILE is given as - input is taken from STDIN
 
         OUTFILE - output file usually HTML or Markdown file
-                - file format is deduced on file extension .html or .md,
+                - file format is deduced on file extension .html, .md or .pdf,
                 - if OUTFILE is the `-` sign output is written to STDOUT
                 - if INFILE and OUTFILE are HTML files just embedding of
                   local images and stylesheets is performed
+                - a .pdf output first writes the matching .html file and
+                  then prints it with headless chrome/chromium or, if no
+                  browser is installed, with weasyprint; without either
+                  tool the conversion is refused, because only HTML
+                  documents can be produced
 
     Optional arguments:
 
@@ -907,6 +1050,11 @@ set HELP [string map [list "\n    " "\n"] {
         # useful for inclusion into other documents
         
         __APP__ sample.md sample.html --bodyonly true
+        
+        # convert a Markdown file to PDF, which creates sample.html and
+        # sample.pdf, needs chrome/chromium or weasyprint to be installed
+        
+        __APP__ sample.md sample.pdf --mathjax true
         
         # inline all local images and stylesheets into an HTML file
         __APP__ sample.html sample-out.html
@@ -973,7 +1121,15 @@ set HELP [string map [list "\n    " "\n"] {
             puts $usage
             exit 0
         } else {
-            mndoc::mndoc {*}[lrange $files 0 1] {*}$options
+            set outfile [lindex $files 1]
+            if {[string tolower [file extension $outfile]] eq ".pdf"} {
+                if {[catch {pdf-output {*}$files {*}$options} err]} {
+                    puts $err
+                    exit 1
+                }
+            } else {
+                mndoc::mndoc {*}[lrange $files 0 1] {*}$options
+            }
         }
     }
 }

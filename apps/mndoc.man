@@ -44,6 +44,15 @@ styles.
 instead of Markdown embedded into code, and it is converted to HTML if the output
 file is a [file .html] file.
 
+[para] If the output file has a [file .pdf] extension, the application first writes
+the matching [file .html] file and then prints it to PDF with headless
+chrome/chromium, or with WeasyPrint if no browser is installed. If neither tool
+is installed the conversion is refused before anything is written, mentioning
+that without chrome or weasyprint only HTML documents can be produced. The paper
+size follows the [const LC_PAPER] locale (A4 by default, US Letter for locales
+such as [const en_US]) and can be overridden with the environment variable
+[const PAPER], for example [const {PAPER=Letter}].
+
 [para] If both [arg input] and [arg output] are HTML files, the application only
 embeds local images and stylesheets as base64 data into a standalone HTML file.
 
@@ -125,6 +134,10 @@ are considered. The default is [const 0], which disables refreshing.
 
     # Convert a Markdown file to HTML and render LaTeX formulas
     mndoc sample.md sample.html --mathjax true
+
+    # Convert a Markdown file to PDF: needs chrome/chromium or weasyprint,
+    # creates sample.html and sample.pdf
+    mndoc sample.md sample.pdf --mathjax true
 
     # Embed images and stylesheet files into an existing HTML file
     mndoc sample.html sample-out.html

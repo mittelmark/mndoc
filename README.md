@@ -30,6 +30,10 @@ languages supporting either multiline comments or at least the # character for c
       documents, marking standalone images as figures and honoring
       explicit image sizes
     * omission of HTML header and footer if requested
+    * PDF output: an output file with .pdf extension writes the matching
+      .html file and prints it to PDF with headless chrome/chromium or,
+      failing that, with weasyprint - without either tool mndoc refuses,
+      as then only HTML documents can be produced
     * refresh option for development  
 
 So the mndoc package/application can be as well  used to  convert  Markdown  code into HTML  optionally  adding
@@ -43,9 +47,12 @@ Since version 0.9.0 it as well supports embedding LaTeX equations using the
 * Manual page as PDF [mndoc.pdf](https://github.com/mittelmark/mndoc/releases/latest/download/mndoc.pdf)
 * Manual page rendered with the book stylesheet:
   [manual-book.html](http://htmlpreview.github.io/?https://github.com/mittelmark/mndoc/blob/main/examples/manual-book.html),
-  [manual-book.pdf](https://github.com/mittelmark/mndoc/raw/main/examples/manual-book.pdf)
+  [manual-book-chromium.pdf](https://github.com/mittelmark/mndoc/raw/main/examples/manual-book-chromium.pdf),
+  [manual-book-weasyprint.pdf](https://github.com/mittelmark/mndoc/raw/main/examples/manual-book-weasyprint.pdf)
 
-Please note that MathJax and highlight.js do not work in these manuals, they only work in the HTML page.
+Please note that MathJax and highlight.js only work in the HTML page and in the
+PDFs rendered by a browser (`manual-book-chromium.pdf`), not in the PDFs
+rendered by WeasyPrint, which has no Javascript engine.
 
 Here an example of an embedded mndoc comment for a Python script:
 
@@ -119,6 +126,10 @@ It was rendered from the Markdown source with
 `mndoc chapter.md chapter.html --css book.css`. Options may be placed before,
 between or after the two file arguments, each option directly followed by its
 value, so `mndoc --css book.css chapter.md chapter.html` is equivalent.
+`mndoc chapter.md chapter.pdf --css book.css` creates both files at once: the
+HTML document and a PDF printed from it with headless chrome/chromium or
+weasyprint (whichever is installed), refusing with a clear message if neither
+of them is available.
 
 ## Installation
 
@@ -147,6 +158,8 @@ which runs it in a clean Linux environment and checks the installed binary.
 - adding header and footer support
 - flexible command line option order: options may be given before or after the
   file arguments, for example `mndoc --css book.css chapter.md chapter.html`
+- adding PDF output as a command line format (`mndoc input.md output.pdf`),
+  rendered by headless chrome/chromium or weasyprint
 - adding javascript (single and multiple file support)
 - adding code highlight support [highlight.js](https://highlightjs.org/)
 - adding equation support using [MathJax](https://www.mathjax.org/)

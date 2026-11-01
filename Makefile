@@ -73,10 +73,12 @@ docu:
 	rm -f mndoc/.print.html
 	#cp mndoc/mndoc-out.html mndoc/mndoc.html
 # render the manual itself with the book stylesheet, as a showcase for book.css
+# the two engines produce both flavours of the manual PDF side by side in
+# examples/, so the difference (MathJax/highlight.js) can be compared directly
 docu-book:
 	TCLLIBPATH=`pwd`/mndoc.vfs/lib tclsh apps/mndoc mndoc/mndoc.tcl examples/manual-book.html --css book.css --mathjax true --javascript highlightjs
 	sed 's|</head>|$(PAPERCSS)</head>|' examples/manual-book.html > examples/.print.html
-	cd examples && weasyprint .print.html manual-book.pdf
+	cd examples && weasyprint .print.html manual-book-weasyprint.pdf
 	rm -f examples/.print.html
 ## headless Chromium variants of the two PDF steps above: WeasyPrint cannot
 ## run JavaScript, so equations rendered by MathJax (and code highlighted by
@@ -94,7 +96,7 @@ docu-browser:
 docu-book-browser:
 	TCLLIBPATH=`pwd`/mndoc.vfs/lib tclsh apps/mndoc mndoc/mndoc.tcl examples/manual-book.html --css book.css --mathjax true --javascript highlightjs
 	sed 's|</head>|$(PAPERCSS)</head>|' examples/manual-book.html > examples/.print.html
-	$(CHROME) $(CHROMEFLAGS) --print-to-pdf=examples/manual-book.pdf file://`pwd`/examples/.print.html
+	$(CHROME) $(CHROMEFLAGS) --print-to-pdf=examples/manual-book-chromium.pdf file://`pwd`/examples/.print.html
 	rm -f examples/.print.html
 test:
 	@echo "Running tests..."
@@ -202,6 +204,23 @@ test:
 	tclsh apps/mndoc "$$tmp/test.md" --refresh 10 "$$tmp/opts-mixed.html"; \
 	grep -qE 'http-equiv="refresh" content="10"' "$$tmp/opts-mixed.html"; \
 	echo "  ... option order passing"; \
+	if command -v chromium-browser >/dev/null 2>&1 || command -v chromium >/dev/null 2>&1 || \
+	   command -v google-chrome >/dev/null 2>&1 || command -v weasyprint >/dev/null 2>&1; then \
+	  tclsh apps/mndoc "$$tmp/test.md" "$$tmp/test.pdf"; \
+	  test -f "$$tmp/test.html"; \
+	  head -c 4 "$$tmp/test.pdf" | grep -q '%PDF'; \
+	  echo "  ... pdf output passing"; \
+	else \
+	  echo "  ... pdf output skipped (no chrome/chromium or weasyprint)"; \
+	fi; \
+	if env -i PATH= TCLLIBPATH="$(CURDIR)/mndoc.vfs/lib" `command -v tclsh` apps/mndoc "$$tmp/test.md" "$$tmp/refuse.pdf" > "$$tmp/refuse.log" 2>&1; then \
+	  echo "Error: PDF output without a renderer should have been refused!"; \
+	  exit 1; \
+	fi; \
+	grep -q "only HTML documents can be produced" "$$tmp/refuse.log"; \
+	! test -e "$$tmp/refuse.html"; \
+	! test -e "$$tmp/refuse.pdf"; \
+	echo "  ... pdf refusal passing"; \
 	echo "Tests passed successfully!"
 run:
 	@TCLLIBPATH=`pwd` tclsh apps/mndoc mndoc.tcl --run

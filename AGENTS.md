@@ -223,8 +223,12 @@ TCLLIBPATH="$PWD/mndoc.vfs/lib" \
 the HTML has already been written.
 
 `make docu-book` renders the same manual with `--css book.css` into
-`examples/manual-book.html` and `examples/manual-book.pdf` — a showcase of the
-book stylesheet, regenerated whenever the manual or `book.css` changes.
+`examples/manual-book.html` and `examples/manual-book-weasyprint.pdf` — a
+showcase of the book stylesheet, regenerated whenever the manual or `book.css`
+changes. `make docu-book-browser` writes `examples/manual-book-chromium.pdf`
+from the very same HTML, so both engines' output of the manual is tracked side
+by side in `examples/` (the pair replaces the former single
+`examples/manual-book.pdf`).
 
 WeasyPrint (the PDF step of `make docu` / `make docu-book`) cannot run
 JavaScript, so MathJax equations and highlight.js code stay unrendered in its
@@ -393,7 +397,8 @@ Before tagging a release, make sure:
       test-inline` if the generated HTML changed (see "Refreshing the reference outputs").
 - [ ] `bin/install-mndoc.sh` works on a fresh account (`~/.local/bin` is created).
 - [ ] The GitHub release attaches `mndoc-<version>.bin`, `install-mndoc.sh`, `mndoc.pdf`
-      and the book stylesheet showcase `manual-book.html`/`manual-book.pdf`.
+      and the book stylesheet showcase `manual-book.html`,
+      `manual-book-chromium.pdf` and `manual-book-weasyprint.pdf`.
 - [ ] The release is created as a prerelease and marked as the latest release only
       after the assets were checked: the installer and the README badges follow
       `releases/latest`, so nothing changes for users until then.
