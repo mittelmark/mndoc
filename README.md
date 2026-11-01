@@ -283,6 +283,15 @@ which runs it in a clean Linux environment and checks the installed binary.
 @ 2019-2026 - Detlef  Groth,  University  of  Potsdam,  Germany  -
   dgroth(at)uni(minus)potsdam(dot)de
 
+## Contributors
+
+- Detlef Groth (@mittelmark) - author and maintainer
+- MiMo-V2.6-Flash - AI coding assistant (via OpenCode) which contributed
+  the book.css stylesheet with figure marking and image size handling
+  (0.16.0) and the help page repositioning (in preparation for the next
+  release). AI-assisted commits carry a `Co-authored-by: MiMo-V2.6-Flash`
+  trailer in the git history.
+
 ## License
 
 

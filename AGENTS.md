@@ -251,6 +251,31 @@ book stylesheet, regenerated whenever the manual or `book.css` changes.
 - Only local images and CSS are base64-inlined. JavaScript inlining is still a
   TODO, and `--base64 false` disables this for both Markdown and HTML input.
 
+## AI assistance and commit attribution
+
+Some of this repository's development is done with AI coding assistants (so
+far: OpenCode running MiMo-V2.6-Flash, with the maintainer reviewing, testing
+and committing). To keep that transparent in the git history:
+
+- Commits where an AI assistant produced the change carry a `Co-authored-by`
+  trailer naming the model, as the last line of the commit message body:
+
+  ```
+  Co-authored-by: MiMo-V2.6-Flash <noreply@opencode.ai>
+  ```
+
+  The address is a placeholder (GitHub needs one in the trailer; the model has
+  no account, so it renders as an unlinked ghost avatar) — adjust it if the
+  provider publishes a canonical address. Use the model name as written above;
+  amend existing trailers rather than adding several for the same model. Pure
+  maintainer commits (version bumps, releases, merges) need no trailer.
+- The README has a `## Contributors` section crediting both the maintainer and
+  the AI assistant; update it if another assistant is used or the contribution
+  changes character.
+- Trailer credit is advisory: GitHub's contributor graph only counts commits
+  whose email matches a GitHub account, so the model will not appear there.
+  The trailer and the README section are the visible, in-repo record.
+
 ## Date handling
 
 YAML `date` values are normalized by `::mndoc::normalize-date`:
