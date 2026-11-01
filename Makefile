@@ -55,15 +55,29 @@ test-header:
 	tclsh ./bin/mndoc-$(VERSION).bin examples/header.md examples/header.html --bodyonly true
 test-image:
 	tclsh ./bin/mndoc-$(VERSION).bin examples/image.md examples/image.html
+## PDF paper size from the locale: LC_PAPER (which falls back to LANG)
+## reports width=216 for US Letter locales like en_US and width=210 for
+## A4 locales like de_DE and for the C locale. Override e.g. with:
+## make docu PAPER=Letter
+PAPER?=$(shell locale -k LC_PAPER 2>/dev/null | sed -n 's/^width=//p' | grep -qE '^215.9$$|^216$$' && echo Letter || echo A4)
+## neither WeasyPrint 70 nor headless Chromium has a paper size command
+## line flag, so the size is injected as CSS into a throwaway copy of the
+## generated HTML, which is removed again after the PDF was written
+PAPERCSS=<style>@page { size: $(PAPER); }</style>
+
 docu:
 	TCLLIBPATH=`pwd`/mndoc.vfs/lib tclsh apps/mndoc mndoc/mndoc.tcl mndoc/mndoc.html --css mndoc.css --mathjax true --javascript highlightjs
 	#htmlark --ignore-js mndoc/mndoc.html -o mndoc/mndoc-out.html
-	cd mndoc && weasyprint -s small.css mndoc.html mndoc.pdf 
+	sed 's|</head>|$(PAPERCSS)</head>|' mndoc/mndoc.html > mndoc/.print.html
+	cd mndoc && weasyprint .print.html mndoc.pdf
+	rm -f mndoc/.print.html
 	#cp mndoc/mndoc-out.html mndoc/mndoc.html
 # render the manual itself with the book stylesheet, as a showcase for book.css
 docu-book:
 	TCLLIBPATH=`pwd`/mndoc.vfs/lib tclsh apps/mndoc mndoc/mndoc.tcl examples/manual-book.html --css book.css --mathjax true --javascript highlightjs
-	cd examples && weasyprint manual-book.html manual-book.pdf
+	sed 's|</head>|$(PAPERCSS)</head>|' examples/manual-book.html > examples/.print.html
+	cd examples && weasyprint .print.html manual-book.pdf
+	rm -f examples/.print.html
 ## headless Chromium variants of the two PDF steps above: WeasyPrint cannot
 ## run JavaScript, so equations rendered by MathJax (and code highlighted by
 ## highlight.js) only appear in the PDF when a browser does the HTML to PDF
@@ -73,11 +87,15 @@ CHROMEFLAGS=--headless=new --disable-gpu --no-pdf-header-footer --virtual-time-b
 
 docu-browser:
 	TCLLIBPATH=`pwd`/mndoc.vfs/lib tclsh apps/mndoc mndoc/mndoc.tcl mndoc/mndoc.html --css mndoc.css --mathjax true --javascript highlightjs
-	$(CHROME) $(CHROMEFLAGS) --print-to-pdf=mndoc/mndoc.pdf file://`pwd`/mndoc/mndoc.html
+	sed 's|</head>|$(PAPERCSS)</head>|' mndoc/mndoc.html > mndoc/.print.html
+	$(CHROME) $(CHROMEFLAGS) --print-to-pdf=mndoc/mndoc.pdf file://`pwd`/mndoc/.print.html
+	rm -f mndoc/.print.html
 
 docu-book-browser:
 	TCLLIBPATH=`pwd`/mndoc.vfs/lib tclsh apps/mndoc mndoc/mndoc.tcl examples/manual-book.html --css book.css --mathjax true --javascript highlightjs
-	$(CHROME) $(CHROMEFLAGS) --print-to-pdf=examples/manual-book.pdf file://`pwd`/examples/manual-book.html
+	sed 's|</head>|$(PAPERCSS)</head>|' examples/manual-book.html > examples/.print.html
+	$(CHROME) $(CHROMEFLAGS) --print-to-pdf=examples/manual-book.pdf file://`pwd`/examples/.print.html
+	rm -f examples/.print.html
 test:
 	@echo "Running tests..."
 	@set -e; \

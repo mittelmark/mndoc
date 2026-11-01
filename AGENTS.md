@@ -38,7 +38,7 @@ It started as an extended fork of Tcllib's `mkdoc`; the name was changed to
 | --- | --- |
 | `mndoc/mndoc.tcl` | **Main source of truth**: library + CLI logic + embedded manual (`#'` comments) |
 | `mndoc/pkgIndex.tcl` | Package index; version used by the Makefile |
-| `mndoc/mndoc.css`, `tmdoc.css`, `small.css`, `book.css` | Bundled stylesheets (`book.css` is a flat, greyish traditional-book layout) |
+| `mndoc/mndoc.css`, `tmdoc.css`, `small.css`, `book.css` | Bundled stylesheets (`book.css` is a flat, greyish traditional-book layout; `small.css` is legacy - the build no longer uses it, its print fit moved into `mndoc.css`) |
 | `mndoc/mndoc.html` | Generated manual (tracked in git) |
 | `mndoc/mndoc.pdf` | Generated manual PDF (regenerate with `make docu-browser`; `make docu` uses WeasyPrint, which cannot run MathJax) |
 | `apps/mndoc` | Small launcher: `package require mndoc; ::mndoc::main $argv` |
@@ -232,9 +232,26 @@ PDFs. The browser variants `make docu-browser` and `make docu-book-browser`
 print the very same HTML to PDF with headless Chromium instead — that is how
 the tracked PDFs are built. They need `chromium-browser` (override the binary
 with `CHROME=google-chrome` etc.) and network access for the CDN-hosted
-MathJax/highlight.js assets. `mndoc.css` and `book.css` pin
-`@page { size: A4 }` so Chromium (Letter by default) and WeasyPrint (A4 by
-default) agree on the paper size.
+MathJax/highlight.js assets.
+
+Paper size: not pinned in the stylesheets, but computed by the Makefile.
+`PAPER` comes from the locale — `LC_PAPER` (which falls back to `LANG`):
+width 216 gives `Letter` (e.g. `en_US`), every other width, including the
+C/POSIX locale, gives `A4`, so CI-style builds stay A4 and the tracked PDFs
+do not flip paper with the builder's machine. Override with
+`make docu PAPER=Letter`. Neither WeasyPrint 70 nor headless Chromium has a
+paper size command line flag (Chromium needs CSS), so each of the four PDF
+targets injects `<style>@page { size: $(PAPER) }</style>` with `sed` into a
+throwaway `.print.html` next to the generated HTML, prints that, and removes
+it again (`.print.html` is in `.gitignore`).
+
+Print layout: the shared fit lives in `mndoc.css` under `@media print`
+(80% body font, no body padding, wrapped code lines) plus an explicit
+`@page { margin: 14mm 26mm; }`, and `book.css` pins `@page { margin: 14mm }`,
+so both engines produce the same margins. The former WeasyPrint-only `-s
+small.css` fitting sheet is no longer used by the build. Watch the cascade:
+the `@media print` block in `mndoc.css` must come *after* the `body` rule —
+same specificity, so only document order decides.
 
 ## Code conventions
 

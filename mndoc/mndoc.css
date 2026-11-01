@@ -3,17 +3,6 @@
 @import url('https://fonts.bunny.net/css?family=Aleo&display=swap'); 
 @import url('https://fonts.bunny.net/css?family=Ubuntu+Mono&display=swap'); /* ' */
 
-/* printed documents are A4, whichever engine converts them
-   (WeasyPrint defaults to A4, headless Chromium to Letter) */
-@page { size: A4; }
-
-/* in print, long code lines wrap instead of producing a scrollbar
-   (headless Chromium prints the overflow scrollbar of the highlight.js
-   styles, WeasyPrint ignores overflow altogether) */
-@media print {
-    pre, pre code, code { overflow: visible !important; white-space: pre-wrap; }
-}
-
 body {
     /* a comfortable reading measure, centred: at most 1000px of text, with
        the classic 10% of breathing room kept on either side by the padding
@@ -23,6 +12,25 @@ body {
     max-width: 1000px;
     font-family: "Andika", sans-serif;
 }
+
+/* printed documents: fixed page margins, so WeasyPrint and headless
+   Chromium agree; they are slightly tighter than the former combination of
+   engine default margin and the 10% screen padding of the body. The paper
+   SIZE (A4 vs Letter) follows the locale (LC_PAPER) and is injected by the
+   Makefile when a PDF is built, so browsers keep their own locale default
+   when a user prints. */
+@page { margin: 14mm 26mm; }
+
+/* in print: the compact fit formerly done for WeasyPrint by small.css,
+   and long code lines wrap instead of producing a scrollbar (headless
+   Chromium prints the overflow scrollbar of the highlight.js styles,
+   WeasyPrint ignores overflow altogether). The block must come after the
+   body rule above: same specificity, so only document order decides. */
+@media print {
+    body { font-size: 80%; padding: 0; }
+    pre, pre code, code { overflow: visible !important; white-space: pre-wrap; }
+}
+
 pre {
     padding-top:	1ex;
     padding-bottom:	1ex;

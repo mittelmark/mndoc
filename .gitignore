@@ -13,5 +13,8 @@
 # Test output
 /tests/date.html
 
+# PDF build throwaway (docu targets)
+.print.html
+
 # Editor and build backups
 *~

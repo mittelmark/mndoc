@@ -13,9 +13,12 @@
                  restrained headings, understated links, indented quotes.
    --------------------------------------------------------------------------- */
 
-/* printed documents are A4, whichever engine converts them
-   (WeasyPrint defaults to A4, headless Chromium to Letter) */
-@page { size: A4; }
+/* printed documents: fixed page margins, so WeasyPrint and headless
+   Chromium agree (slightly tighter than their former defaults); the paper
+   SIZE (A4 vs Letter) follows the locale (LC_PAPER) and is injected by the
+   Makefile when a PDF is built, so browsers keep their own locale default
+   when a user prints. */
+@page { margin: 14mm; }
 
 /* in print, long code lines wrap instead of producing a scrollbar
    (headless Chromium prints the overflow scrollbar, WeasyPrint ignores
