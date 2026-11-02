@@ -47,6 +47,9 @@
 #                                            marked as figures (data-figure), explicit image sizes are honored as inline
 #                                            styles, reading measure widened to 1000px, --css embedding resolves
 #                                            relative to the document path rather than the working directory
+#                  2026-11-02 Release 0.17.0 flexible command line option order, .pdf output via headless
+#                                            chrome/chromium or weasyprint, shared print fit and locale paper
+#                                            size, mndoc --upgrade checks GitHub for and installs a newer release
 ##############################################################################
 #
 # Copyright (c) 2019-2026  Detlef Groth, E-mail: dgroth((at)uni-potsdam(dot)de
@@ -54,7 +57,7 @@
 # 
 ##############################################################################
 #' ---
-#' title: mndoc::mndoc 0.16.0
+#' title: mndoc::mndoc 0.17.0
 #' author: Detlef Groth, University of Potsdam, Germany
 #' date: 2026-10-31
 #' css: mndoc.css
@@ -243,8 +246,8 @@ package require Tcl 8.6-
 package require yaml
 package require Markdown
 
-package provide mndoc 0.16.0
-package provide mndoc::mndoc 0.16.0
+package provide mndoc 0.17.0
+package provide mndoc::mndoc 0.17.0
 namespace eval ::mndoc {
     variable deindent [list \n\t \n "\n    " \n]
     variable scriptfile [info script]
@@ -1336,7 +1339,7 @@ set HELP [string map [list "\n    " "\n"] {
 #'
 #' ```
 #' #' ---
-#' #' title: mndoc::mndoc 0.16.0
+#' #' title: mndoc::mndoc 0.17.0
 #' #' author: Detlef Groth, University of Potsdam, Germany
 #' #' date: 2026-10-31
 #' #' css: mndoc.css
@@ -1640,6 +1643,25 @@ set HELP [string map [list "\n    " "\n"] {
 #' 
 #' ## <a name='changes'>CHANGES</a>
 #'
+#' - 2026-11-02 Release 0.17.0
+#'       - flexible command line option order: options may be placed before,
+#'         between or after the two file arguments, each directly followed
+#'         by its value
+#'       - new .pdf output: an OUTFILE with the .pdf extension first writes
+#'         the matching HTML file and prints it to PDF with headless
+#'         chrome/chromium or weasyprint (both engines render MathJax
+#'         equations and highlight.js code, WeasyPrint alone cannot);
+#'         without either tool mndoc refuses, as then only HTML documents
+#'         can be produced
+#'       - shared print fit in the stylesheets (@media print) and the paper
+#'         size now follows the locale: A4 by default, US Letter for
+#'         locales such as en_US, overridable with PAPER=...
+#'       - mndoc --upgrade checks GitHub for a newer release (the release
+#'         tag behind the releases/latest redirect) and, if one exists,
+#'         runs the install-mndoc.sh installer again to refresh the
+#'         standalone binary in ~/.local/bin
+#'       - -h alias for --help; help page repositioned with Markdown to HTML
+#'         conversion first
 #' - 2026-10-31 Release 0.16.0
 #'       - new book.css stylesheet: a flat, greyish layout in the style of a
 #'         traditional book, self-contained without remote font imports

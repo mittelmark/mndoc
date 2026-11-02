@@ -15,7 +15,7 @@ extractor. It reads:
 
 and writes HTML, or extracts the Markdown for further processing.
 
-Current version: **0.16.0**. License: **BSD-3-Clause**. Upstream:
+Current version: **0.17.0**. License: **BSD-3-Clause**. Upstream:
 <https://github.com/mittelmark/mndoc>.
 
 It started as an extended fork of Tcllib's `mkdoc`; the name was changed to
@@ -103,7 +103,7 @@ write the sibling `output.html` first and then print it to PDF:
 Run the prebuilt standalone binary:
 
 ```sh
-./bin/mndoc-0.16.0.bin input.md output.html
+./bin/mndoc-0.17.0.bin input.md output.html
 ```
 
 The root `mndoc.tcl` is **not** standalone: it only does
@@ -215,7 +215,7 @@ make test-equations    # examples/equations.html (--mathjax true)
 make test-inline       # examples/intern.html   (from extern.html)
 ```
 
-They were stale after 0.16.0 (missing charset meta, old 800px measure, missing
+They were stale after 0.17.0 (missing charset meta, old 800px measure, missing
 `data-figure` marker) — a good sign they need a refresh is `git diff` showing
 only `<meta charset>`, `max-width:` or `data-figure` lines after a release.
 

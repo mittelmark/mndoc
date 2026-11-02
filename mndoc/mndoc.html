@@ -4,10 +4,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="title" content="mndoc::mndoc 0.16.0">
+<meta name="title" content="mndoc::mndoc 0.17.0">
 <meta name="author" content="Detlef Groth, University of Potsdam, Germany">
     
-<title>mndoc::mndoc 0.16.0</title>
+<title>mndoc::mndoc 0.17.0</title>
     
                                       <link rel="stylesheet" href="https://unpkg.com/@highlightjs/cdn-assets@11.9.0/styles/atom-one-light.min.css">
                                       <script src="https://unpkg.com/@highlightjs/cdn-assets@11.9.0/highlight.min.js"></script>
@@ -41,7 +41,7 @@ pre, code { font-family: "Ubuntu Mono", monospaced ; }
 
 
     <div class="document-header">
-<h1 class="title">mndoc::mndoc 0.16.0</h1>
+<h1 class="title">mndoc::mndoc 0.17.0</h1>
 <h2 class="author">Detlef Groth, University of Potsdam, Germany</h2>
 <h2 class="date">2026-10-31</h2>
     </div>
@@ -262,7 +262,7 @@ either in the css file, or if you like you can add as well a style section to th
 either like in this example:</p>
 
 <pre class='code'><code>#' ---
-#' title: mndoc::mndoc 0.16.0
+#' title: mndoc::mndoc 0.17.0
 #' author: Detlef Groth, University of Potsdam, Germany
 #' date: 2026-10-31
 #' css: mndoc.css
@@ -541,6 +541,28 @@ in your module path as <code>mndoc-0.1X.X.tm</code> for instance. See the <a hre
 <h2><a name='changes'>CHANGES</a></h2>
 
 <ul>
+<li>2026-11-02 Release 0.17.0
+<ul>
+<li>flexible command line option order: options may be placed before,
+between or after the two file arguments, each directly followed
+by its value</li>
+<li>new .pdf output: an OUTFILE with the .pdf extension first writes
+the matching HTML file and prints it to PDF with headless
+chrome/chromium or weasyprint (both engines render MathJax
+equations and highlight.js code, WeasyPrint alone cannot);
+without either tool mndoc refuses, as then only HTML documents
+can be produced</li>
+<li>shared print fit in the stylesheets (@media print) and the paper
+size now follows the locale: A4 by default, US Letter for
+locales such as en_US, overridable with PAPER=...</li>
+<li>mndoc --upgrade checks GitHub for a newer release (the release
+tag behind the releases/latest redirect) and, if one exists,
+runs the install-mndoc.sh installer again to refresh the
+standalone binary in ~/.local/bin</li>
+<li>-h alias for --help; help page repositioned with Markdown to HTML
+conversion first</li></ul>
+
+</li>
 <li>2026-10-31 Release 0.16.0
 <ul>
 <li>new book.css stylesheet: a flat, greyish layout in the style of a

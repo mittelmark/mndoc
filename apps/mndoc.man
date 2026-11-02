@@ -1,5 +1,5 @@
 [comment {-*- mode: tcl ; fill-column: 90 -*- doctools manpage}]
-[vset VERSION 0.16.0]
+[vset VERSION 0.17.0]
 [manpage_begin mndoc n [vset VERSION]]
 [copyright {2019-2026, Detlef Groth <detlef(at)uni(minus)potsdam(dot)de>}]
 [moddesc   {Markdown to HTML converter and source code documentation}]

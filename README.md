@@ -195,6 +195,22 @@ which runs it in a clean Linux environment and checks the installed binary.
 
 ## ChangeLog
 
+- 2026-11-02 Release 0.17.0
+    - flexible command line option order: options may be placed before,
+      between or after the two file arguments, each directly followed by
+      its value
+    - new .pdf output: an OUTFILE with the .pdf extension first writes the
+      matching HTML file and prints it to PDF with headless chrome/chromium
+      or weasyprint; without either tool mndoc refuses, as then only HTML
+      documents can be produced
+    - shared print fit in the stylesheets (@media print) and the paper size
+      now follows the locale: A4 by default, US Letter for locales such as
+      en_US, overridable with PAPER=...
+    - mndoc --upgrade checks GitHub for a newer release (the tag behind the
+      releases/latest redirect) and, if one exists, runs the install script
+      again to refresh the standalone binary in ~/.local/bin
+    - -h alias for --help; help page repositioned with Markdown to HTML
+      conversion first
 - 2026-10-31 Release 0.16.0
     - new book.css stylesheet: a flat, greyish layout in the style of a
       traditional book, self-contained without remote font imports
@@ -322,9 +338,10 @@ which runs it in a clean Linux environment and checks the installed binary.
 - Detlef Groth (@mittelmark) - author and maintainer
 - MiMo-V2.6-Flash - AI coding assistant (via OpenCode) which contributed
   the book.css stylesheet with figure marking and image size handling
-  (0.16.0) and the help page repositioning (in preparation for the next
-  release). AI-assisted commits carry a `Co-authored-by: MiMo-V2.6-Flash`
-  trailer in the git history.
+  (0.16.0) and the PDF output path with shared print fit and locale paper
+  size, the .pdf CLI output format, mndoc --upgrade and the help page
+  repositioning (0.17.0). AI-assisted commits carry a
+  `Co-authored-by: MiMo-V2.6-Flash` trailer in the git history.
 
 ## License
 
