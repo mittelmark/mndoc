@@ -110,6 +110,18 @@ mndoc::mndoc inputfile outputfile ?--css file1.css,file2.css? \
   --footer footer.html --javascript highlightjs|filename1,filename2  --mathjax true \
   --refresh 10 --base64 true --bodyonly false?  </code></pre>
 
+<p>Usage as command line application for conversion of Markdown to PDF:</p>
+
+<pre class='code'><code>mndoc inputfile.md outputfile.pdf ?options?</code></pre>
+
+<p>This first writes the matching <code>outputfile.html</code> and then prints it to PDF
+with headless chrome/chromium, or with weasyprint if no browser is
+installed. Without either of those tools the application refuses to run,
+because then only HTML documents can be produced. The paper size follows
+the <code>LC_PAPER</code> locale (A4 by default, US Letter for locales such as
+<code>en_US</code>) and can be overridden with the environment variable <code>PAPER</code>,
+for instance <code>PAPER=Letter</code>.</p>
+
 <p>The options may be placed before, between or after the two file arguments,
 each option directly followed by its value, for example
 <code>mndoc --css file.css --bodyonly false inputfile.md outputfile.html</code>.</p>
@@ -127,7 +139,11 @@ The file extension of the output file determines the output format.
 File extensions can bei either <code>.md</code> for Markdown output, <code>.man</code> for doctools output or <code>.html</code> for html output.
 The latter requires the tcllib Markdown or the doctools extensions to be installed.
 If the file extension of the inputfile is <em>.md</em> and file extension of the output files is <em>.html</em> 
-there will be simply a conversion from a Markdown to a HTML file.</p>
+there will be simply a conversion from a Markdown to a HTML file.
+The command line application additionally accepts a <em>.pdf</em> output file:
+it writes the matching HTML file and prints it to PDF, see the SYNOPSIS
+section above for the details and the requirements on chrome/chromium or
+weasyprint.</p>
 
 <p>The file <code>mndoc.tcl</code> can be as well directly used as a console application. 
 An explanation on how to do this, is given in the section <a href="#install">Installation</a>.</p>

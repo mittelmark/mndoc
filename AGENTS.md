@@ -63,11 +63,42 @@ on a system-wide Tcllib:
 ```sh
 export TCLLIBPATH="$PWD/mndoc.vfs/lib"
 tclsh apps/mndoc input.md output.html
+tclsh apps/mndoc input.md output.pdf --css book.css
 tclsh apps/mndoc mndoc/mndoc.tcl mndoc/mndoc.html --css mndoc.css
 tclsh apps/mndoc --help
 ```
 
 If `mndoc.vfs/` is missing, run `make app` (see caveats below).
+
+### PDF output from the command line
+
+An OUTFILE with the extension `.pdf` (matched case-insensitively) makes the CLI
+write the sibling `output.html` first and then print it to PDF:
+
+- The renderer is picked before anything is written: `$CHROME` (environment
+  variable) if set, then `chromium-browser`, `chromium`, `google-chrome`,
+  `google-chrome-stable`, `chrome`, then `weasyprint` — a browser wins because
+  only it runs MathJax and highlight.js. Look-up uses `auto_execok`, so the
+  tools are found via `PATH`.
+- **Fail fast:** if none of them is installed the command refuses with a
+  message stating that without chrome or weasyprint only HTML documents can be
+  produced, exits with status 1 and creates *no* files at all. The user reruns
+  with an `.html` OUTFILE.
+- Chrome runs with `--headless=new --print-to-pdf=... --virtual-time-budget=15000`
+  (the budget lets the async CDN scripts finish), WeasyPrint is called with the
+  usual `input output` arguments. The engine failure is reported and exits 1.
+- Paper size: a throwaway `output.print.html` copy of the generated HTML gets
+  `<style>@page { size: ... }</style>` injected before `</head>` — same
+  `PAPER` environment override and same `LC_PAPER` locale rule as the Makefile
+  PDF targets (`PAPER=Letter` for US Letter). The kept `output.html` stays
+  neutral; the temp copy is deleted after the run, also on failure.
+- Corner case: converting a HTML file whose base name already matches the PDF
+  (e.g. `chapter.html` → `chapter.pdf`) must not overwrite the input, so no
+  separate `.html` is written there — only the PDF, from a temporary inlined
+  copy.
+- The package API `::mndoc::mndoc infile outfile ?options?` is unchanged: the
+  `.pdf` handling lives in `::mndoc::main` (dispatch) and
+  `::mndoc::pdf-output`.
 
 Run the prebuilt standalone binary:
 
@@ -158,7 +189,11 @@ directory, and covers:
 - non-ISO and integer date fallback,
 - table/pipe handling from `tests/tables.md`,
 - nested CSS paths and document-relative `--css` lookup,
-- `--bodyonly`.
+- `--bodyonly`,
+- `.pdf` output (happy path, guarded by `command -v` for any chrome/chromium
+  variant or weasyprint: asserts the sibling `.html` and a `%PDF` signature)
+  and the refusal path (runs with `env -i PATH=`, asserts status 1, the
+  "only HTML documents can be produced" message and that no files were created).
 
 The suite should pass under both Tcl 8.6 and Tcl 9. The tracked
 `examples/*.html` files are reference outputs and must not be overwritten by
