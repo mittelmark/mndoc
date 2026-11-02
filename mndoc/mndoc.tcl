@@ -140,6 +140,12 @@
 #' `en_US`) and can be overridden with the environment variable `PAPER`,
 #' for instance `PAPER=Letter`.
 #'
+#' The only exception is an input file which already is the HTML document
+#' behind that PDF, that is when *infile* and *outfile* share their base
+#' name, for example `mndoc chapter.html chapter.pdf`. The input file must
+#' not be overwritten, so no separate HTML file is written then, the PDF is
+#' printed from a temporary inlined copy of the input instead.
+#'
 #' The options may be placed before, between or after the two file arguments,
 #' each option directly followed by its value, for example
 #' `mndoc --css file.css --bodyonly false inputfile.md outputfile.html`.
@@ -1010,6 +1016,10 @@ set HELP [string map [list "\n    " "\n"] {
                   browser is installed, with weasyprint; without either
                   tool the conversion is refused, because only HTML
                   documents can be produced
+                - exception: if INFILE is already the HTML file a .pdf
+                  OUTFILE would be built from (same base name, e.g.
+                  sample.html -> sample.pdf), only the PDF is written,
+                  because the input file must not be overwritten
 
     Optional arguments:
 
@@ -1055,6 +1065,11 @@ set HELP [string map [list "\n    " "\n"] {
         # sample.pdf, needs chrome/chromium or weasyprint to be installed
         
         __APP__ sample.md sample.pdf --mathjax true
+        
+        # print an existing HTML file to PDF, sample.html stays untouched
+        # and no second HTML file is written
+        
+        __APP__ sample.html sample.pdf
         
         # inline all local images and stylesheets into an HTML file
         __APP__ sample.html sample-out.html

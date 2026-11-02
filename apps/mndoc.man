@@ -53,6 +53,12 @@ size follows the [const LC_PAPER] locale (A4 by default, US Letter for locales
 such as [const en_US]) and can be overridden with the environment variable
 [const PAPER], for example [const {PAPER=Letter}].
 
+[para] The only exception is an input file which already is the HTML document
+behind that PDF, that is when input and output file share their base name, for
+example [const {mndoc chapter.html chapter.pdf}]. The input file must not be
+overwritten, so no separate HTML file is written then: only the PDF is
+produced, printed from a temporary inlined copy of the input.
+
 [para] If both [arg input] and [arg output] are HTML files, the application only
 embeds local images and stylesheets as base64 data into a standalone HTML file.
 
@@ -138,6 +144,10 @@ are considered. The default is [const 0], which disables refreshing.
     # Convert a Markdown file to PDF: needs chrome/chromium or weasyprint,
     # creates sample.html and sample.pdf
     mndoc sample.md sample.pdf --mathjax true
+
+    # Print an existing HTML file to PDF: sample.html stays untouched,
+    # no second HTML file is written
+    mndoc sample.html sample.pdf
 
     # Embed images and stylesheet files into an existing HTML file
     mndoc sample.html sample-out.html

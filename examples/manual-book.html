@@ -122,6 +122,12 @@ the <code>LC_PAPER</code> locale (A4 by default, US Letter for locales such as
 <code>en_US</code>) and can be overridden with the environment variable <code>PAPER</code>,
 for instance <code>PAPER=Letter</code>.</p>
 
+<p>The only exception is an input file which already is the HTML document
+behind that PDF, that is when <em>infile</em> and <em>outfile</em> share their base
+name, for example <code>mndoc chapter.html chapter.pdf</code>. The input file must
+not be overwritten, so no separate HTML file is written then, the PDF is
+printed from a temporary inlined copy of the input instead.</p>
+
 <p>The options may be placed before, between or after the two file arguments,
 each option directly followed by its value, for example
 <code>mndoc --css file.css --bodyonly false inputfile.md outputfile.html</code>.</p>
