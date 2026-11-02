@@ -193,7 +193,10 @@ directory, and covers:
 - `.pdf` output (happy path, guarded by `command -v` for any chrome/chromium
   variant or weasyprint: asserts the sibling `.html` and a `%PDF` signature)
   and the refusal path (runs with `env -i PATH=`, asserts status 1, the
-  "only HTML documents can be produced" message and that no files were created).
+  "only HTML documents can be produced" message and that no files were created),
+- `--upgrade` (its help entry, plus the refusal path with `env -i PATH=` —
+  no live GitHub check in `make test`, that would really run the installer
+  and needs the network).
 
 The suite should pass under both Tcl 8.6 and Tcl 9. The tracked
 `examples/*.html` files are reference outputs and must not be overwritten by
@@ -299,10 +302,12 @@ same specificity, so only document order decides.
 - Public entry point is `::mndoc::mndoc infile outfile ?--option value ...?`;
   command-line handling is `::mndoc::main argv`.
 - Options are `--long-option value` pairs, not flags with a separate parser,
-  with one exception: `-h` is accepted as an alias for `--help` (checked in the
-  same `lsearch` branch in `main`). Keep the option list in `main`
-  (`valid_args`), the `array set arg` defaults, and the `USAGE`/`HELP` text in
-  sync.
+  with two exceptions: `-h` is accepted as an alias for `--help` and
+  `--upgrade` takes no value — both are value-less flags handled by early
+  `lsearch` branches in `main` and deliberately **not** part of `valid_args`
+  (which only feeds the value-pairing dispatch loop). Keep the option list in
+  `main` (`valid_args`), the `array set arg` defaults, and the `USAGE`/`HELP`
+  text in sync.
 - On the command line options may appear **before, between or after** the
   `INFILE OUTFILE` arguments (`mndoc --css my.css in.md out.html`), following
   the usual `appname options files` convention. `main` collects the two
@@ -384,6 +389,22 @@ as `28.10.2026`.
 - The `.tapp` parallel first-run race is fixed by `patches/tpack-race.patch`
   (per-PID cache directories). Keep that patch applied to `bin/tpack` before
   running `make app`.
+- `mndoc --upgrade` needs `curl` (or `wget`) and network access. It installs
+  or refreshes only the standalone binary in `~/.local/bin` — a source
+  checkout stays untouched (`git pull` there). It prepends `~/.local/bin` to
+  the PATH of the *installer subprocess*, because `install-mndoc.sh` asks
+  interactively about the PATH otherwise (and loops on non-tty stdin); a PATH
+  hint is printed instead afterwards.
+- The `--upgrade` branch in `main` must **`exit` and never return**: while it
+  runs, the installer overwrites `~/.local/bin/mndoc`, which for an installed
+  `mndoc-*.bin` is exactly the file the interpreter executes (`[info script]`,
+  tpack reads it lazily; `::mndoc::main $argv` sits near the end with only
+  `exit` behind it). Returning would make tclsh parse whatever bytes the new
+  binary leaves at that offset.
+- Tcl ARE quirk (hit while writing `latest-version`): a non-greedy `.*?`
+  before the capture shortens the *whole* match, so a greedy star behind it
+  collapses — `location:.*?/tag/v([0-9][0-9.]*)` captured only `0`. The
+  patterns in `latest-version` must stay greedy.
 - Do not confuse `mndoc/mndoc.tcl` (source) with root `mndoc.tcl` (generated
   launcher). Do not confuse the tracked `mndoc/mndoc.html` (manual) with
   generated test output.

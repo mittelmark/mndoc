@@ -136,6 +136,18 @@ each option directly followed by its value, for example
 
 <pre class='code'><code>mndoc inputcodefile outputfile.md ?options?</code></pre>
 
+<p>Usage as command line application to check for and install a newer release:</p>
+
+<pre class='code'><code>mndoc --upgrade</code></pre>
+
+<p>The running version is compared with the release tag GitHub serves for
+<code>releases/latest</code> (an HTTP redirect to <code>releases/tag/vX.Y.Z</code>). If a newer
+release exists, the official <code>install-mndoc.sh</code> installer is downloaded and
+run again, which refreshes the standalone binary in <code>~/.local/bin</code>. The
+check needs <code>curl</code> or <code>wget</code> and network access, the installation runs
+without asking questions, and a source checkout of the mndoc repository is
+not touched - use <code>git pull</code> there.</p>
+
 <h2><a name='description'>DESCRIPTION</a></h2>
 
 <p><strong>mndoc::mndoc</strong>  converts Markdown files to HTML files and extracts embedded

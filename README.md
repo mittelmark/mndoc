@@ -34,6 +34,8 @@ languages supporting either multiline comments or at least the # character for c
       .html file and prints it to PDF with headless chrome/chromium or,
       failing that, with weasyprint - without either tool mndoc refuses,
       as then only HTML documents can be produced
+    * self-update: `mndoc --upgrade` checks GitHub for a newer release and
+      runs the install script again if there is one
     * refresh option for development  
 
 So the mndoc package/application can be as well  used to  convert  Markdown  code into HTML  optionally  adding
@@ -150,6 +152,19 @@ This downloads the latest `mndoc-<version>.bin` release asset, places it as
 (`.bashrc`/`.zshrc`). If Tcl is not installed on the machine, just use the
 resulting `mndoc` command (or add `~/.local/bin` to your `PATH`).
 
+Later on you can check for and install a newer release with:
+
+```
+mndoc --upgrade
+```
+
+The running version is compared with the release tag behind the GitHub
+`releases/latest` redirect; if a newer release exists, the official
+`install-mndoc.sh` installer is downloaded and run again to refresh
+`~/.local/bin/mndoc`. The check needs `curl` (or `wget`) plus network access,
+the installation runs without asking questions (a PATH hint is printed
+instead), and a source checkout of this repository is not touched.
+
 The installer is verified on every release by the `installer` GitHub Action,
 which runs it in a clean Linux environment and checks the installed binary.
 
@@ -160,6 +175,8 @@ which runs it in a clean Linux environment and checks the installed binary.
   file arguments, for example `mndoc --css book.css chapter.md chapter.html`
 - adding PDF output as a command line format (`mndoc input.md output.pdf`),
   rendered by headless chrome/chromium or weasyprint
+- adding `mndoc --upgrade` to check GitHub for a newer release and install it
+  through the official install script
 - adding javascript (single and multiple file support)
 - adding code highlight support [highlight.js](https://highlightjs.org/)
 - adding equation support using [MathJax](https://www.mathjax.org/)

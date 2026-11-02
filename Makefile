@@ -221,6 +221,14 @@ test:
 	! test -e "$$tmp/refuse.html"; \
 	! test -e "$$tmp/refuse.pdf"; \
 	echo "  ... pdf refusal passing"; \
+	tclsh apps/mndoc -h | grep -q -- "--upgrade"; \
+	echo "  ... upgrade help passing"; \
+	if env -i PATH= TCLLIBPATH="$(CURDIR)/mndoc.vfs/lib" `command -v tclsh` apps/mndoc --upgrade > "$$tmp/upgrade.log" 2>&1; then \
+	  echo "Error: --upgrade without curl/wget should have been refused!"; \
+	  exit 1; \
+	fi; \
+	grep -q "needs curl or wget" "$$tmp/upgrade.log"; \
+	echo "  ... upgrade refusal passing"; \
 	echo "Tests passed successfully!"
 run:
 	@TCLLIBPATH=`pwd` tclsh apps/mndoc mndoc.tcl --run

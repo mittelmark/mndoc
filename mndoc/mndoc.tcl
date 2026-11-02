@@ -156,6 +156,20 @@
 #' mndoc inputcodefile outputfile.md ?options?
 #' ```
 #'
+#' Usage as command line application to check for and install a newer release:
+#'
+#' ```
+#' mndoc --upgrade
+#' ```
+#'
+#' The running version is compared with the release tag GitHub serves for
+#' `releases/latest` (an HTTP redirect to `releases/tag/vX.Y.Z`). If a newer
+#' release exists, the official `install-mndoc.sh` installer is downloaded and
+#' run again, which refreshes the standalone binary in `~/.local/bin`. The
+#' check needs `curl` or `wget` and network access, the installation runs
+#' without asking questions, and a source checkout of the mndoc repository is
+#' not touched - use `git pull` there.
+#'
 #' ## <a name='description'>DESCRIPTION</a>
 #' 
 #' **mndoc::mndoc**  converts Markdown files to HTML files and extracts embedded
@@ -968,6 +982,109 @@ proc ::mndoc::pdf-output {filename outfile args} {
     return $outfile
 }
 
+## the version of the latest release on GitHub: the releases/latest URL
+## redirects (HTTP 302) to .../releases/tag/vX.Y.Z, which is exactly the
+## check the install-mndoc.sh script performs. curl is preferred, since the
+## installer needs it anyway, wget is the fallback.
+proc ::mndoc::latest-version {} {
+    set url "https://github.com/mittelmark/mndoc/releases/latest/"
+    set out ""
+    if {[auto_execok curl] ne ""} {
+        if {[catch {exec curl -isS $url 2>@1} out]} {
+            return -code error "Error: checking GitHub for the latest mndoc release failed: $out"
+        }
+        # note: greedy '.*' - a non-greedy '.*?' before /tag/v shortens the
+        # whole match in Tcl's AREs and would truncate the version capture
+        if {![regexp -nocase -line {^location:.*/tag/v([0-9][0-9.]*)} $out -> version]} {
+            return -code error "Error: unexpected answer from GitHub while checking the latest mndoc release!"
+        }
+    } elseif {[auto_execok wget] ne ""} {
+        catch {exec wget -S --spider $url 2>@1} out
+        if {![regexp -nocase {location:.*/tag/v([0-9][0-9.]*)} $out -> version]} {
+            return -code error "Error: could not read the latest mndoc release tag from GitHub!"
+        }
+    } else {
+        return -code error "Error: 'mndoc --upgrade' needs curl or wget to check GitHub for a newer release!"
+    }
+    return $version
+}
+## is version a strictly newer than version b? compared numerically
+## component by component, leading digits only, missing parts count as 0
+proc ::mndoc::version-newer {a b} {
+    set va [split $a .]
+    set vb [split $b .]
+    while {[llength $va] < [llength $vb]} { lappend va 0 }
+    while {[llength $vb] < [llength $va]} { lappend vb 0 }
+    foreach x $va y $vb {
+        set xa 0
+        set ya 0
+        regexp {^[0-9]+} $x xa
+        regexp {^[0-9]+} $y ya
+        if {$xa > $ya} { return 1 }
+        if {$xa < $ya} { return 0 }
+    }
+    return 0
+}
+## download url into the file outfile, with curl or wget
+proc ::mndoc::fetch {url outfile} {
+    if {[auto_execok curl] ne ""} {
+        set cmd [list {*}[auto_execok curl] -fsSL $url --output $outfile]
+    } elseif {[auto_execok wget] ne ""} {
+        set cmd [list {*}[auto_execok wget] -q -O $outfile $url]
+    } else {
+        return -code error "Error: downloading '$url' needs curl or wget!"
+    }
+    if {[catch {exec {*}$cmd 2>@1} out]} {
+        file delete -force $outfile
+        return -code error "Error: downloading '$url' failed: $out"
+    }
+}
+## 'mndoc --upgrade': check GitHub for a newer release and, if there is one,
+## download and run the official install-mndoc.sh installer again, which
+## refreshes the standalone binary in ~/.local/bin (a checkout of the source
+## repository is not touched). The installer asks interactively whether to
+## add ~/.local/bin to the PATH, so that directory is prepended to the PATH
+## of the installer process - --upgrade stays non-interactive and prints a
+## PATH hint itself afterwards.
+proc ::mndoc::upgrade {} {
+    set current [package provide mndoc]
+    set latest [latest-version]
+    if {![version-newer $latest $current]} {
+        puts "mndoc $current is already the latest release (GitHub: v$latest)."
+        return
+    }
+    puts "A newer mndoc release is available: GitHub v$latest, local version: $current"
+    set url "https://github.com/mittelmark/mndoc/releases/latest/download/install-mndoc.sh"
+    set bindir ""
+    set envargs [list env]
+    if {[info exists ::env(HOME)]} {
+        set bindir [file join $::env(HOME) .local bin]
+        set path ""
+        if {[info exists ::env(PATH)]} {
+            set path $::env(PATH)
+        }
+        lappend envargs "PATH=$bindir:$path"
+    }
+    set fh [file tempfile script mndoc-install-]
+    close $fh
+    set cmd [list {*}$envargs {*}[auto_execok bash] $script]
+    if {[catch {
+        fetch $url $script
+        exec {*}$cmd 2>@1
+    } out]} {
+        file delete -force $script
+        return -code error "Error: running the mndoc install script failed!\n$out"
+    }
+    file delete -force $script
+    puts $out
+    puts "mndoc was upgraded to the latest release."
+    if {$bindir ne "" && (![info exists ::env(PATH)] || \
+            [lsearch -exact [split $::env(PATH) ":"] $bindir] == -1)} {
+        puts "Note: $bindir is not in your PATH yet, add it for example with:"
+        puts "  echo \$PATH | grep -q /.local/bin || export PATH=\$HOME/.local/bin:\$PATH"
+    }
+}
+
 proc ::mndoc::main {argv} {
     global argv0
     set valid_args [list --help -h --version --license --css --header --footer --mathjax \
@@ -989,7 +1106,7 @@ set USAGE [string map [list "\n    " "\n"] {
                               chrome/chromium or weasyprint (refused if
                               neither of them is installed)
 
-    Info:   __APP__ ?-h|--help? | ?--version? | ?--license?
+    Info:   __APP__ ?-h|--help? | ?--version? | ?--license? | ?--upgrade?
 }]
 set HELP [string map [list "\n    " "\n"] {
     mndoc __VERSION__ - Markdown to HTML converter and source code documentation tool
@@ -1026,6 +1143,11 @@ set HELP [string map [list "\n    " "\n"] {
         --help, -h         - display this help page, and exit
         --version          - display version number, and exit
         --license          - display license information, and exit
+        --upgrade          - check GitHub for a newer mndoc release and, if
+                             there is one, run the official install script
+                             again to update the standalone binary in
+                             ~/.local/bin; needs curl or wget and network
+                             access, the source checkout is not touched
         --css CSSFILE      - use the specified CSSFILE instead of internal default 
                              mndoc.css
         --header HTMLFILE  - file with HTML code to be included after the body tag
@@ -1084,6 +1206,11 @@ set HELP [string map [list "\n    " "\n"] {
         # create a manual page for a CPP file using a custom style sheet
         __APP__ sample.cpp sample.html --css manual.css
 
+        # check GitHub for a newer mndoc release and install it if there is
+        # one (updates the standalone binary in ~/.local/bin)
+        
+        __APP__ --upgrade
+
     Author: @ Detlef Groth, University of Potsdam, Germany 2019-2026
 
     License: BSD-3-Clause
@@ -1099,6 +1226,16 @@ set HELP [string map [list "\n    " "\n"] {
         puts $usage
         set help [regsub -all {__VERSION__} [regsub -all {__APP__} $HELP $APP] [package provide mndoc]]
         puts $help
+        exit 0
+    } elseif {[lsearch -exact $argv {--upgrade}] > -1} {
+        # '--upgrade' must not return to the script: the installer may just
+        # have replaced the very file this interpreter is executing (an
+        # installed mndoc-*.bin), so no further top-level commands of
+        # [info script] may be read - exit right after the upgrade instead
+        if {[catch {upgrade} err]} {
+            puts $err
+            exit 1
+        }
         exit 0
     } else {
         # options may be given before, between or after the file names,

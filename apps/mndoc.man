@@ -28,6 +28,18 @@ The application prints its version number to standard output and exits.
 
 The application prints its license to standard output and exits.
 
+[call [cmd mndoc] [option --upgrade]]
+
+The application checks GitHub for a newer mndoc release: the version tag the
+[const https://github.com/mittelmark/mndoc/releases/latest] URL redirects to is
+compared with the running version. If a newer release exists, the official
+[file install-mndoc.sh] installer is downloaded and run again, which refreshes
+the standalone binary in [file ~/.local/bin]. A source checkout of the
+repository is not touched. The check needs [const curl] or [const wget] plus
+network access, the installation itself runs without asking questions, and the
+application exits with status 1 when no download tool is available or the
+check fails.
+
 [call [cmd mndoc] [arg input] [arg output] [arg options]]
 [call [cmd mndoc] [arg options] [arg input] [arg output]]
 
@@ -161,6 +173,9 @@ are considered. The default is [const 0], which disables refreshing.
     # Extract the documentation from code as simple Markdown, ready to be processed
     # further, for example with pandoc, or similar
     mndoc sample.cpp sample.md 
+
+    # Check GitHub for a newer mndoc release and install it if there is one
+    mndoc --upgrade
 }]
 
 [section "Bugs, Ideas, Feedback"]
