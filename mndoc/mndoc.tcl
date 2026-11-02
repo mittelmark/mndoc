@@ -1562,12 +1562,19 @@ set HELP [string map [list "\n    " "\n"] {
 #' 
 #' <a name="equations">**Equations**</a>
 #'
-#' Since version 0.9.0 as well LaTeX equations can be embedded into Markdown documents and are
-#' rendered using the [MathJax](https://www.mathjax.org/) library. Just include either inline 
-#' equations using parenthesis protected by two backslashes or block equations embedded within
-#' brackets protected by two backslashes or within two dollar symbols in your Markdown code and use
-#' the option `--mathjax true` during document conversion. Here an example for 
-#' inline equations:
+#' Since version 0.9.0 as well LaTeX equations can be embedded into Markdown
+#' documents and are rendered using the [MathJax](https://www.mathjax.org/)
+#' library. The equation source stays in your own document: MathJax typesets
+#' it in the browser, so the rendering does not depend on an external
+#' equation service (like CodeCogs, where equations are images fetched from a
+#' third party domain that may disappear).
+#'
+#' Use the option `--mathjax true` during document conversion. You can then
+#' write inline equations using the parenthesis `\( ... \)` approach and
+#' block equations using the bracket `\[ ... \]` approach, both protected by
+#' two backslashes in your Markdown source, or the dollar variants
+#' `$ ... $` / `$$ ... $$` which need no backslashes at all. Here an example
+#' for inline equations:
 #'
 #' ```
 #' The  famous  Einstein  equation  \\( E = mc^2 \\) is  probably  the most known
@@ -1579,6 +1586,16 @@ set HELP [string map [list "\n    " "\n"] {
 #' The  famous  Einstein  equation  \\( E = mc^2 \\) is  probably  the most know
 #' equation world wide. 
 #' 
+#' And here the bracket `\\[ ... \\]` approach for a block equation:
+#'
+#' ```
+#' \\[ \\sum_{i=0}^n i^2 = \\frac{(n^2+n)(2n+1)}{6} \\]
+#' ```
+#'
+#' The output (will as well not work in Github Preview Mode):
+#'
+#' \\[ \\sum_{i=0}^n i^2 = \\frac{(n^2+n)(2n+1)}{6} \\]
+#'
 #' Block equations should be usually aligned left, like in the
 #' following examples:
 #'

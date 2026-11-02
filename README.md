@@ -42,7 +42,12 @@ So the mndoc package/application can be as well  used to  convert  Markdown  cod
 header, footer, stylesheets and Javascript code. The latter can be used to add
 syntax   highlighting   for   instance   using   the [Highlight.js syntax   highlighter](https://github.com/highlightjs).
 Since version 0.9.0 it as well supports embedding LaTeX equations using the
-[MathJax Javascript library](https://www.mathjax.org/)
+[MathJax Javascript library](https://www.mathjax.org/): inline equations
+with the `\( ... \)` approach, block equations with the `\[ ... \]`
+approach (both written with doubled backslashes in the Markdown source) or
+the dollar variants `$ ... $` / `$$ ... $$`. The equations are typeset in
+the browser from the equation source in your own document - no external
+equation service (like CodeCogs) is involved.
 
 * current code and manuals:  [mndoc.zip](https://github.com/mittelmark/mndoc/archive/refs/heads/main.zip)
 * Manual page [mndoc.html](http://htmlpreview.github.io/?https://github.com/mittelmark/mndoc/blob/main/mndoc/mndoc.html)

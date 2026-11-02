@@ -128,8 +128,13 @@ HTML output file. Multiple local files can be separated by commas.
 
 [call [option --mathjax] [arg boolean]]
 
-Include the MathJax JavaScript library so that embedded LaTeX formulas are
-rendered. The default is [const false].
+[para] Include the MathJax JavaScript library so that embedded LaTeX formulas
+are rendered in the browser. The formula source stays in your own document
+(no external formula service is needed): write inline formulas with the
+parenthesis syntax [emph {\( ... \)}] and display formulas with the
+bracket syntax [emph {\[ ... \]}] (both with doubled backslashes in the
+Markdown source), or use the dollar variants [emph {$ ... $}] /
+[emph {$$ ... $$}]. The default is [const false].
 
 [call [option --refresh] [arg seconds]]
 
