@@ -96,15 +96,15 @@ math equations within Markdown documents.</p>
 
 <h2>Inline Equations</h2>
 
-<p>Simple  Equations  can be  inline  within  the text  using  the two  backslash
+<p>Simple  Equations  can be  inline  within  the text  using  the backslash
 parenthesis syntax like here:</p>
 
-<pre class='code'><code>    The  famous  Einstein  equations  \\( E = mc^2 \\) is  probably  the most known
+<pre class='code'><code>    The  famous  Einstein  equations  \( E = mc^2 \) is  probably  the most known
     equation world wide.</code></pre>
 
 <p>The output is this:</p>
 
-<p>The  famous  Einstein  equations  \( E = mc^2 \) is  probably  the most known
+<p>The  famous  Einstein  equations  ( E = mc^2 ) is  probably  the most known
 equation world wide.</p>
 
 <h2>Block Equations</h2>
@@ -112,11 +112,11 @@ equation world wide.</p>
 <p>Block  equations can be embedded within brackets  protected by two backslashes
 or within two starting and two ending dollar signs like in the examples below:</p>
 
-<pre class='code'><code>\\[ \sum_{i=0}^n i^2 =  \frac{(n^2+n)(2n+1)}{6} \tag{1} \\] </code></pre>
+<pre class='code'><code>\[ \sum_{i=0}^n i^2 =  \frac{(n^2+n)(2n+1)}{6} \tag{1} \] </code></pre>
 
 <p>and here the output:</p>
 
-<p>\[ \sum_{i=0}^n i^2 =  \frac{(n^2+n)(2n+1)}{6} \tag{1} \]</p>
+<p>[ \sum_{i=0}^n i^2 =  \frac{(n^2+n)(2n+1)}{6} \tag{1} ]</p>
 
 <p>As you can see the  alignment  to the  center  does not  really  look nice. So
 there is style  command for the  division tag of class left which aligns the equation to the
@@ -140,6 +140,56 @@ very end.</p>
 
 <p>You can as well create a div class left in your  stylesheet  to just write the
 classname in your div tag.</p>
+
+<h2>Problems</h2>
+
+<p>Multiline blocks with $$ borders are supported as well.</p>
+
+<p>$$
+E = mc^2
+$$</p>
+
+<p>The following equation is more involved:</p>
+
+<p>The Formula for the geometric mean (gm) is :</p>
+
+<p>$$
+\left(\prod<em>{i=1}^{n} x</em>i\right)^{1/n}
+$$</p>
+
+<p>It uses underscores and subscripts within a multiline display block.</p>
+
+<h2>Some more equations</h2>
+
+<p>The well known Pythagorean theorem (x^2 + y^2 = z^2) was 
+proved to be invalid for other exponents. 
+Meaning the next equation has no integer solutions:</p>
+
+<p>[ x^n + y^n = z^n ]</p>
+
+<p>Same formula but opening and closing on different lines:</p>
+
+<p>[ 
+x^n + y^n = z^n 
+]</p>
+
+<p>Works as well.</p>
+
+<p>Two equations on the same line ( x = 3 ) and ( y = 4 ).</p>
+
+<p>Now the same with single dollars $x = 3$ and $y = 4$.</p>
+
+<h2>Backward compatibility:</h2>
+
+<p>Does \(E = mc^2\) render correctly?</p>
+
+<p>Or:</p>
+
+<p>\[
+E = mc^2
+\]</p>
+
+<h2>End</h2>
 
 
 

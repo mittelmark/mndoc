@@ -570,6 +570,106 @@ proc ::mndoc::inline-assets {filename html} {
     return $htm
 }
 
+proc ::mndoc::protect-equations {markdown} {
+    set equations [list]
+    set pos 0
+    set out ""
+    while {[regexp -start $pos -indices {(?s)(```|~~~).*?\1} $markdown span]} {
+        lassign $span start end
+        append out [string range $markdown $pos [expr {$start - 1}]]
+        set code [string range $markdown $start $end]
+        set placeholder "MNDOCMATH[llength $equations]Z"
+        lappend equations [list $placeholder $code 0]
+        append out $placeholder
+        set pos [expr {$end + 1}]
+    }
+    append out [string range $markdown $pos end]
+    set markdown $out
+
+    set pos 0
+    set out ""
+    while {[regexp -start $pos -indices {`+[^`\r\n]*`+} $markdown span]} {
+        lassign $span start end
+        append out [string range $markdown $pos [expr {$start - 1}]]
+        set code [string range $markdown $start $end]
+        set placeholder "MNDOCMATH[llength $equations]Z"
+        lappend equations [list $placeholder $code 0]
+        append out $placeholder
+        set pos [expr {$end + 1}]
+    }
+    append out [string range $markdown $pos end]
+    set markdown $out
+
+    set lines [list]
+    set block ""
+    set inblock false
+    foreach line [split $markdown "\n"] {
+        if {[regexp {^[ \t]*\$\$[ \t]*$} $line]} {
+            if {!$inblock} {
+                set block "$line\n"
+                set inblock true
+                continue
+            }
+            append block "$line\n"
+            set placeholder "MNDOCMATH[llength $equations]Z"
+            lappend equations [list $placeholder [string trimright $block] 1]
+            lappend lines $placeholder
+            set block ""
+            set inblock false
+            continue
+        }
+        if {$inblock} {
+            append block "$line\n"
+        } else {
+            lappend lines $line
+        }
+    }
+    if {$inblock} {
+        lappend lines [string trimright $block]
+    }
+    set markdown [join $lines "\n"]
+
+    set patterns [list \
+        {\$\$[^$\r\n]+\$\$} \
+        {(?s)\\\\\[.*?\\\\\]} \
+        {(?s)\\\\\(.*?\\\\\)} \
+        {(?s)\\\[.*?\\\]} \
+        {(?s)\\\(.*?\\\)} \
+        {\$[^$\r\n]+\$}]
+
+    foreach re $patterns {
+        set pos 0
+        set out ""
+        set found false
+        while {[regexp -start $pos -indices $re $markdown span]} {
+            set found true
+            lassign $span start end
+            append out [string range $markdown $pos [expr {$start - 1}]]
+            set equation [string range $markdown $start $end]
+            set placeholder "MNDOCMATH[llength $equations]Z"
+            lappend equations [list $placeholder $equation 1]
+            append out $placeholder
+            set pos [expr {$end + 1}]
+        }
+        if {$found} {
+            append out [string range $markdown $pos end]
+            set markdown $out
+        }
+    }
+    return [list $markdown $equations]
+}
+
+proc ::mndoc::restore-equations {html equations} {
+    foreach pair $equations {
+        lassign $pair placeholder equation normalize
+        if {$normalize} {
+            set equation [string map [list {\\(} {\(} {\\)} {\)} {\\[} {\[} {\\]} {\]}] $equation]
+        }
+        set html [string map [list $placeholder $equation] $html]
+    }
+    return $html
+}
+
 proc ::mndoc::mndoc {filename outfile args} {
     variable deindent [list \n\t \n "\n    " \n]    
     variable htmltemplate
@@ -771,8 +871,8 @@ proc ::mndoc::mndoc {filename outfile args} {
         }
     }
     if {$arg(--mathjax)} {
-        set document(mathjax) {<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>}
-        append document(mathjax) {<script>  window.MathJax = {  tex: { inlineMath: [['$', '$'], ['\\(', '\\)']]  } }; </script> }
+        set document(mathjax) {<script>window.MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']] } }; </script>}
+        append document(mathjax) {<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>}
     } else {
         set document(mathjax) ""
     }
@@ -813,7 +913,15 @@ proc ::mndoc::mndoc {filename outfile args} {
             set style [dict get $yamldict css]
             append style "\n<style>\n[dict get $yamldict style]</style>"
         }
-        set html [Markdown::convert $mdhtml]
+        set equations [list]
+        set mdforhtml $mdhtml
+        if {$arg(--mathjax)} {
+            lassign [protect-equations $mdforhtml] mdforhtml equations
+        }
+        set html [Markdown::convert $mdforhtml]
+        if {$arg(--mathjax)} {
+            set html [restore-equations $html $equations]
+        }
         set html [mndoc::mark-figures $html]
         if {$arg(--base64)} {
             set html [mndoc::inline-assets $filename $html]

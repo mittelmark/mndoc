@@ -194,6 +194,20 @@ test:
 	grep -q '<meta charset="utf-8">' "$$tmp/utf8.html"; \
 	grep -q 'Grüße — mit UTF-8' "$$tmp/utf8.html"; \
 	echo "  ... utf8 charset passing"; \
+	printf '%s\n' '```' 'plain code' '```' '' 'text' '' > "$$tmp/fence.md"; \
+	tclsh apps/mndoc "$$tmp/fence.md" "$$tmp/fence.html" --mathjax true; \
+	python3 -c 'open("'"$$tmp"'/equations.md","w").write(chr(36)*2+"\\n\\\\left(\\\\prod_{i=1}^{n} x_i\\\\right)^{1/n}\\n"+chr(36)*2+"\\n\\nInline "+chr(36)+"x_i"+chr(36)+".\\n")'; \
+	tclsh apps/mndoc "$$tmp/equations.md" "$$tmp/equations.html" --mathjax true; \
+	grep -q 'displayMath' "$$tmp/equations.html"; \
+	grep -q 'x_i' "$$tmp/equations.html"; \
+	! grep -q '<em>' "$$tmp/equations.html"; \
+	echo "  ... mathjax dollar equations passing"; \
+	tclsh apps/mndoc examples/equations.md "$$tmp/equations-legacy.html" --mathjax true; \
+	grep -Fq 'gm' "$$tmp/equations-legacy.html"; \
+	grep -Fq 'x^n' "$$tmp/equations-legacy.html"; \
+	! grep -Fq 'gm<em>' "$$tmp/equations-legacy.html"; \
+	grep -Fq 'x_i' "$$tmp/equations-legacy.html"; \
+	echo "  ... mathjax backslash delimiters passing"; \
 	tclsh apps/mndoc "$$tmp/test.md" "$$tmp/bodyonly.html" --bodyonly true; \
 	! grep -q '<!DOCTYPE html>' "$$tmp/bodyonly.html"; \
 	grep -q '<p>hello</p>' "$$tmp/bodyonly.html"; \

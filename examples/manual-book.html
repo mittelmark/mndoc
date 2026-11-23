@@ -464,12 +464,19 @@ test();</code></pre>
 
 <p><a name="equations"><strong>Equations</strong></a></p>
 
-<p>Since version 0.9.0 as well LaTeX equations can be embedded into Markdown documents and are
-rendered using the <a href="https://www.mathjax.org/">MathJax</a> library. Just include either inline 
-equations using parenthesis protected by two backslashes or block equations embedded within
-brackets protected by two backslashes or within two dollar symbols in your Markdown code and use
-the option <code>--mathjax true</code> during document conversion. Here an example for 
-inline equations:</p>
+<p>Since version 0.9.0 as well LaTeX equations can be embedded into Markdown
+documents and are rendered using the <a href="https://www.mathjax.org/">MathJax</a>
+library. The equation source stays in your own document: MathJax typesets
+it in the browser, so the rendering does not depend on an external
+equation service (like CodeCogs, where equations are images fetched from a
+third party domain that may disappear).</p>
+
+<p>Use the option <code>--mathjax true</code> during document conversion. You can then
+write inline equations using the parenthesis <code>\( ... \)</code> approach and
+block equations using the bracket <code>\[ ... \]</code> approach, both protected by
+two backslashes in your Markdown source, or the dollar variants
+<code>$ ... $</code> / <code>$$ ... $$</code> which need no backslashes at all. Here an example
+for inline equations:</p>
 
 <pre class='code'><code>The  famous  Einstein  equation  \\( E = mc^2 \\) is  probably  the most known
 equation world wide.</code></pre>
@@ -478,6 +485,14 @@ equation world wide.</code></pre>
 
 <p>The  famous  Einstein  equation  \( E = mc^2 \) is  probably  the most know
 equation world wide.</p>
+
+<p>And here the bracket <code>\\[ ... \\]</code> approach for a block equation:</p>
+
+<pre class='code'><code>\\[ \\sum_{i=0}^n i^2 = \\frac{(n^2+n)(2n+1)}{6} \\]</code></pre>
+
+<p>The output (will as well not work in Github Preview Mode):</p>
+
+<p>\[ \sum_{i=0}^n i^2 = \frac{(n^2+n)(2n+1)}{6} \]</p>
 
 <p>Block equations should be usually aligned left, like in the
 following examples:</p>
