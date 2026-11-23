@@ -208,6 +208,12 @@ test:
 	! grep -Fq 'gm<em>' "$$tmp/equations-legacy.html"; \
 	grep -Fq 'x_i' "$$tmp/equations-legacy.html"; \
 	echo "  ... mathjax backslash delimiters passing"; \
+	python3 -c 'open("'"$$tmp"'/single-equations.md","w").write("Inline "+chr(92)+"(x_i + y_j"+chr(92)+")\\n\\n"+chr(92)+"["+chr(92)+"n\\left(\\\\prod_{i=1}^{n} x_i\\\\right)^{1/n}\\n"+chr(92)+"]\\n")'; \
+	tclsh apps/mndoc "$$tmp/single-equations.md" "$$tmp/single-equations.html" --mathjax true; \
+	grep -Fq 'x_i + y_j' "$$tmp/single-equations.html"; \
+	grep -Fq 'x_i' "$$tmp/single-equations.html"; \
+	! grep -q '<em>' "$$tmp/single-equations.html"; \
+	echo "  ... single-backslash equations with underscores passing"; \
 	tclsh apps/mndoc "$$tmp/test.md" "$$tmp/bodyonly.html" --bodyonly true; \
 	! grep -q '<!DOCTYPE html>' "$$tmp/bodyonly.html"; \
 	grep -q '<p>hello</p>' "$$tmp/bodyonly.html"; \
