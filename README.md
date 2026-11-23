@@ -43,11 +43,12 @@ header, footer, stylesheets and Javascript code. The latter can be used to add
 syntax   highlighting   for   instance   using   the [Highlight.js syntax   highlighter](https://github.com/highlightjs).
 Since version 0.9.0 it as well supports embedding LaTeX equations using the
 [MathJax Javascript library](https://www.mathjax.org/): inline equations
-with the `\( ... \)` approach, block equations with the `\[ ... \]`
-approach (both written with doubled backslashes in the Markdown source) or
-the dollar variants `$ ... $` / `$$ ... $$`. The equations are typeset in
-the browser from the equation source in your own document - no external
-equation service (like CodeCogs) is involved.
+with `\( ... \)` or `$ ... $`, block equations with `\[ ... \]` or
+`$$ ... $$`, and legacy double-backslash forms `\\( ... \\)` and
+`\\[ ... \\]` for backward compatibility. Underscores inside equation bodies
+are preserved instead of being interpreted as Markdown emphasis. The equations
+are typeset in the browser from the equation source in your own document - no
+external equation service (like CodeCogs) is involved.
 
 * current code and manuals:  [mndoc.zip](https://github.com/mittelmark/mndoc/archive/refs/heads/main.zip)
 * Manual page [mndoc.html](http://htmlpreview.github.io/?https://github.com/mittelmark/mndoc/blob/main/mndoc/mndoc.html)
@@ -199,6 +200,13 @@ which runs it in a clean Linux environment and checks the installed binary.
   traditional book, including figure and image size handling
 
 ## ChangeLog
+
+- 2026-11-23 Release 0.17.1
+    - fixed single-backslash `\( ... \)` and `\[ ... \]` LaTeX equations
+    - fixed multiline `$$ ... $$` equations containing underscores
+    - preserved legacy double-backslash `\\( ... \\)` and `\\[ ... \\]`
+      delimiters
+    - fixed plain triple-backtick fenced code blocks with MathJax enabled
 
 - 2026-11-02 Release 0.17.0
     - flexible command line option order: options may be placed before,

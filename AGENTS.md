@@ -15,7 +15,7 @@ extractor. It reads:
 
 and writes HTML, or extracts the Markdown for further processing.
 
-Current version: **0.17.0**. License: **BSD-3-Clause**. Upstream:
+Current version: **0.17.1**. License: **BSD-3-Clause**. Upstream:
 <https://github.com/mittelmark/mndoc>.
 
 It started as an extended fork of Tcllib's `mkdoc`; the name was changed to
@@ -103,7 +103,7 @@ write the sibling `output.html` first and then print it to PDF:
 Run the prebuilt standalone binary:
 
 ```sh
-./bin/mndoc-0.17.0.bin input.md output.html
+./bin/mndoc-0.17.1.bin input.md output.html
 ```
 
 The root `mndoc.tcl` is **not** standalone: it only does

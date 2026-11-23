@@ -4,10 +4,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="title" content="mndoc::mndoc 0.17.0">
+<meta name="title" content="mndoc::mndoc 0.17.1">
 <meta name="author" content="Detlef Groth, University of Potsdam, Germany">
     
-<title>mndoc::mndoc 0.17.0</title>
+<title>mndoc::mndoc 0.17.1</title>
     
                                       <link rel="stylesheet" href="https://unpkg.com/@highlightjs/cdn-assets@11.9.0/styles/atom-one-light.min.css">
                                       <script src="https://unpkg.com/@highlightjs/cdn-assets@11.9.0/highlight.min.js"></script>
@@ -16,7 +16,7 @@
                                       <!-- Initialize highlight.js -->
                                       <script>hljs.highlightAll();</script>
        
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script><script>  window.MathJax = {  tex: { inlineMath: [['$', '$'], ['\\(', '\\)']]  } }; </script> 
+    <script>window.MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']] } }; </script><script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 
 
 <style>
@@ -41,9 +41,9 @@ pre, code { font-family: "Ubuntu Mono", monospaced ; }
 
 
     <div class="document-header">
-<h1 class="title">mndoc::mndoc 0.17.0</h1>
+<h1 class="title">mndoc::mndoc 0.17.1</h1>
 <h2 class="author">Detlef Groth, University of Potsdam, Germany</h2>
-<h2 class="date">2026-10-31</h2>
+<h2 class="date">2026-11-23</h2>
     </div>
 
 <h2>NAME</h2>
@@ -262,9 +262,9 @@ either in the css file, or if you like you can add as well a style section to th
 either like in this example:</p>
 
 <pre class='code'><code>#' ---
-#' title: mndoc::mndoc 0.17.0
+#' title: mndoc::mndoc 0.17.1
 #' author: Detlef Groth, University of Potsdam, Germany
-#' date: 2026-10-31
+#' date: 2026-11-23
 #' css: mndoc.css
 #' style: |
 #'   @import url('https://fonts.bunny.net/css?family=Andika&amp;display=swap'); 
@@ -472,27 +472,48 @@ equation service (like CodeCogs, where equations are images fetched from a
 third party domain that may disappear).</p>
 
 <p>Use the option <code>--mathjax true</code> during document conversion. You can then
-write inline equations using the parenthesis <code>\( ... \)</code> approach and
-block equations using the bracket <code>\[ ... \]</code> approach, both protected by
-two backslashes in your Markdown source, or the dollar variants
-<code>$ ... $</code> / <code>$$ ... $$</code> which need no backslashes at all. Here an example
-for inline equations:</p>
+write inline equations using <code>\( ... \)</code> or <code>$ ... $</code>, and block equations
+using <code>\[ ... \]</code> or <code>$$ ... $$</code>. Legacy doubled-backslash forms
+<code>\( ... \)</code> and <code>\[ ... \]</code> remain accepted for existing documents.
+Equation bodies are protected from Markdown emphasis parsing, so
+underscores such as <code>x_i</code> remain LaTeX instead of becoming italics.</p>
 
-<pre class='code'><code>The  famous  Einstein  equation  \\( E = mc^2 \\) is  probably  the most known
+<p>Here an inline example:</p>
+
+<pre class='code'><code>The famous Einstein equation \( E = mc^2 \) is probably the most known
 equation world wide.</code></pre>
 
 <p>And here the output (will not work on http://htmlpreview.github.io/):</p>
 
-<p>The  famous  Einstein  equation  \( E = mc^2 \) is  probably  the most know
+<p>The famous Einstein equation \( E = mc^2 \) is probably the most known
 equation world wide.</p>
 
-<p>And here the bracket <code>\\[ ... \\]</code> approach for a block equation:</p>
+<p>The dollar form is shorter for inline equations:</p>
 
-<pre class='code'><code>\\[ \\sum_{i=0}^n i^2 = \\frac{(n^2+n)(2n+1)}{6} \\]</code></pre>
+<pre class='code'><code>The relation $E = mc^2$ is a famous example.</code></pre>
+
+<p>And here the bracket <code>\[ ... \]</code> approach for a block equation:</p>
+
+<pre class='code'><code>\[ \sum_{i=0}^n i^2 = \frac{(n^2+n)(2n+1)}{6} \]</code></pre>
 
 <p>The output (will as well not work in Github Preview Mode):</p>
 
 <p>\[ \sum_{i=0}^n i^2 = \frac{(n^2+n)(2n+1)}{6} \]</p>
+
+<p>Multiline display equations and subscripts use the Pandoc-style <code>$$</code> form:</p>
+
+<pre class='code'><code>$$
+\left(\prod_{i=1}^{n} x_i\right)^{1/n}
+$$</code></pre>
+
+<p>Here the inline and block double-backslash forms remain accepted for
+backward compatibility:</p>
+
+<pre class='code'><code>\(E = mc^2\)
+
+\[
+E = mc^2
+\]</code></pre>
 
 <p>Block equations should be usually aligned left, like in the
 following examples:</p>
@@ -556,6 +577,15 @@ in your module path as <code>mndoc-0.1X.X.tm</code> for instance. See the <a hre
 <h2><a name='changes'>CHANGES</a></h2>
 
 <ul>
+<li>2026-11-23 Release 0.17.1
+<ul>
+<li>fixed single-backslash <code>\( ... \)</code> and <code>\[ ... \]</code> equations</li>
+<li>fixed multiline <code>$$ ... $$</code> equations containing underscores</li>
+<li>preserved legacy double-backslash <code>\( ... \)</code> and <code>\[ ... \]</code>
+delimiters</li>
+<li>fixed plain triple-backtick fenced code blocks with MathJax enabled</li></ul>
+
+</li>
 <li>2026-11-02 Release 0.17.0
 <ul>
 <li>flexible command line option order: options may be placed before,
