@@ -572,34 +572,6 @@ proc ::mndoc::inline-assets {filename html} {
 
 proc ::mndoc::protect-equations {markdown} {
     set equations [list]
-    set pos 0
-    set out ""
-    while {[regexp -start $pos -indices {(?s)(```|~~~).*?\1} $markdown span]} {
-        lassign $span start end
-        append out [string range $markdown $pos [expr {$start - 1}]]
-        set code [string range $markdown $start $end]
-        set placeholder "MNDOCMATH[llength $equations]Z"
-        lappend equations [list $placeholder $code 0]
-        append out $placeholder
-        set pos [expr {$end + 1}]
-    }
-    append out [string range $markdown $pos end]
-    set markdown $out
-
-    set pos 0
-    set out ""
-    while {[regexp -start $pos -indices {`+[^`\r\n]*`+} $markdown span]} {
-        lassign $span start end
-        append out [string range $markdown $pos [expr {$start - 1}]]
-        set code [string range $markdown $start $end]
-        set placeholder "MNDOCMATH[llength $equations]Z"
-        lappend equations [list $placeholder $code 0]
-        append out $placeholder
-        set pos [expr {$end + 1}]
-    }
-    append out [string range $markdown $pos end]
-    set markdown $out
-
     set lines [list]
     set block ""
     set inblock false

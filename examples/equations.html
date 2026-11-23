@@ -9,7 +9,7 @@
     
 <title>Documentation equations</title>
     
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script><script>  window.MathJax = {  tex: { inlineMath: [['$', '$'], ['\\(', '\\)']]  } }; </script> 
+    <script>window.MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']] } }; </script><script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 <style>
     body {
         padding: 30px;
@@ -104,7 +104,7 @@ parenthesis syntax like here:</p>
 
 <p>The output is this:</p>
 
-<p>The  famous  Einstein  equations  ( E = mc^2 ) is  probably  the most known
+<p>The  famous  Einstein  equations  \( E = mc^2 \) is  probably  the most known
 equation world wide.</p>
 
 <h2>Block Equations</h2>
@@ -116,7 +116,7 @@ or within two starting and two ending dollar signs like in the examples below:</
 
 <p>and here the output:</p>
 
-<p>[ \sum_{i=0}^n i^2 =  \frac{(n^2+n)(2n+1)}{6} \tag{1} ]</p>
+<p>\[ \sum_{i=0}^n i^2 =  \frac{(n^2+n)(2n+1)}{6} \tag{1} \]</p>
 
 <p>As you can see the  alignment  to the  center  does not  really  look nice. So
 there is style  command for the  division tag of class left which aligns the equation to the
@@ -151,31 +151,31 @@ $$</p>
 
 <p>The following equation is more involved:</p>
 
-<p>The Formula for the geometric mean (gm) is :</p>
+<p>The Formula for the geometric mean \(gm\) is :</p>
 
 <p>$$
-\left(\prod<em>{i=1}^{n} x</em>i\right)^{1/n}
+\left(\prod_{i=1}^{n} x_i\right)^{1/n}
 $$</p>
 
 <p>It uses underscores and subscripts within a multiline display block.</p>
 
 <h2>Some more equations</h2>
 
-<p>The well known Pythagorean theorem (x^2 + y^2 = z^2) was 
+<p>The well known Pythagorean theorem \(x^2 + y^2 = z^2\) was 
 proved to be invalid for other exponents. 
 Meaning the next equation has no integer solutions:</p>
 
-<p>[ x^n + y^n = z^n ]</p>
+<p>\[ x^n + y^n = z^n \]</p>
 
 <p>Same formula but opening and closing on different lines:</p>
 
-<p>[ 
+<p>\[ 
 x^n + y^n = z^n 
-]</p>
+\]</p>
 
 <p>Works as well.</p>
 
-<p>Two equations on the same line ( x = 3 ) and ( y = 4 ).</p>
+<p>Two equations on the same line \( x = 3 \) and \( y = 4 \).</p>
 
 <p>Now the same with single dollars $x = 3$ and $y = 4$.</p>
 
