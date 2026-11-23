@@ -2,7 +2,7 @@
 ##############################################################################
 #  Author        : Dr. Detlef Groth
 #  Created       : Fri Nov 15 10:20:22 2019
-#  Last Modified : <260128.0743>
+#  Last Modified : <261123.1620>
 #
 #  Description	 : Command line utility and package to extract Markdown documentation 
 #                  from programming code if embedded as after comment sequence #' 
@@ -1772,7 +1772,7 @@ set HELP [string map [list "\n    " "\n"] {
 #' - 2026-11-23 Release 0.17.1
 #'       - fixed single-backslash `\( ... \)` and `\[ ... \]` equations
 #'       - fixed multiline `$$ ... $$` equations containing underscores
-#'       - preserved legacy double-backslash `\\( ... \\)` and `\\[ ... \\]`
+#'       - preserved legacy double-backslash `\\\( ... \\\)` and `\\\[ ... \\\]`
 #'         delimiters
 #'       - fixed plain triple-backtick fenced code blocks with MathJax enabled
 #' - 2026-11-02 Release 0.17.0
